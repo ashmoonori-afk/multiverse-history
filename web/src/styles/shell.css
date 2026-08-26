@@ -1,4 +1,5 @@
 .game_shell {
+  position: relative;
   block-size: 100dvb;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
@@ -210,6 +211,21 @@
   max-block-size: 100%;
 }
 
+.map_viewport {
+  display: grid;
+  place-items: center;
+  inline-size: 100%;
+  block-size: 100%;
+  transform-origin: center;
+  transition: transform var(--motion-fast) var(--ease-enter);
+  touch-action: none;
+  user-select: none;
+}
+
+.map_viewport > svg {
+  flex: 0 0 auto;
+}
+
 .map_controls {
   position: absolute;
   z-index: 1;
@@ -217,6 +233,34 @@
   inset-inline-start: var(--space-4);
   display: flex;
   gap: var(--space-2);
+}
+
+.map_viewport_controls {
+  display: flex;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.map_change_callout {
+  position: absolute;
+  z-index: 1;
+  inset-block-start: 7rem;
+  inset-inline-start: var(--space-4);
+  display: grid;
+  gap: var(--space-1);
+  max-inline-size: min(24rem, calc(100% - 2rem));
+  padding: var(--space-2) var(--space-3);
+  border-inline-start: 2px solid var(--color-selection);
+  background: rgb(7 10 15 / 82%);
+  color: var(--color-text);
+  font-size: var(--text-xs);
+  line-height: 1.45;
+}
+
+.map_change_callout strong {
+  color: var(--color-selection);
 }
 
 .map_entities,
@@ -410,6 +454,10 @@
   color: var(--color-text-strong);
 }
 
+.faction_overlay_button.is_changed {
+  box-shadow: inset 0 0 0 1px var(--color-plan);
+}
+
 .faction_overlay_swatch {
   inline-size: 0.8rem;
   block-size: 0.8rem;
@@ -485,6 +533,11 @@
 .province_button:hover {
   border-color: var(--color-selection);
   background: var(--color-surface-2);
+}
+
+.province_button.is_changed {
+  border-color: var(--color-plan);
+  background: rgb(231 184 91 / 10%);
 }
 
 .province_owner {
@@ -794,6 +847,156 @@
   color: var(--color-text-strong);
 }
 
+.chat_drawer {
+  position: absolute;
+  z-index: 5;
+  inset-block-start: 5.25rem;
+  inset-inline-end: var(--space-5);
+  display: grid;
+  gap: var(--space-3);
+  inline-size: min(25rem, calc(100% - 2rem));
+  max-block-size: min(70dvb, 42rem);
+  overflow: auto;
+  padding: var(--space-4);
+  border: 1px solid var(--color-selection);
+  border-radius: var(--radius-lg);
+  background: var(--color-shell);
+  box-shadow: 0 1.5rem 4rem rgb(0 0 0 / 38%);
+}
+
+.chat_drawer_heading,
+.resolution_feed_heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.chat_drawer_heading h2,
+.resolution_feed_heading h2 {
+  margin: 0;
+  color: var(--color-text-strong);
+  font-size: var(--text-md);
+}
+
+.chat_history {
+  display: grid;
+  gap: var(--space-2);
+  max-block-size: 18rem;
+  overflow: auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chat_message {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  border-inline-start: 2px solid var(--color-economy);
+  background: var(--color-surface-2);
+  color: var(--color-text);
+  font-size: var(--text-xs);
+  line-height: 1.5;
+}
+
+.chat_message_player {
+  border-inline-start-color: var(--color-selection);
+  background: rgb(79 209 181 / 10%);
+}
+
+.chat_message_meta {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+.chat_empty,
+.resolution_empty {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  line-height: 1.5;
+}
+
+.chat_composer {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.chat_composer textarea {
+  min-block-size: 5.5rem;
+  resize: vertical;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-1);
+  color: var(--color-text-strong);
+  font-size: var(--text-base);
+  line-height: 1.5;
+}
+
+.resolution_feed {
+  display: grid;
+  gap: var(--space-2);
+  min-inline-size: 0;
+  padding: var(--space-3);
+  border: 1px solid rgb(79 209 181 / 32%);
+  border-radius: var(--radius-md);
+  background: rgb(79 209 181 / 6%);
+}
+
+.resolution_entry {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.resolution_timestamp,
+.resolution_narrative,
+.resolution_world_impact {
+  margin: 0;
+  color: var(--color-text);
+  font-size: var(--text-xs);
+  line-height: 1.5;
+}
+
+.resolution_timestamp {
+  color: var(--color-selection);
+  font-variant-numeric: tabular-nums;
+}
+
+.resolution_delta_list {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.resolution_delta_list li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+.resolution_delta_list strong {
+  color: var(--color-text-strong);
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+
+.resolution_world_impact {
+  display: grid;
+  gap: var(--space-1);
+  padding-block-start: var(--space-2);
+  border-block-start: 1px solid var(--color-border-subtle);
+}
+
+.resolution_world_impact strong {
+  color: var(--color-plan);
+}
+
 .diplomacy_empty {
   color: var(--color-text-muted);
 }
@@ -934,6 +1137,29 @@
   padding: var(--space-4) var(--space-5);
   border-block-start: 1px solid var(--color-border);
   background: var(--color-shell);
+}
+
+.command_activity {
+  display: grid;
+  gap: var(--space-3);
+  min-block-size: 0;
+  overflow: auto;
+}
+
+.resolution_summary {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  border-inline-start: 2px solid var(--color-selection);
+  background: rgb(79 209 181 / 8%);
+  color: var(--color-text);
+  font-size: var(--text-xs);
+  line-height: 1.45;
+}
+
+.resolution_summary strong {
+  color: var(--color-selection);
+  font-variant-numeric: tabular-nums;
 }
 
 .order_composer {
@@ -1405,6 +1631,23 @@
     inset-inline-end: var(--space-3);
     max-inline-size: calc(100% - 2rem);
     overflow: auto;
+  }
+
+  .map_change_callout {
+    inset-block-start: 12.5rem;
+    inset-inline-start: var(--space-3);
+  }
+
+  .map_viewport_controls {
+    flex-wrap: wrap;
+  }
+
+  .chat_drawer {
+    inset-block-start: 11.5rem;
+    inset-inline-end: var(--space-3);
+    inset-inline-start: var(--space-3);
+    inline-size: auto;
+    max-block-size: calc(100dvb - 13rem);
   }
 
   .custom_geography_form {

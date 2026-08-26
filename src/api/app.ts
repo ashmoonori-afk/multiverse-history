@@ -3,6 +3,7 @@ import { cors } from "hono/cors";
 import { ZodError } from "zod";
 
 import { applyStrategicPlan } from "../application/apply-strategic-plan";
+import { appendCampaignChat } from "../application/campaign-chat";
 import {
   createCampaignState,
   jumpCampaignTimeline,
@@ -30,6 +31,7 @@ import {
   AdvanceTurnRequestSchema,
   CreateCampaignRequestSchema,
   DeclareWarRequestSchema,
+  DiplomacyChatRequestSchema,
   JumpTimelineRequestSchema,
   MoveUnitRequestSchema,
   ProposeTreatyRequestSchema,
@@ -221,6 +223,17 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
     return context.json({ campaign: store.read(), stateHash: store.stateHash() });
   });
 
+  app.post("/api/diplomacy/chat", async (context) => {
+    const request = DiplomacyChatRequestSchema.parse(await jsonBody(context.req.raw));
+    const state = appendCampaignChat({
+      state: parseCampaignState(store.read()),
+      targetNationId: request.targetNationId,
+      message: request.message,
+    });
+    store.replace(state);
+    return context.json({ campaign: store.read(), stateHash: store.stateHash() });
+  });
+
   app.get("/api/catalog", (context) =>
     context.json({
       scenarios: listScenarios().map((scenario) => ({
@@ -321,7 +334,8 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
           turn: store.read().turn,
           stateJson: canonicalStringify(store.read()),
         }),
-      reduce: (snapshot, plan) => applyStrategicPlan(parseCampaignState(snapshot), plan),
+      reduce: (snapshot, plan) =>
+        applyStrategicPlan(parseCampaignState(snapshot), plan, request.orderText),
     });
     return context.json({ campaign: result.state, plan: result.plan, stateHash: result.stateHash });
   });

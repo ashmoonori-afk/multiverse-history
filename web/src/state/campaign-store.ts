@@ -40,6 +40,75 @@ const StrategicPlanSchema = z
   })
   .strict();
 
+const NumericDeltaSchema = z
+  .object({
+    before: z.number().int(),
+    after: z.number().int(),
+  })
+  .strict();
+
+const CampaignResolutionSchema = z
+  .object({
+    id: z.string(),
+    turn: z.number().int().nonnegative(),
+    timestampKo: z.string().min(1),
+    orderText: z.string().min(1),
+    narrativeKo: z.string().min(1),
+    nationDeltas: z.array(
+      z
+        .object({
+          nationId: z.string(),
+          nationNameKo: z.string().min(1),
+          treasuryCredits: NumericDeltaSchema,
+          gdpCredits: NumericDeltaSchema,
+          infrastructureBps: NumericDeltaSchema,
+        })
+        .strict(),
+    ),
+    relationDeltas: z.array(
+      z
+        .object({
+          fromNationId: z.string(),
+          toNationId: z.string(),
+          before: z.number().int(),
+          after: z.number().int(),
+        })
+        .strict(),
+    ),
+    treatyDeltas: z.array(
+      z
+        .object({
+          id: z.string(),
+          proposerNationId: z.string(),
+          recipientNationId: z.string(),
+          clauses: z.array(z.string()),
+          status: z.enum(["proposed", "active"]),
+          proposedTurn: z.number().int().nonnegative(),
+        })
+        .strict(),
+    ),
+    worldImpact: z
+      .object({
+        changedNationIds: z.array(z.string()),
+        changedProvinceIds: z.array(z.string()),
+        summaryKo: z.string().min(1),
+      })
+      .strict(),
+  })
+  .strict();
+
+const CampaignChatMessageSchema = z
+  .object({
+    id: z.string(),
+    role: z.enum(["player", "counterpart"]),
+    speakerNationId: z.string(),
+    targetNationId: z.string(),
+    turn: z.number().int().nonnegative(),
+    date: z.object({ year: z.number().int(), quarter: z.number().int().min(1).max(4) }).strict(),
+    text: z.string().min(1),
+  })
+  .strict();
+
 const CampaignSchema = z
   .object({
     id: z.literal("cmp_local"),
@@ -117,6 +186,8 @@ const CampaignSchema = z
     battleReports: z.array(z.string()),
     events: z.array(z.string()),
     lastPlan: StrategicPlanSchema.nullable(),
+    resolutions: z.array(CampaignResolutionSchema),
+    chatMessages: z.array(CampaignChatMessageSchema),
   })
   .strict();
 
@@ -156,6 +227,8 @@ const ApiErrorSchema = z
 
 export type Campaign = z.infer<typeof CampaignSchema>;
 export type StrategicPlan = z.infer<typeof StrategicPlanSchema>;
+export type CampaignResolution = z.infer<typeof CampaignResolutionSchema>;
+export type CampaignChatMessage = z.infer<typeof CampaignChatMessageSchema>;
 export type CampaignExport = z.infer<typeof CampaignExportSchema>;
 export type TreatyClause = "alliance" | "non_aggression" | "trade" | "military_access";
 export type PlannerProvider = "deterministic" | "codex" | "claude";
@@ -198,6 +271,7 @@ const isCampaignNotStartedError = (error: unknown): boolean =>
 
 export interface CampaignStoreState {
   readonly campaign: Campaign | null;
+  readonly bootstrapReady: boolean;
   readonly startScreenRequested: boolean;
   readonly stateHash: string | null;
   readonly plan: StrategicPlan | null;
@@ -214,6 +288,7 @@ export interface CampaignStoreState {
     options?: CampaignCreationOptions,
   ) => Promise<boolean>;
   readonly advanceTurn: (orderText: string) => Promise<boolean>;
+  readonly sendChat: (targetNationId: string, message: string) => Promise<boolean>;
   readonly jumpTimeline: (cadence: TimelineCadence) => Promise<boolean>;
   readonly saveCampaign: () => Promise<boolean>;
   readonly exportCampaign: () => Promise<string | null>;
@@ -248,6 +323,7 @@ const postCampaignAction = async (
 
 export const useCampaignStore = create<CampaignStoreState>((set, get) => ({
   campaign: null,
+  bootstrapReady: false,
   startScreenRequested: false,
   stateHash: null,
   plan: null,
@@ -264,6 +340,7 @@ export const useCampaignStore = create<CampaignStoreState>((set, get) => ({
       }
       set({
         campaign: result.campaign,
+        bootstrapReady: true,
         startScreenRequested: false,
         stateHash: result.stateHash,
         error: null,
@@ -276,11 +353,17 @@ export const useCampaignStore = create<CampaignStoreState>((set, get) => ({
       }
       if (isCampaignNotStartedError(error)) {
         if (get().campaign === null) {
-          set({ campaign: null, stateHash: null, plan: null, error: null });
+          set({
+            campaign: null,
+            bootstrapReady: true,
+            stateHash: null,
+            plan: null,
+            error: null,
+          });
         }
         return;
       }
-      set({ error: messageForError(error) });
+      set({ bootstrapReady: true, error: messageForError(error) });
     }
   },
   beginNewCampaign: () => {
@@ -288,6 +371,7 @@ export const useCampaignStore = create<CampaignStoreState>((set, get) => ({
     campaignLoadEpoch += 1;
     set({
       campaign: null,
+      bootstrapReady: true,
       startScreenRequested: true,
       stateHash: null,
       plan: null,
@@ -311,6 +395,7 @@ export const useCampaignStore = create<CampaignStoreState>((set, get) => ({
       );
       set({
         campaign: result.campaign,
+        bootstrapReady: true,
         startScreenRequested: false,
         stateHash: result.stateHash,
         plan: null,
@@ -347,6 +432,32 @@ export const useCampaignStore = create<CampaignStoreState>((set, get) => ({
         campaign: result.campaign,
         stateHash: result.stateHash,
         plan: result.plan,
+        busy: false,
+        saveStatus: null,
+      });
+      return true;
+    } catch (error: unknown) {
+      set({ busy: false, error: messageForError(error) });
+      return false;
+    }
+  },
+  sendChat: async (targetNationId, message) => {
+    if (get().campaign === null) {
+      return false;
+    }
+    set({ busy: true, error: null, saveStatus: null });
+    try {
+      const result = await parseResponse(
+        await fetch("/api/diplomacy/chat", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ targetNationId, message }),
+        }),
+        CampaignResponseSchema,
+      );
+      set({
+        campaign: result.campaign,
+        stateHash: result.stateHash,
         busy: false,
         saveStatus: null,
       });

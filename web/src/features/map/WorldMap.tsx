@@ -1,5 +1,5 @@
 import type { ComponentType } from "react";
-import { useState } from "react";
+import { type PointerEvent, useRef, useState, type WheelEvent } from "react";
 import {
   ComposableMap,
   type ComposableMapProps,
@@ -42,6 +42,43 @@ const shortProvinceName = (id: string): string =>
     .join(" ");
 
 const factionPalette = ["#39c6a0", "#e7b85b", "#e27669", "#76a7df", "#bd8de4", "#e29259"];
+
+interface MapViewportState {
+  readonly scale: number;
+  readonly translateX: number;
+  readonly translateY: number;
+}
+
+interface DragOrigin {
+  readonly pointerId: number;
+  readonly startX: number;
+  readonly startY: number;
+  readonly originX: number;
+  readonly originY: number;
+}
+
+const initialViewport: MapViewportState = {
+  scale: 1,
+  translateX: 0,
+  translateY: 0,
+};
+const viewportBounds = {
+  minScale: 0.8,
+  maxScale: 2.2,
+  minTranslate: -260,
+  maxTranslate: 260,
+} as const;
+const capitalOffsets: Readonly<Record<string, readonly [number, number]>> = {
+  nat_kor: [0, 28],
+  nat_jpn: [62, 16],
+  nat_qing: [-54, 42],
+  nat_rus: [-28, -38],
+};
+
+const clamp = (value: number, minimum: number, maximum: number): number =>
+  Math.min(maximum, Math.max(minimum, value));
+
+const formatTransformNumber = (value: number): string => Number(value.toFixed(2)).toString();
 
 const factionForGeography = (
   geographyName: string,
@@ -102,6 +139,10 @@ const MapSurface = ({
   const [globeView, setGlobeView] = useState(false);
   const [customRegion, setCustomRegion] = useState("");
   const [customRegions, setCustomRegions] = useState<readonly string[]>([]);
+  const [viewport, setViewport] = useState<MapViewportState>(initialViewport);
+  const [focusedCapitalNationId, setFocusedCapitalNationId] = useState<string | null>(null);
+  const dragOrigin = useRef<DragOrigin | null>(null);
+  const latestResolution = campaign.resolutions[campaign.resolutions.length - 1];
   const ownedProvinces = campaign.provinces.filter(
     (province) => province.ownerNationId === campaign.playerNationId,
   );
@@ -137,6 +178,74 @@ const MapSurface = ({
     "해협: 대한해협",
     ...customRegions.map((region) => `사용자 지형: ${region}`),
   ];
+  const viewportTransform = `scale=${formatTransformNumber(viewport.scale)};translateX=${formatTransformNumber(viewport.translateX)};translateY=${formatTransformNumber(viewport.translateY)}`;
+  const zoomBy = (delta: number): void => {
+    setViewport((current) => ({
+      ...current,
+      scale: clamp(
+        Number((current.scale + delta).toFixed(2)),
+        viewportBounds.minScale,
+        viewportBounds.maxScale,
+      ),
+    }));
+    setFocusedCapitalNationId(null);
+  };
+  const resetViewport = (): void => {
+    setViewport(initialViewport);
+    setFocusedCapitalNationId(null);
+  };
+  const focusCapital = (): void => {
+    const [offsetX, offsetY] = capitalOffsets[selectedNationId] ?? [0, 0];
+    setViewport({
+      scale: 1.35,
+      translateX: clamp(-offsetX, viewportBounds.minTranslate, viewportBounds.maxTranslate),
+      translateY: clamp(-offsetY, viewportBounds.minTranslate, viewportBounds.maxTranslate),
+    });
+    setFocusedCapitalNationId(selectedNationId);
+  };
+  const handleWheel = (event: WheelEvent<HTMLDivElement>): void => {
+    event.preventDefault();
+    zoomBy(event.deltaY < 0 ? 0.1 : -0.1);
+  };
+  const beginDrag = (event: PointerEvent<HTMLDivElement>): void => {
+    if (event.button !== 0) {
+      return;
+    }
+    event.currentTarget.setPointerCapture(event.pointerId);
+    dragOrigin.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      originX: viewport.translateX,
+      originY: viewport.translateY,
+    };
+  };
+  const moveDrag = (event: PointerEvent<HTMLDivElement>): void => {
+    const origin = dragOrigin.current;
+    if (origin === null || origin.pointerId !== event.pointerId) {
+      return;
+    }
+    setViewport((current) => ({
+      ...current,
+      translateX: clamp(
+        origin.originX + event.clientX - origin.startX,
+        viewportBounds.minTranslate,
+        viewportBounds.maxTranslate,
+      ),
+      translateY: clamp(
+        origin.originY + event.clientY - origin.startY,
+        viewportBounds.minTranslate,
+        viewportBounds.maxTranslate,
+      ),
+    }));
+    setFocusedCapitalNationId(null);
+  };
+  const endDrag = (event: PointerEvent<HTMLDivElement>): void => {
+    if (dragOrigin.current?.pointerId === event.pointerId) {
+      dragOrigin.current = null;
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+  };
 
   return (
     <>
@@ -175,51 +284,102 @@ const MapSurface = ({
           </label>
         </div>
         <div className="map_svg_frame" data-testid="world-map">
-          <TypedComposableMap
-            projectionConfig={{ scale: 170 }}
-            role="img"
-            aria-label={`세계 ${mode} 지도`}
+          <div
+            className="map_viewport"
+            data-testid="map-viewport"
+            data-map-transform={viewportTransform}
+            data-map-focus={focusedCapitalNationId ?? undefined}
+            onPointerDown={beginDrag}
+            onPointerMove={moveDrag}
+            onPointerUp={endDrag}
+            onPointerCancel={endDrag}
+            onWheel={handleWheel}
+            style={{
+              transform: `translate(${viewport.translateX}px, ${viewport.translateY}px) scale(${viewport.scale})`,
+            }}
           >
-            <TypedGeographies geography={worldAtlas}>
-              {({ geographies }) =>
-                geographies.map((geography) => {
-                  const name = geographyLabel(geography);
-                  const factionId = factionForGeography(
-                    name,
-                    campaign.nations.map((nation) => nation.id),
-                  );
-                  return (
-                    <TypedGeography
-                      key={geography.rsmKey}
-                      geography={geography}
-                      fill={factionById.get(factionId ?? "")?.color ?? "var(--color-map-land)"}
-                      stroke="var(--color-map-border)"
-                      strokeWidth={0.35}
-                      tabIndex={0}
-                      data-testid={`faction-overlay-map-${factionId ?? "unknown"}`}
-                      aria-label={`${name} 세력`}
-                      onClick={() => {
-                        if (factionId !== undefined) {
-                          onSelectNation(factionId);
-                        }
-                      }}
-                      onMouseEnter={() => setHoveredFactionId(factionId ?? null)}
-                      onMouseLeave={() => setHoveredFactionId(null)}
-                      onFocus={() => setHoveredFactionId(factionId ?? null)}
-                      onBlur={() => setHoveredFactionId(null)}
-                      style={{
-                        default: { outline: "none", opacity: 0.88 },
-                        hover: { outline: "none", opacity: 1, strokeWidth: 0.8 },
-                        pressed: { outline: "none", opacity: 1, strokeWidth: 1 },
-                      }}
-                    />
-                  );
-                })
-              }
-            </TypedGeographies>
-          </TypedComposableMap>
+            <TypedComposableMap
+              projectionConfig={{ scale: 170 }}
+              role="img"
+              aria-label={`세계 ${mode} 지도`}
+            >
+              <TypedGeographies geography={worldAtlas}>
+                {({ geographies }) =>
+                  geographies.map((geography) => {
+                    const name = geographyLabel(geography);
+                    const factionId = factionForGeography(
+                      name,
+                      campaign.nations.map((nation) => nation.id),
+                    );
+                    return (
+                      <TypedGeography
+                        key={geography.rsmKey}
+                        geography={geography}
+                        fill={factionById.get(factionId ?? "")?.color ?? "var(--color-map-land)"}
+                        stroke="var(--color-map-border)"
+                        strokeWidth={0.35}
+                        tabIndex={0}
+                        data-testid={`faction-overlay-map-${factionId ?? "unknown"}`}
+                        aria-label={`${name} 세력`}
+                        onClick={() => {
+                          if (factionId !== undefined) {
+                            onSelectNation(factionId);
+                          }
+                        }}
+                        onMouseEnter={() => setHoveredFactionId(factionId ?? null)}
+                        onMouseLeave={() => setHoveredFactionId(null)}
+                        onFocus={() => setHoveredFactionId(factionId ?? null)}
+                        onBlur={() => setHoveredFactionId(null)}
+                        style={{
+                          default: { outline: "none", opacity: 0.88 },
+                          hover: { outline: "none", opacity: 1, strokeWidth: 0.8 },
+                          pressed: { outline: "none", opacity: 1, strokeWidth: 1 },
+                        }}
+                      />
+                    );
+                  })
+                }
+              </TypedGeographies>
+            </TypedComposableMap>
+          </div>
         </div>
         <div className="map_controls">
+          <fieldset className="map_viewport_controls" aria-label="지도 이동과 확대">
+            <button
+              className="map_control"
+              data-testid="map-zoom-out"
+              type="button"
+              aria-label="지도 축소"
+              onClick={() => zoomBy(-0.1)}
+            >
+              −
+            </button>
+            <button
+              className="map_control"
+              data-testid="map-zoom-in"
+              type="button"
+              aria-label="지도 확대"
+              onClick={() => zoomBy(0.1)}
+            >
+              +
+            </button>
+            <button
+              className="map_control"
+              data-testid="map-reset"
+              type="button"
+              onClick={resetViewport}
+            >
+              초기화
+            </button>
+            <button
+              className="map_control"
+              data-testid="map-focus-capital"
+              type="button"
+              onClick={focusCapital}
+            >
+              수도 집중
+            </button>
+          </fieldset>
           {mapModes.map(([value, label]) => (
             <button
               className={`map_control ${mode === value ? "is_active" : ""}`}
@@ -244,6 +404,13 @@ const MapSurface = ({
             지구본
           </button>
         </div>
+        {latestResolution !== undefined ? (
+          <div className="map_change_callout" data-testid="changed-region-marker" role="status">
+            <strong>최근 변화</strong>
+            <span>{latestResolution.worldImpact.summaryKo}</span>
+            <span>변경 지역: {latestResolution.worldImpact.changedProvinceIds.join(", ")}</span>
+          </div>
+        ) : null}
         <div className="map_legend">
           <span>
             <i className="legend_swatch land" aria-hidden="true" />
@@ -266,8 +433,25 @@ const MapSurface = ({
           <ul>
             {ownedProvinces.map((province) => (
               <li key={province.id}>
-                <button className="province_button" type="button">
-                  <span>{shortProvinceName(province.id)}</span>
+                <button
+                  className={`province_button ${
+                    latestResolution?.worldImpact.changedProvinceIds.includes(province.id)
+                      ? "is_changed"
+                      : ""
+                  }`}
+                  type="button"
+                  data-testid={
+                    latestResolution?.worldImpact.changedProvinceIds.includes(province.id)
+                      ? "changed-province"
+                      : undefined
+                  }
+                >
+                  <span>
+                    {shortProvinceName(province.id)}
+                    {latestResolution?.worldImpact.changedProvinceIds.includes(province.id)
+                      ? " · 변경"
+                      : ""}
+                  </span>
                   <span className="province_owner">
                     {nationNameById.get(province.ownerNationId) ?? province.ownerNationId}
                   </span>
@@ -299,6 +483,10 @@ const MapSurface = ({
               <button
                 className={`faction_overlay_button ${
                   selectedNationId === nation.id ? "is_active" : ""
+                } ${
+                  latestResolution?.worldImpact.changedNationIds.includes(nation.id)
+                    ? "is_changed"
+                    : ""
                 }`}
                 data-testid={`faction-overlay-${nation.id}`}
                 type="button"

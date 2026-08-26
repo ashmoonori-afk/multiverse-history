@@ -24,6 +24,13 @@ export const ProposeTreatyRequestSchema = z
   })
   .strict();
 
+export const DiplomacyChatRequestSchema = z
+  .object({
+    targetNationId: z.string().regex(/^nat_[a-z0-9_]+$/),
+    message: z.string().trim().min(1).max(4_000),
+  })
+  .strict();
+
 export const TransferTerritoryRequestSchema = z
   .object({
     targetNationId: z.string().regex(/^nat_[a-z0-9_]+$/),

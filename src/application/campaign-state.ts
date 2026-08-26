@@ -6,6 +6,8 @@ import type { StrategicPlan } from "../providers/schemas";
 import { parseStrategicPlan } from "../providers/schemas";
 import { hashCanonical } from "../shared/canonical-json";
 import { parseNationId, parseScenarioId } from "../shared/ids";
+import { type CampaignChatMessage, CampaignChatMessageSchema } from "./campaign-chat";
+import { type CampaignResolution, CampaignResolutionSchema } from "./campaign-resolution";
 import type { CampaignStore, CampaignTurnState } from "./turn-transaction";
 
 export interface CampaignTreatyState {
@@ -45,6 +47,8 @@ export interface CampaignState extends CampaignTurnState {
   readonly wars: readonly CampaignWarState[];
   readonly battleReports: readonly string[];
   readonly lastPlan: StrategicPlan | null;
+  readonly resolutions: readonly CampaignResolution[];
+  readonly chatMessages: readonly CampaignChatMessage[];
 }
 
 const CampaignStateSchema = z
@@ -129,6 +133,8 @@ const CampaignStateSchema = z
     battleReports: z.array(z.string()),
     events: z.array(z.string()),
     lastPlan: z.unknown().nullable(),
+    resolutions: z.array(CampaignResolutionSchema).default([]),
+    chatMessages: z.array(CampaignChatMessageSchema).default([]),
   })
   .strict();
 
@@ -176,6 +182,8 @@ export const createCampaignState = (
     battleReports: Object.freeze([]),
     events: Object.freeze([]),
     lastPlan: null,
+    resolutions: Object.freeze([]),
+    chatMessages: Object.freeze([]),
   });
 };
 
@@ -216,6 +224,15 @@ export const parseCampaignState = (value: unknown): CampaignState => {
       ),
     ),
     battleReports: Object.freeze([...parsed.battleReports]),
+    resolutions: Object.freeze(parsed.resolutions.map((resolution) => Object.freeze(resolution))),
+    chatMessages: Object.freeze(
+      parsed.chatMessages.map((message) =>
+        Object.freeze({
+          ...message,
+          date: Object.freeze({ ...message.date }),
+        }),
+      ),
+    ),
     lastPlan,
   });
 };

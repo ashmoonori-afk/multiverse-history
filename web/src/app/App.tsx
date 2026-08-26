@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 
+import { CampaignChatDrawer } from "../features/diplomacy/CampaignChatDrawer";
 import { DiplomacyPanel } from "../features/diplomacy/DiplomacyPanel";
 import { NationPanel } from "../features/inspector/NationPanel";
 import { GameLibrary } from "../features/library/GameLibrary";
@@ -8,6 +9,8 @@ import { WorldMap } from "../features/map/WorldMap";
 import { MilitaryPanel } from "../features/military/MilitaryPanel";
 import { OrderComposer } from "../features/orders/OrderComposer";
 import { type PresetDraft, PresetEditor } from "../features/presets/PresetEditor";
+import { ResolutionFeed } from "../features/resolution/ResolutionFeed";
+import { ResolutionSummary } from "../features/resolution/ResolutionSummary";
 import { CampaignSetupOptions } from "../features/setup/CampaignSetupOptions";
 import { TimelinePanel } from "../features/timeline/TimelinePanel";
 import {
@@ -259,7 +262,12 @@ const StartScreen = ({ busy, error, onStart, onImport }: StartScreenProps): JSX.
         <div>
           <span className="eyebrow">한국어 전략 시뮬레이션</span>
           <h1>Multiverse History</h1>
-          <span className="load_indicator">
+          <span
+            className="load_indicator"
+            data-testid="catalog-status"
+            data-loading={catalogLoading}
+            aria-live="polite"
+          >
             {catalogLoading ? "목록 동기화 중" : `${scenarioOptions.length}개 시나리오`}
           </span>
         </div>
@@ -326,7 +334,7 @@ const StartScreen = ({ busy, error, onStart, onImport }: StartScreenProps): JSX.
           className="primary_button"
           data-testid="start-campaign"
           type="submit"
-          disabled={busy}
+          disabled={busy || catalogLoading}
         >
           {busy ? "세계 준비 중…" : "캠페인 시작"}
         </button>
@@ -365,6 +373,7 @@ interface GameShellProps {
   readonly saveStatus: string | null;
   readonly onNewCampaign: () => void;
   readonly onAdvance: (orderText: string) => Promise<boolean>;
+  readonly onSendChat: (targetNationId: string, message: string) => Promise<boolean>;
   readonly onJumpTimeline: (cadence: TimelineCadence) => Promise<boolean>;
   readonly onSave: () => Promise<boolean>;
   readonly onExport: () => Promise<string | null>;
@@ -473,6 +482,7 @@ const InspectorOverview = ({
   return (
     <section className="panel_section">
       <h3>{activePanel} 개요</h3>
+      <ResolutionFeed campaign={campaign} nationNameById={nationNameById} />
       <div className="metric_grid">
         <dl className="metric_card economy">
           <dt>국고</dt>
@@ -534,6 +544,7 @@ const GameShell = ({
   saveStatus,
   onNewCampaign,
   onAdvance,
+  onSendChat,
   onJumpTimeline,
   onSave,
   onExport,
@@ -545,6 +556,7 @@ const GameShell = ({
   onCombat,
 }: GameShellProps): JSX.Element => {
   const [activePanel, setActivePanel] = useState<InspectorPanel>("국가");
+  const [chatOpen, setChatOpen] = useState(false);
   const [selectedNationId, setSelectedNationId] = useState(campaign.playerNationId);
   const nationNameById = useMemo(
     () => new Map(campaign.nations.map((nation) => [nation.id, nation.nameKo])),
@@ -562,7 +574,7 @@ const GameShell = ({
   };
 
   return (
-    <div className="game_shell" data-testid="campaign-shell">
+    <div className="game_shell" data-testid="campaign-shell" data-bootstrap-ready="true">
       <header className="game_topbar">
         <div className="brand_lockup">
           <span className="brand_mark" aria-hidden="true">
@@ -581,6 +593,15 @@ const GameShell = ({
           )}
         </div>
         <div className="persistence_actions">
+          <button
+            className="secondary_button"
+            data-testid="open-chat"
+            type="button"
+            aria-expanded={chatOpen}
+            onClick={() => setChatOpen(true)}
+          >
+            채팅
+          </button>
           <button
             className="quiet_button"
             data-testid="save-campaign"
@@ -723,6 +744,15 @@ const GameShell = ({
           </div>
         </aside>
       </div>
+      {chatOpen ? (
+        <CampaignChatDrawer
+          campaign={campaign}
+          nationNameById={nationNameById}
+          busy={busy}
+          onClose={() => setChatOpen(false)}
+          onSendChat={onSendChat}
+        />
+      ) : null}
       <nav
         className="mobile_navigation"
         data-testid="mobile-navigation"
@@ -746,7 +776,10 @@ const GameShell = ({
         ))}
       </nav>
       <footer className="command_drawer">
-        <OrderComposer busy={busy} error={error} onSubmit={onAdvance} />
+        <div className="command_activity">
+          <ResolutionSummary campaign={campaign} />
+          <OrderComposer busy={busy} error={error} onSubmit={onAdvance} />
+        </div>
         <section className="chronicle_scroll_area" aria-labelledby="chronicle-title">
           <h2 id="chronicle-title">연대기</h2>
           <span className="state_hash" data-testid="state-hash" title={stateHash ?? undefined}>
@@ -772,6 +805,7 @@ const GameShell = ({
 
 export const App = (): JSX.Element => {
   const campaign = useCampaignStore((state) => state.campaign);
+  const bootstrapReady = useCampaignStore((state) => state.bootstrapReady);
   const startScreenRequested = useCampaignStore((state) => state.startScreenRequested);
   const plan = useCampaignStore((state) => state.plan);
   const stateHash = useCampaignStore((state) => state.stateHash);
@@ -782,6 +816,7 @@ export const App = (): JSX.Element => {
   const beginNewCampaign = useCampaignStore((state) => state.beginNewCampaign);
   const createCampaign = useCampaignStore((state) => state.createCampaign);
   const advanceTurn = useCampaignStore((state) => state.advanceTurn);
+  const sendChat = useCampaignStore((state) => state.sendChat);
   const jumpTimeline = useCampaignStore((state) => state.jumpTimeline);
   const saveCampaign = useCampaignStore((state) => state.saveCampaign);
   const exportCampaign = useCampaignStore((state) => state.exportCampaign);
@@ -797,9 +832,19 @@ export const App = (): JSX.Element => {
     void loadCampaign();
   }, [loadCampaign]);
 
+  if (!bootstrapReady) {
+    return (
+      <div className="game_shell" data-testid="campaign-shell" data-bootstrap-ready="false">
+        <main className="start_screen">
+          <p className="load_indicator">세계 기록 불러오는 중…</p>
+        </main>
+      </div>
+    );
+  }
+
   if (campaign === null || startScreenRequested) {
     return (
-      <div className="game_shell" data-testid="campaign-shell">
+      <div className="game_shell" data-testid="campaign-shell" data-bootstrap-ready="true">
         <StartScreen busy={busy} error={error} onStart={createCampaign} onImport={importCampaign} />
       </div>
     );
@@ -815,6 +860,7 @@ export const App = (): JSX.Element => {
       saveStatus={saveStatus}
       onNewCampaign={beginNewCampaign}
       onAdvance={advanceTurn}
+      onSendChat={sendChat}
       onJumpTimeline={jumpTimeline}
       onSave={saveCampaign}
       onExport={exportCampaign}

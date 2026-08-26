@@ -1,6 +1,7 @@
 import { renderChronicle } from "../domain/events/chronicle";
 import type { StrategicIntent, StrategicPlan } from "../providers/schemas";
 import { provinceNameKo } from "../shared/display-labels";
+import { createCampaignResolution } from "./campaign-resolution";
 import type { CampaignState } from "./campaign-state";
 
 const updateNation = (
@@ -69,8 +70,29 @@ const proposeTrade = (
     clauseNameKo: "통상",
     status: "proposed",
   });
+  const currentRelation = state.relations.find(
+    (relation) => relation.fromNationId === proposer.id && relation.toNationId === recipient.id,
+  );
+  const relationAfter = Math.min(10_000, (currentRelation?.value ?? 0) + 50);
+  const relations = Object.freeze(
+    currentRelation === undefined
+      ? [
+          ...state.relations,
+          Object.freeze({
+            fromNationId: proposer.id,
+            toNationId: recipient.id,
+            value: relationAfter,
+          }),
+        ]
+      : state.relations.map((relation) =>
+          relation.fromNationId === proposer.id && relation.toNationId === recipient.id
+            ? Object.freeze({ ...relation, value: relationAfter })
+            : relation,
+        ),
+  );
   return {
     ...state,
+    relations,
     treaties: Object.freeze([...state.treaties, treaty]),
     events: Object.freeze([...state.events, chronicle.textKo]),
   };
@@ -126,17 +148,35 @@ const nextDate = (date: CampaignState["date"]): CampaignState["date"] =>
     ? Object.freeze({ year: date.year + 1, quarter: 1 })
     : Object.freeze({ year: date.year, quarter: date.quarter + 1 });
 
-export const applyStrategicPlan = (snapshot: CampaignState, plan: StrategicPlan): CampaignState => {
+export const applyStrategicPlan = (
+  snapshot: CampaignState,
+  plan: StrategicPlan,
+  orderText = "플레이어 계획",
+): CampaignState => {
   const intents = [...plan.playerIntents, ...plan.npcIntents];
   const resolved = intents.reduce(
     (state, intent, index) => applyIntent(state, intent, snapshot.turn + 1, index),
     snapshot,
   );
-  return Object.freeze({
+  const nextState = Object.freeze({
     ...resolved,
     elapsedDays: snapshot.elapsedDays + 91,
     date: nextDate(snapshot.date),
     events: Object.freeze([...resolved.events, plan.narrative.ko]),
     lastPlan: plan,
+  });
+  const resolution = createCampaignResolution({
+    before: snapshot,
+    after: nextState,
+    turn: snapshot.turn + 1,
+    orderText: orderText.trim(),
+    narrativeKo: plan.narrative.ko,
+    changedProvinceIds: intents.flatMap((intent) =>
+      "provinceId" in intent ? [intent.provinceId] : [],
+    ),
+  });
+  return Object.freeze({
+    ...nextState,
+    resolutions: Object.freeze([...snapshot.resolutions, resolution]),
   });
 };
