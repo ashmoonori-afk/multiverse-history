@@ -1,6 +1,8 @@
 import { useState } from "react";
 
 import type { Campaign, TimelineCadence } from "../../state/campaign-store";
+import { TimelineNews } from "./TimelineNews";
+import { TimelineProcessedEventList } from "./TimelineProcessedEventList";
 
 interface TimelinePanelProps {
   readonly campaign: Campaign;
@@ -9,7 +11,9 @@ interface TimelinePanelProps {
 }
 
 export const TimelinePanel = ({ campaign, onJump, onSave }: TimelinePanelProps): JSX.Element => {
-  const [selectedEventIndex, setSelectedEventIndex] = useState<number | null>(null);
+  const [selectedEventIndex, setSelectedEventIndex] = useState(() =>
+    Math.max(0, campaign.resolutions.length - 1),
+  );
   const [intervention, setIntervention] = useState("");
   const [result, setResult] = useState<string | null>(null);
   const [cadence, setCadence] = useState<"week" | "month" | "quarter" | "year" | "major">(
@@ -22,8 +26,7 @@ export const TimelinePanel = ({ campaign, onJump, onSave }: TimelinePanelProps):
   ]);
   const [activeCatalysts, setActiveCatalysts] = useState<readonly string[]>([]);
   const [simulationSaveStatus, setSimulationSaveStatus] = useState<string | null>(null);
-  const selectedEvent =
-    selectedEventIndex === null ? undefined : campaign.events[selectedEventIndex];
+  const selectedEvent = campaign.resolutions[selectedEventIndex]?.article.headlineKo;
 
   const submitIntervention = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
@@ -83,16 +86,31 @@ export const TimelinePanel = ({ campaign, onJump, onSave }: TimelinePanelProps):
       <p className="timeline_helper">
         확정 기록을 선택하면 다음 턴에 반영할 개입 초안을 만들 수 있습니다.
       </p>
+      <TimelineNews
+        campaign={campaign}
+        selectedResolutionIndex={selectedEventIndex}
+        onSelectResolutionIndex={setSelectedEventIndex}
+      />
       <fieldset className="timeline_jump_controls">
-        <legend>시간 이동</legend>
+        <legend>추가 시간 이동</legend>
         <label className="field">
           <span>시간 이동</span>
           <select
             data-testid="timeline-cadence"
             value={cadence}
-            onChange={(event) =>
-              setCadence(event.target.value as "week" | "month" | "quarter" | "year" | "major")
-            }
+            onChange={(event) => {
+              switch (event.target.value) {
+                case "week":
+                case "month":
+                case "quarter":
+                case "year":
+                case "major":
+                  setCadence(event.target.value);
+                  break;
+                default:
+                  setCadence("quarter");
+              }
+            }}
           >
             <option value="week">1주</option>
             <option value="month">1개월</option>
@@ -122,26 +140,11 @@ export const TimelinePanel = ({ campaign, onJump, onSave }: TimelinePanelProps):
           시뮬레이션 저장
         </button>
       </fieldset>
-      <ol className="timeline_event_list">
-        {campaign.events.length === 0 ? (
-          <li>확정된 사건이 없습니다.</li>
-        ) : (
-          campaign.events.map((event, index) => (
-            <li key={event}>
-              <button
-                className="timeline_event_button"
-                data-testid={`timeline-event-${index}`}
-                type="button"
-                aria-pressed={selectedEventIndex === index}
-                onClick={() => setSelectedEventIndex(index)}
-              >
-                <span>기록 {index + 1}</span>
-                <strong>{event}</strong>
-              </button>
-            </li>
-          ))
-        )}
-      </ol>
+      <TimelineProcessedEventList
+        resolutions={campaign.resolutions}
+        selectedIndex={selectedEventIndex}
+        onSelect={setSelectedEventIndex}
+      />
       <section className="queued_events" aria-labelledby="queued-events-title">
         <div className="timeline_subheading">
           <h4 id="queued-events-title">대기 사건 검토</h4>

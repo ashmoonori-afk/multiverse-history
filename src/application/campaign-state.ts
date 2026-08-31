@@ -36,6 +36,7 @@ export interface CampaignState extends CampaignTurnState {
   readonly id: "cmp_local";
   readonly scenarioId: string;
   readonly playerNationId: string;
+  readonly plannerProvider: "deterministic" | "codex" | "claude";
   readonly difficulty: "story" | "standard" | "hard";
   readonly elapsedDays: number;
   readonly date: { readonly year: number; readonly quarter: number };
@@ -56,6 +57,7 @@ const CampaignStateSchema = z
     id: z.literal("cmp_local"),
     scenarioId: z.string().regex(/^scn_[a-z0-9_]+$/),
     playerNationId: z.string().regex(/^nat_[a-z0-9_]+$/),
+    plannerProvider: z.enum(["deterministic", "codex", "claude"]).default("deterministic"),
     difficulty: z.enum(["story", "standard", "hard"]),
     elapsedDays: z.number().safe().int().nonnegative(),
     turn: z.number().safe().int().nonnegative(),
@@ -141,6 +143,7 @@ const CampaignStateSchema = z
 export interface CampaignCreationOptions {
   readonly customPolityName?: string;
   readonly difficulty?: "story" | "standard" | "hard";
+  readonly plannerProvider?: "deterministic" | "codex" | "claude";
 }
 
 export const createCampaignState = (
@@ -160,6 +163,7 @@ export const createCampaignState = (
     id: "cmp_local",
     scenarioId: scenario.id,
     playerNationId,
+    plannerProvider: options.plannerProvider ?? "deterministic",
     difficulty: options.difficulty ?? "standard",
     elapsedDays: 0,
     turn: 0,
@@ -226,12 +230,15 @@ export const parseCampaignState = (value: unknown): CampaignState => {
     battleReports: Object.freeze([...parsed.battleReports]),
     resolutions: Object.freeze(parsed.resolutions.map((resolution) => Object.freeze(resolution))),
     chatMessages: Object.freeze(
-      parsed.chatMessages.map((message) =>
-        Object.freeze({
-          ...message,
+      parsed.chatMessages.map((message) => {
+        const { replyToMessageId, sourceKey, ...base } = message;
+        return Object.freeze({
+          ...base,
+          ...(replyToMessageId === undefined ? {} : { replyToMessageId }),
+          ...(sourceKey === undefined ? {} : { sourceKey }),
           date: Object.freeze({ ...message.date }),
-        }),
-      ),
+        });
+      }),
     ),
     lastPlan,
   });
@@ -239,27 +246,52 @@ export const parseCampaignState = (value: unknown): CampaignState => {
 
 export type TimelineCadence = "week" | "month" | "quarter" | "year" | "major";
 
-const timelineDays: Readonly<Record<TimelineCadence, number>> = {
+const timelineDays: Readonly<Record<TimelineCadence, number>> = Object.freeze({
   week: 7,
   month: 30,
   quarter: 91,
   year: 365,
   major: 365,
+});
+
+interface AdvanceCampaignClockInput {
+  readonly elapsedDays: number;
+  readonly date: CampaignState["date"];
+  readonly cadence: TimelineCadence;
+}
+
+interface CampaignClock {
+  readonly elapsedDays: number;
+  readonly date: CampaignState["date"];
+  readonly advanceDays: number;
+}
+
+export const advanceCampaignClock = (input: AdvanceCampaignClockInput): CampaignClock => {
+  const advanceDays = timelineDays[input.cadence];
+  const quarterSteps =
+    input.cadence === "year" || input.cadence === "major" ? 4 : input.cadence === "quarter" ? 1 : 0;
+  const nextQuarter = ((input.date.quarter - 1 + quarterSteps) % 4) + 1;
+  const nextYear = input.date.year + Math.floor((input.date.quarter - 1 + quarterSteps) / 4);
+  return Object.freeze({
+    elapsedDays: input.elapsedDays + advanceDays,
+    date: Object.freeze({ year: nextYear, quarter: nextQuarter }),
+    advanceDays,
+  });
 };
 
 export const jumpCampaignTimeline = (
   state: CampaignState,
   cadence: TimelineCadence,
 ): CampaignState => {
-  const days = timelineDays[cadence];
-  const quarterSteps =
-    cadence === "year" || cadence === "major" ? 4 : cadence === "quarter" ? 1 : 0;
-  const nextQuarter = ((state.date.quarter - 1 + quarterSteps) % 4) + 1;
-  const nextYear = state.date.year + Math.floor((state.date.quarter - 1 + quarterSteps) / 4);
+  const clock = advanceCampaignClock({
+    elapsedDays: state.elapsedDays,
+    date: state.date,
+    cadence,
+  });
   return Object.freeze({
     ...state,
-    elapsedDays: state.elapsedDays + days,
-    date: Object.freeze({ year: nextYear, quarter: nextQuarter }),
+    elapsedDays: clock.elapsedDays,
+    date: clock.date,
     events: Object.freeze([...state.events, `시간 이동: ${cadence}`]),
   });
 };

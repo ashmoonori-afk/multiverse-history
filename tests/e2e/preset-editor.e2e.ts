@@ -1,19 +1,13 @@
 import { expect, test } from "@playwright/test";
 
+import { openStartScreen } from "./helpers/open-historia";
+
 test.describe("Multiverse History preset editor", () => {
   test("clones, exports, and imports a strict preset", async ({ page }, testInfo) => {
     // Given
-    await page.goto("/");
+    await openStartScreen(page);
     const editor = page.getByTestId("preset-editor");
     if (!(await editor.isVisible().catch(() => false))) {
-      if (
-        await page
-          .getByTestId("campaign-state")
-          .isVisible()
-          .catch(() => false)
-      ) {
-        await page.getByTestId("new-campaign").click();
-      }
       await page.getByTestId("open-preset-editor").click();
     }
     await expect(editor).toBeVisible();

@@ -4,6 +4,7 @@ export const CreateCampaignRequestSchema = z
   .object({
     scenarioId: z.string().regex(/^scn_[a-z0-9_]+$/),
     playerNationId: z.string().regex(/^nat_[a-z0-9_]+$/),
+    provider: z.enum(["deterministic", "codex", "claude"]).default("deterministic"),
     customPolityName: z.string().trim().min(1).max(80).optional(),
     difficulty: z.enum(["story", "standard", "hard"]).optional(),
   })
@@ -14,6 +15,7 @@ export const AdvanceTurnRequestSchema = z
     provider: z.enum(["deterministic", "codex", "claude"]),
     requestId: z.string().regex(/^req_[a-z0-9_]+$/),
     orderText: z.string().trim().min(1).max(4_000),
+    cadence: z.enum(["week", "month", "quarter", "year", "major"]).default("quarter"),
   })
   .strict();
 
@@ -28,6 +30,7 @@ export const DiplomacyChatRequestSchema = z
   .object({
     targetNationId: z.string().regex(/^nat_[a-z0-9_]+$/),
     message: z.string().trim().min(1).max(4_000),
+    provider: z.enum(["deterministic", "codex", "claude"]).default("deterministic"),
   })
   .strict();
 

@@ -1,6 +1,13 @@
 import { z } from "zod";
 
-import type { CampaignState } from "./campaign-state";
+import { provinceNameKo } from "../shared/display-labels";
+import {
+  type CampaignNewsArticle,
+  CampaignNewsArticleSchema,
+  campaignNewsArticleBody,
+  createCampaignNewsArticle,
+} from "./campaign-news-article";
+import type { CampaignState, TimelineCadence } from "./campaign-state";
 
 export interface CampaignNumericDelta {
   readonly before: number;
@@ -41,8 +48,12 @@ export interface CampaignResolution {
   readonly id: string;
   readonly turn: number;
   readonly timestampKo: string;
+  readonly cadence: TimelineCadence;
+  readonly advanceDays: number;
   readonly orderText: string;
   readonly narrativeKo: string;
+  readonly articleKo: string;
+  readonly article: CampaignNewsArticle;
   readonly nationDeltas: readonly CampaignNationDelta[];
   readonly relationDeltas: readonly CampaignRelationDelta[];
   readonly treatyDeltas: readonly CampaignTreatyDelta[];
@@ -61,8 +72,19 @@ export const CampaignResolutionSchema = z
     id: z.string().regex(/^res_[a-z0-9_]+$/),
     turn: z.number().safe().int().nonnegative(),
     timestampKo: z.string().min(1),
+    cadence: z.enum(["week", "month", "quarter", "year", "major"]).default("quarter"),
+    advanceDays: z.number().safe().int().positive().default(91),
     orderText: z.string().min(1),
     narrativeKo: z.string().min(1),
+    articleKo: z.string().min(1).default("이전 기록은 뉴스 단신 형식으로 작성되지 않았습니다."),
+    article: CampaignNewsArticleSchema.default({
+      headlineKo: "이전 기록",
+      ledeKo: "이전 기록은 구조화 뉴스 형식으로 작성되지 않았습니다.",
+      paragraphsKo: [
+        "이 기록의 원문은 캠페인 감사 데이터에 보존되어 있습니다.",
+        "새 턴부터 구조화된 기사 형식이 적용됩니다.",
+      ],
+    }),
     nationDeltas: z.array(
       z
         .object({
@@ -115,10 +137,14 @@ const unique = (values: readonly string[]): readonly string[] =>
 const nationName = (state: CampaignState, nationId: string): string =>
   state.nations.find((nation) => nation.id === nationId)?.nameKo ?? nationId;
 
+export type CampaignResolutionDraft = Omit<CampaignResolution, "articleKo" | "article">;
+
 export interface CreateCampaignResolutionInput {
   readonly before: CampaignState;
   readonly after: CampaignState;
   readonly turn: number;
+  readonly cadence: TimelineCadence;
+  readonly advanceDays: number;
   readonly orderText: string;
   readonly narrativeKo: string;
   readonly changedProvinceIds: readonly string[];
@@ -190,14 +216,17 @@ export const createCampaignResolution = (
     }),
   ]);
   const changedNationNames = changedNationIds.map((nationId) => nationName(input.after, nationId));
+  const changedProvinceNames = changedProvinceIds.map(provinceNameKo);
   const summaryKo =
     changedNationNames.length === 0
-      ? "이번 턴에는 지도상 소유권 변화가 없었습니다."
-      : `${changedNationNames.join("·")}의 ${changedProvinceIds.join(", ")} 지역에 변화가 확정되었습니다.`;
-  return Object.freeze({
+      ? "이번 턴에는 지도상 소유권 변화가 없었다."
+      : `${changedNationNames.join("·")}의 ${changedProvinceNames.join(", ")} 지역에 변화가 확정됐다.`;
+  const draft: CampaignResolutionDraft = Object.freeze({
     id: `res_${input.turn}_${input.after.resolutions.length + 1}`,
     turn: input.turn,
-    timestampKo: `${input.after.date.year}년 ${input.after.date.quarter}분기 · 턴 ${input.turn}`,
+    timestampKo: `${input.after.date.year}년 ${input.after.date.quarter}분기 · +${input.advanceDays}일 · 턴 ${input.turn}`,
+    cadence: input.cadence,
+    advanceDays: input.advanceDays,
     orderText: input.orderText,
     narrativeKo: input.narrativeKo,
     nationDeltas: Object.freeze(nationDeltas),
@@ -209,4 +238,9 @@ export const createCampaignResolution = (
       summaryKo,
     }),
   });
+  const article = createCampaignNewsArticle(
+    draft,
+    new Map(input.after.nations.map((nation) => [nation.id, nation.nameKo])),
+  );
+  return Object.freeze({ ...draft, article, articleKo: campaignNewsArticleBody(article) });
 };

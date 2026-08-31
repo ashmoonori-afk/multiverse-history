@@ -1,0 +1,40 @@
+.timeline_event_button small {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  font-weight: 400;
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.timeline_news_navigation {
+  position: fixed;
+  z-index: 2;
+  inset-block-end: 0;
+  inset-inline: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-2);
+  inline-size: auto;
+  padding: var(--space-3);
+  border-block-start: 1px solid var(--oh-stroke);
+  background: var(--oh-panel-bg);
+  box-shadow: var(--oh-shadow-footer);
+}
+
+.timeline_news_navigation > span {
+  color: var(--oh-text-3);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.timeline_news_navigation button:last-child {
+  justify-self: stretch;
+}
+
+.timeline_panel {
+  padding-block-end: var(--oh-advisor-footer-size);
+}

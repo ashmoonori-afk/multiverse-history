@@ -90,7 +90,8 @@ const ResolutionDetails = ({
     <div className="resolution_timestamp" data-testid="resolution-timestamp">
       {resolution.timestampKo}
     </div>
-    <p className="resolution_narrative">{resolution.narrativeKo}</p>
+    <strong>{resolution.article.headlineKo}</strong>
+    <p className="resolution_lede">{resolution.article.ledeKo}</p>
     <ResolutionDeltas
       resolution={resolution}
       playerDelta={playerDelta}

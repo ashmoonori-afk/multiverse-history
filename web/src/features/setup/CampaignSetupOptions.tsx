@@ -99,7 +99,7 @@ export const CampaignSetupOptions = ({
         {polityName} · {difficultyLabels[difficulty]} · {modelLabels[provider]}
       </p>
       <p className="setup_note">
-        선택한 플래너가 다음 명령을 구조화합니다. Codex와 Claude는 로컬 인증이 필요합니다.
+        선택한 모델이 다음 명령과 외교 역할극을 생성합니다. Codex와 Claude는 로컬 인증이 필요합니다.
       </p>
     </section>
   );

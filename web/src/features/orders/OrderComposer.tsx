@@ -1,14 +1,17 @@
 import { useState } from "react";
 
+import type { TimelineCadence } from "../../state/campaign-store";
+
 interface OrderComposerProps {
   readonly busy: boolean;
   readonly error: string | null;
-  readonly onSubmit: (orderText: string) => Promise<boolean>;
+  readonly onSubmit: (orderText: string, cadence: TimelineCadence) => Promise<boolean>;
 }
 
 export const OrderComposer = ({ busy, error, onSubmit }: OrderComposerProps): JSX.Element => {
   const [orderText, setOrderText] = useState("");
   const [actions, setActions] = useState<readonly string[]>([]);
+  const [cadence, setCadence] = useState<TimelineCadence>("quarter");
 
   const addAction = (): void => {
     const trimmed = orderText.trim();
@@ -37,8 +40,10 @@ export const OrderComposer = ({ busy, error, onSubmit }: OrderComposerProps): JS
     if ((orderText.trim().length === 0 && actions.length === 0) || busy) {
       return;
     }
-    const combinedOrder = [...actions, orderText.trim()].join(" 그리고 ");
-    const committed = await onSubmit(combinedOrder);
+    const combinedOrder = [...actions, orderText.trim()]
+      .filter((action) => action.length > 0)
+      .join(" 그리고 ");
+    const committed = await onSubmit(combinedOrder, cadence);
     if (committed) {
       setOrderText("");
       setActions([]);
@@ -118,13 +123,41 @@ export const OrderComposer = ({ busy, error, onSubmit }: OrderComposerProps): JS
           ))}
         </ol>
       ) : null}
+      <label className="turn_cadence_field">
+        <span>얼마나 진행할까요?</span>
+        <select
+          data-testid="turn-cadence"
+          value={cadence}
+          onChange={(event) => {
+            switch (event.target.value) {
+              case "week":
+              case "month":
+              case "quarter":
+              case "year":
+              case "major":
+                setCadence(event.target.value);
+                break;
+              default:
+                setCadence("quarter");
+            }
+          }}
+          disabled={busy}
+        >
+          <option value="week">1주</option>
+          <option value="month">1개월</option>
+          <option value="quarter">1분기</option>
+          <option value="year">1년</option>
+          <option value="major">다음 주요 사건까지</option>
+        </select>
+        <small>확정한 행동의 파급 효과를 이 기간 동안 계산합니다.</small>
+      </label>
       <div className="order_footer">
         <span className="order_hint">비용과 외교 결과를 확인한 뒤 턴을 확정합니다.</span>
         <button
           className="primary_button"
           data-testid="advance-turn"
           type="submit"
-          disabled={busy || orderText.trim().length === 0}
+          disabled={busy || (orderText.trim().length === 0 && actions.length === 0)}
         >
           {busy ? "분석 중…" : "턴 확정"}
         </button>

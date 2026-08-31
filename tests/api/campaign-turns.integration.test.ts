@@ -39,6 +39,20 @@ const CampaignResponseSchema = z.object({
   stateHash: z.string().regex(/^[a-f0-9]{64}$/),
 });
 
+const ProcessedArticleSchema = z
+  .object({
+    headlineKo: z.string().min(1),
+    ledeKo: z.string().min(1),
+    paragraphsKo: z.array(z.string().min(1)).min(2),
+    quote: z
+      .object({
+        textKo: z.string().min(1),
+        attributionKo: z.string().min(1),
+      })
+      .optional(),
+  })
+  .strict();
+
 const createCampaign = async (app: ReturnType<typeof createGameApp>) => {
   const response = await app.request("/api/campaigns", {
     method: "POST",
@@ -147,9 +161,19 @@ describe("campaign and turn API", () => {
     // Then
     expect(exported.status).toBe(200);
     expect(imported.status).toBe(200);
-    const importedBody = CampaignResponseSchema.parse(await imported.json());
+    const importedJson = await imported.json();
+    const importedBody = CampaignResponseSchema.parse(importedJson);
+    const importedArticle = z
+      .object({
+        campaign: z.object({
+          resolutions: z.array(z.object({ article: ProcessedArticleSchema })).length(1),
+        }),
+      })
+      .parse(importedJson).campaign.resolutions[0]?.article;
     expect(importedBody.stateHash).toBe(sourceHash);
     expect(importedBody.campaign.turn).toBe(1);
+    expect(importedArticle?.headlineKo).toContain("철도");
+    expect(importedArticle?.paragraphsKo.length).toBeGreaterThanOrEqual(2);
   });
 
   test("returns typed client errors for unknown scenarios and invalid turn payloads", async () => {

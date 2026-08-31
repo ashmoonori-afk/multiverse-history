@@ -1,0 +1,320 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "KOR-68945753B85747362819570",
+      "properties": {
+        "provinceId": "prv_kor_gyeonggi",
+        "sourceName": "Gangwon",
+        "sourceIso": "KOR"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [129.4226, 36.6166],
+            [129.4126, 36.617],
+            [127.607, 37.1314],
+            [126.9661, 38.213],
+            [128.3649, 38.6243],
+            [129.4226, 36.6166]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "KOR-68945753B43731078897969",
+      "properties": {
+        "provinceId": "prv_kor_gyeonggi",
+        "sourceName": "Gyeonggi",
+        "sourceIso": "KOR"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [126.9661, 38.213],
+            [126.9859, 38.2054],
+            [127.8311, 37.5085],
+            [127.26, 36.8789],
+            [126.5454, 37.6725],
+            [126.9661, 38.213]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "KOR-68945753B70752081047384",
+      "properties": {
+        "provinceId": "prv_kor_chungcheong",
+        "sourceName": "South Chungcheong",
+        "sourceIso": "KOR"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [126.9617, 36.9051],
+            [127.0086, 36.8974],
+            [127.5711, 35.993],
+            [126.1289, 36.7119],
+            [126.9617, 36.9051]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "KOR-68945753B50642023031709",
+      "properties": {
+        "provinceId": "prv_kor_gyeonggi",
+        "sourceName": "Incheon",
+        "sourceIso": "KOR"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [[126.6038, 37.5493], [126.7006, 37.552], [126.6403, 37.3644], [126.6038, 37.5493]]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "KOR-68945753B82824634329413",
+      "properties": {
+        "provinceId": "prv_kor_jeolla",
+        "sourceName": "North Jeolla",
+        "sourceIso": "KOR"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [126.8121, 36.0473],
+            [126.8571, 36.0922],
+            [127.8776, 36.0074],
+            [127.6384, 35.2942],
+            [126.4369, 35.3706],
+            [126.8121, 36.0473]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "KOR-68945753B5424648896322",
+      "properties": {
+        "provinceId": "prv_kor_jeolla",
+        "sourceName": "South Jeolla",
+        "sourceIso": "KOR"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [126.4369, 35.3706],
+            [126.5549, 35.3982],
+            [127.7498, 34.7371],
+            [126.5213, 34.2942],
+            [126.4369, 35.3706]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "KOR-68945753B56309283475968",
+      "properties": {
+        "provinceId": "prv_kor_gyeongsang",
+        "sourceName": "South Gyeongsang",
+        "sourceIso": "KOR"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [127.6175, 35.2766],
+            [127.6384, 35.2942],
+            [127.9139, 35.8871],
+            [129.2688, 35.3157],
+            [128.4129, 34.8376],
+            [127.6175, 35.2766]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "KOR-68945753B18996591190839",
+      "properties": {
+        "provinceId": "prv_kor_gyeongsang",
+        "sourceName": "Busan",
+        "sourceIso": "KOR"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [[128.9628, 35.1334], [128.9711, 35.1458], [129.1993, 35.1636], [128.9628, 35.1334]]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "KOR-68945753B85001375391280",
+      "properties": {
+        "provinceId": "prv_kor_gyeongsang",
+        "sourceName": "Ulsan",
+        "sourceIso": "KOR"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [129.2688, 35.3157],
+            [129.2648, 35.3186],
+            [129.0986, 35.6659],
+            [129.4673, 35.5997],
+            [129.2688, 35.3157]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "KOR-68945753B22494711915469",
+      "properties": {
+        "provinceId": "prv_kor_gyeongsang",
+        "sourceName": "North Gyeongsang",
+        "sourceIso": "KOR"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [128.6503, 37.0223],
+            [128.6759, 37.0114],
+            [129.4226, 36.6166],
+            [129.4591, 35.6108],
+            [127.9219, 35.8648],
+            [127.7887, 36.5648],
+            [128.6503, 37.0223]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "KOR-68945753B53856725499604",
+      "properties": { "provinceId": "prv_kor_jeolla", "sourceName": "Jeju", "sourceIso": "KOR" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [[126.9461, 33.478], [126.9536, 33.465], [126.1611, 33.3008], [126.9461, 33.478]]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "KOR-68945753B55100681051852",
+      "properties": { "provinceId": "prv_kor_hanseong", "sourceName": "Seoul", "sourceIso": "KOR" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [[127.1159, 37.5506], [126.7937, 37.5517], [127.1433, 37.5508], [127.1159, 37.5506]]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "KOR-68945753B85435209225479",
+      "properties": {
+        "provinceId": "prv_kor_chungcheong",
+        "sourceName": "Daejeon",
+        "sourceIso": "KOR"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [[127.4823, 36.3745], [127.4774, 36.351], [127.219, 36.4562], [127.4823, 36.3745]]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "KOR-68945753B58129180850627",
+      "properties": {
+        "provinceId": "prv_kor_chungcheong",
+        "sourceName": "Sejong",
+        "sourceIso": "KOR"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [[127.219, 36.4562], [127.1508, 36.4412], [127.1042, 36.6916], [127.219, 36.4562]]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "KOR-68945753B59172752195743",
+      "properties": {
+        "provinceId": "prv_kor_chungcheong",
+        "sourceName": "North Chungcheong",
+        "sourceIso": "KOR"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [127.607, 37.1314],
+            [127.7126, 37.1545],
+            [128.6503, 37.0223],
+            [127.852, 35.987],
+            [127.2117, 36.5357],
+            [127.607, 37.1314]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "KOR-68945753B46109248456415",
+      "properties": { "provinceId": "prv_kor_jeolla", "sourceName": "Gwangju", "sourceIso": "KOR" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [126.98556196541244, 35.23877960919168],
+            [127.00581912615178, 35.19304596609851],
+            [126.96644168533555, 35.15007701344348],
+            [126.90474002533199, 35.15813853626452],
+            [126.8502730649501, 35.18488109048997],
+            [126.82288455557784, 35.2340770533134],
+            [126.84448530525265, 35.250768541535024],
+            [126.8803487485959, 35.24299123775546],
+            [126.93398888577849, 35.254592597370504],
+            [126.98556196541244, 35.23877960919168]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "KOR-68945753B94077674833362",
+      "properties": {
+        "provinceId": "prv_kor_gyeongsang",
+        "sourceName": "Daegu",
+        "sourceIso": "KOR"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [[128.7413, 35.8488], [128.4753, 35.8462], [128.7338, 35.8506], [128.7413, 35.8488]]
+        ]
+      }
+    }
+  ]
+}

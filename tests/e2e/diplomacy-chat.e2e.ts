@@ -1,43 +1,39 @@
-import type { Page } from "@playwright/test";
 import { expect, test } from "@playwright/test";
 
-const startKoreanCampaign = async (page: Page): Promise<void> => {
-  await page.goto("/");
-  const scenarioSelect = page.getByTestId("scenario-select");
-  await page
-    .locator('[data-testid="scenario-select"], [data-testid="campaign-state"]')
-    .first()
-    .waitFor({ state: "visible" });
-  if (await page.getByTestId("campaign-state").isVisible()) {
-    await page.getByTestId("new-campaign").click({ force: true });
-    await expect(scenarioSelect).toBeVisible();
-  }
-  await scenarioSelect.selectOption("scn_ea1900");
-  await page.getByTestId("nation-select").selectOption("nat_kor");
-  await page.getByTestId("start-campaign").click();
-  await expect(page.getByTestId("campaign-state")).toBeVisible();
-};
+import { openAdvisor, startKoreanCampaign } from "./helpers/open-historia";
 
 test.describe("Multiverse History diplomacy chat", () => {
-  test("sends a nation message and requests advisor assistance", async ({ page }, testInfo) => {
+  test("routes nation messages through the persisted room and keeps advisor assistance", async ({
+    page,
+  }) => {
     // Given
     await startKoreanCampaign(page);
-    await page.getByTestId("diplomacy-tab").click();
-    await expect(page.getByTestId("diplomacy-tab")).toHaveAttribute("aria-selected", "true");
-    await expect(page.getByText("외교 개요")).toBeVisible();
+    await openAdvisor(page);
+    const advisor = page.getByRole("complementary", { name: "전략 자문" });
+    const diplomacyTab = advisor.getByRole("button", { name: "외교", exact: true });
+    await diplomacyTab.click();
+    await expect(diplomacyTab).toHaveAttribute("aria-current", "page");
+    await expect(page.getByTestId("diplomacy-panel")).toBeVisible();
+    await expect(page.getByTestId("diplomacy-chat-input")).toHaveCount(0);
 
     // When
-    await page.getByTestId("diplomacy-chat-target").selectOption("nat_jpn");
-    await page.getByTestId("diplomacy-chat-input").fill("통상 협정을 논의하고 싶습니다.");
-    await page.getByTestId("send-diplomacy-chat").click();
+    await page.getByTestId("diplomacy-target").selectOption("nat_jpn");
     await page.getByTestId("advisor-assist").click();
+    await expect(page.getByTestId("advisor-suggestion")).toContainText("일본제국");
+    await page.getByTestId("close-advisor").click();
+    await page.getByTestId("oh-chat").click();
+    await page.getByTestId("new-chat").click();
+    await page.getByTestId("chat-target").selectOption("nat_jpn");
+    await page.getByTestId("chat-input").fill("통상 협정을 논의하고 싶습니다.");
+    const reply = page.waitForResponse(
+      (response) => response.url().endsWith("/api/diplomacy/chat") && response.ok(),
+    );
+    await page.getByTestId("send-chat").click();
+    await reply;
+    await page.getByTestId("chat-room").filter({ hasText: "일본제국" }).click();
 
     // Then
-    await expect(page.getByTestId("diplomacy-chat-log")).toContainText("통상 협정");
-    await expect(page.getByTestId("diplomacy-chat-log")).toContainText("일본제국");
-    await expect(page.getByTestId("advisor-suggestion")).toContainText("일본제국");
-    await page.screenshot({
-      path: `.omo/evidence/C001/${testInfo.project.name}-diplomacy-chat.png`,
-    });
+    await expect(page.getByTestId("chat-room-thread")).toContainText("통상 협정");
+    await expect(page.getByTestId("chat-room-thread")).toContainText("일본제국");
   });
 });

@@ -1,21 +1,11 @@
 import { expect, test } from "@playwright/test";
 
+import { openStartScreen } from "./helpers/open-historia";
+
 test.describe("Multiverse History campaign setup", () => {
   test("configures a custom polity, difficulty, and planner model", async ({ page }, testInfo) => {
     // Given
-    await page.goto("/");
-    await page
-      .locator('[data-testid="custom-polity-toggle"], [data-testid="campaign-state"]')
-      .first()
-      .waitFor({ state: "visible" });
-    if (
-      await page
-        .getByTestId("campaign-state")
-        .isVisible()
-        .catch(() => false)
-    ) {
-      await page.getByTestId("new-campaign").click({ force: true });
-    }
+    await openStartScreen(page);
     await expect(page.getByTestId("custom-polity-toggle")).toBeVisible();
 
     // When

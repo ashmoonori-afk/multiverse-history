@@ -1,0 +1,244 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "PRK-3916807B5646338397672",
+      "properties": {
+        "provinceId": "prv_kor_pyeongan",
+        "sourceName": "Jagang",
+        "sourceIso": "PRK"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [127.0606, 41.6587],
+            [127.0594, 41.6308],
+            [127.4994, 41.0344],
+            [126.8075, 40.2019],
+            [125.6147, 40.3331],
+            [127.0606, 41.6587]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "PRK-3916807B60771411413787",
+      "properties": {
+        "provinceId": "prv_kor_pyeongan",
+        "sourceName": "Kangwon",
+        "sourceIso": "PRK"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [127.3341, 39.4051],
+            [127.332, 39.4033],
+            [128.2892, 38.4344],
+            [126.8826, 38.2128],
+            [127.3341, 39.4051]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "PRK-3916807B42842403076429",
+      "properties": { "provinceId": "prv_kor_pyeongan", "sourceName": "Nampo", "sourceIso": "PRK" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [125.5789, 39.0103],
+            [125.5803, 38.9967],
+            [125.6298, 38.6569],
+            [125.1367, 38.8057],
+            [125.5789, 39.0103]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "PRK-3916807B66197610677259",
+      "properties": {
+        "provinceId": "prv_kor_hamgyeong",
+        "sourceName": "North Hamgyong",
+        "sourceIso": "PRK"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [129.168, 40.5677],
+            [129.1622, 40.5714],
+            [128.8091, 41.9247],
+            [130.1427, 42.9791],
+            [130.6749, 42.2836],
+            [129.168, 40.5677]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "PRK-3916807B54689859523154",
+      "properties": {
+        "provinceId": "prv_kor_pyeongan",
+        "sourceName": "North Hwanghae",
+        "sourceIso": "PRK"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [126.982, 39.0692],
+            [126.9753, 39.0492],
+            [126.5854, 37.7683],
+            [125.5203, 38.8408],
+            [126.982, 39.0692]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "PRK-3916807B80386364257881",
+      "properties": {
+        "provinceId": "prv_kor_pyeongan",
+        "sourceName": "North Pyongan",
+        "sourceIso": "PRK"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [125.4113, 40.6544],
+            [125.4592, 40.6317],
+            [126.3672, 39.8939],
+            [124.6071, 39.585],
+            [124.3374, 40.0649],
+            [125.4113, 40.6544]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "PRK-3916807B24987303688366",
+      "properties": {
+        "provinceId": "prv_kor_pyeongan",
+        "sourceName": "Pyongyang",
+        "sourceIso": "PRK"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [125.6059, 38.9388],
+            [125.6075, 38.9414],
+            [125.7278, 39.2836],
+            [126.3894, 38.9611],
+            [125.6059, 38.9388]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "PRK-3916807B2118550659035",
+      "properties": {
+        "provinceId": "prv_kor_hamgyeong",
+        "sourceName": "Ryanggang",
+        "sourceIso": "PRK"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [127.5056, 41.0708],
+            [127.5069, 41.0872],
+            [126.9161, 41.5283],
+            [128.1089, 41.3607],
+            [128.0796, 41.993],
+            [129.0125, 42.0995],
+            [128.9888, 41.0989],
+            [127.7428, 40.4139],
+            [127.5056, 41.0708]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "PRK-3916807B59695090380014",
+      "properties": {
+        "provinceId": "prv_kor_hamgyeong",
+        "sourceName": "South Hamgyong",
+        "sourceIso": "PRK"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [126.9112, 40.3347],
+            [126.9239, 40.3717],
+            [127.663, 41.1464],
+            [127.7355, 40.4144],
+            [128.7433, 41.1747],
+            [129.168, 40.5677],
+            [127.0255, 39.2043],
+            [126.9112, 40.3347]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "PRK-3916807B69422143587516",
+      "properties": {
+        "provinceId": "prv_kor_pyeongan",
+        "sourceName": "South Hwanghae",
+        "sourceIso": "PRK"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [125.1658, 38.6182],
+            [125.1732, 38.6099],
+            [126.413, 37.9081],
+            [125.3385, 37.6741],
+            [124.6529, 38.1288],
+            [125.1658, 38.6182]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "PRK-3916807B57216784573597",
+      "properties": {
+        "provinceId": "prv_kor_pyeongan",
+        "sourceName": "South Pyongan",
+        "sourceIso": "PRK"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [126.3602, 40.0176],
+            [126.3836, 40.0061],
+            [127.1072, 40.2844],
+            [126.982, 39.0692],
+            [125.2117, 38.9987],
+            [126.3602, 40.0176]
+          ]
+        ]
+      }
+    }
+  ]
+}

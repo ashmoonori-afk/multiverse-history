@@ -1,4 +1,5 @@
 import type { Campaign } from "../../state/campaign-store";
+import { SearchableSelect } from "../controls/SearchableSelect";
 
 interface NationPanelProps {
   readonly campaign: Campaign;
@@ -29,6 +30,12 @@ export const NationPanel = ({
         relation.toNationId === selectedNation?.id,
     )?.value ?? 0;
 
+  const directoryOptions = campaign.nations.map((nation) => ({
+    id: nation.id,
+    label: nation.nameKo,
+    hint: nation.id === campaign.playerNationId ? "플레이어" : "국가",
+  }));
+
   if (selectedNation === undefined) {
     return <p className="panel_section p">선택 가능한 국가가 없습니다.</p>;
   }
@@ -37,24 +44,14 @@ export const NationPanel = ({
     <>
       <section className="nation_directory" aria-labelledby="nation-directory-title">
         <h4 id="nation-directory-title">국가 선택</h4>
-        <ul className="nation_directory_list">
-          {campaign.nations.map((nation) => (
-            <li key={nation.id}>
-              <button
-                className="nation_option"
-                type="button"
-                aria-pressed={nation.id === selectedNation.id}
-                data-testid={`nation-option-${nation.id}`}
-                onClick={() => onSelectNation(nation.id)}
-              >
-                <span>{nation.nameKo}</span>
-                <span className="province_owner">
-                  {nation.id === campaign.playerNationId ? "플레이어" : "국가"}
-                </span>
-              </button>
-            </li>
-          ))}
-        </ul>
+        <SearchableSelect
+          label="국가 선택 검색"
+          optionTestIdPrefix="nation-option"
+          placeholder="국가 이름 또는 코드 검색"
+          options={directoryOptions}
+          value={selectedNation.id}
+          onSelect={onSelectNation}
+        />
       </section>
       <section
         className="selected_nation_panel"

@@ -1,0 +1,105 @@
+.searchable_select {
+  position: relative;
+  display: grid;
+  gap: var(--space-2);
+  min-inline-size: 0;
+}
+
+.searchable_select_input {
+  inline-size: 100%;
+  min-inline-size: 0;
+  min-block-size: 2.75rem;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-2);
+  color: var(--color-text-strong);
+  font-size: var(--text-base);
+}
+
+.searchable_select_input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.searchable_select[data-expanded="true"] .searchable_select_input {
+  border-color: color-mix(in srgb, var(--color-selection) 42%, transparent);
+}
+
+.searchable_select_results {
+  display: grid;
+  gap: var(--space-1);
+  max-block-size: 19rem;
+  overflow-y: auto;
+  margin: 0;
+  padding: var(--space-1);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-1);
+  box-shadow: var(--shadow-2);
+  list-style: none;
+}
+
+.start_screen .searchable_select_results {
+  position: absolute;
+  z-index: 20;
+  inset-block-start: calc(100% + var(--space-2));
+  inset-inline: 0;
+}
+
+.searchable_select_option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  inline-size: 100%;
+  min-block-size: 2.25rem;
+  padding: 0 var(--space-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--text-sm);
+  text-align: start;
+  cursor: pointer;
+}
+
+.searchable_select_option[data-active="true"],
+.searchable_select_option[aria-selected="true"] {
+  border-color: color-mix(in srgb, var(--color-selection) 42%, transparent);
+  background: color-mix(in srgb, var(--color-selection) 10%, transparent);
+  color: var(--color-text-strong);
+}
+
+.searchable_select_option_label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.searchable_select_option_hint {
+  flex: none;
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+.searchable_select_option[aria-selected="true"] .searchable_select_option_hint {
+  color: var(--color-selection);
+}
+
+.searchable_select_empty {
+  padding: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+.nation_search_panel {
+  display: grid;
+  gap: var(--space-2);
+  min-inline-size: 0;
+}
+
+.nation_search_panel > strong {
+  color: var(--color-text-strong);
+  font-size: var(--text-sm);
+}

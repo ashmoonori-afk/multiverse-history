@@ -1,8 +1,9 @@
 import { renderChronicle } from "../domain/events/chronicle";
 import type { StrategicIntent, StrategicPlan } from "../providers/schemas";
 import { provinceNameKo } from "../shared/display-labels";
+import { appendIncomingCampaignChat } from "./campaign-chat";
 import { createCampaignResolution } from "./campaign-resolution";
-import type { CampaignState } from "./campaign-state";
+import { advanceCampaignClock, type CampaignState, type TimelineCadence } from "./campaign-state";
 
 const updateNation = (
   state: CampaignState,
@@ -143,25 +144,32 @@ const applyIntent = (
   }
 };
 
-const nextDate = (date: CampaignState["date"]): CampaignState["date"] =>
-  date.quarter === 4
-    ? Object.freeze({ year: date.year + 1, quarter: 1 })
-    : Object.freeze({ year: date.year, quarter: date.quarter + 1 });
+export interface ApplyStrategicPlanInput {
+  readonly snapshot: CampaignState;
+  readonly plan: StrategicPlan;
+  readonly orderText?: string;
+  readonly cadence?: TimelineCadence;
+}
 
-export const applyStrategicPlan = (
-  snapshot: CampaignState,
-  plan: StrategicPlan,
-  orderText = "플레이어 계획",
-): CampaignState => {
+export const applyStrategicPlan = (input: ApplyStrategicPlanInput): CampaignState => {
+  const snapshot = input.snapshot;
+  const plan = input.plan;
+  const orderText = input.orderText ?? "플레이어 계획";
+  const cadence = input.cadence ?? "quarter";
   const intents = [...plan.playerIntents, ...plan.npcIntents];
   const resolved = intents.reduce(
     (state, intent, index) => applyIntent(state, intent, snapshot.turn + 1, index),
     snapshot,
   );
+  const clock = advanceCampaignClock({
+    elapsedDays: snapshot.elapsedDays,
+    date: snapshot.date,
+    cadence,
+  });
   const nextState = Object.freeze({
     ...resolved,
-    elapsedDays: snapshot.elapsedDays + 91,
-    date: nextDate(snapshot.date),
+    elapsedDays: clock.elapsedDays,
+    date: clock.date,
     events: Object.freeze([...resolved.events, plan.narrative.ko]),
     lastPlan: plan,
   });
@@ -169,14 +177,31 @@ export const applyStrategicPlan = (
     before: snapshot,
     after: nextState,
     turn: snapshot.turn + 1,
+    cadence,
+    advanceDays: clock.advanceDays,
     orderText: orderText.trim(),
     narrativeKo: plan.narrative.ko,
     changedProvinceIds: intents.flatMap((intent) =>
       "provinceId" in intent ? [intent.provinceId] : [],
     ),
   });
-  return Object.freeze({
+  const committed = Object.freeze({
     ...nextState,
     resolutions: Object.freeze([...snapshot.resolutions, resolution]),
+  });
+  const incomingNationId = resolution.treatyDeltas[0]?.recipientNationId;
+  if (incomingNationId === undefined) {
+    return committed;
+  }
+  const incomingNationName =
+    committed.nations.find((nation) => nation.id === incomingNationId)?.nameKo ?? incomingNationId;
+  return appendIncomingCampaignChat({
+    state: committed,
+    speakerNationId: incomingNationId,
+    turn: resolution.turn,
+    message: `${incomingNationName} 외교부는 귀국의 통상 협정 제안을 공식 접수했습니다. 관세와 철도 연결 조건을 논의할 실무 회담을 요청합니다. 협상 대표단의 답신을 기다리겠습니다.`,
+    topic: "trade",
+    intent: "proposal",
+    sourceKey: `diplomacy:trade:${committed.playerNationId}:${incomingNationId}`,
   });
 };

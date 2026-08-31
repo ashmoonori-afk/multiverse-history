@@ -3,8 +3,14 @@ import { cors } from "hono/cors";
 import { ZodError } from "zod";
 
 import { applyStrategicPlan } from "../application/apply-strategic-plan";
-import { appendCampaignChat } from "../application/campaign-chat";
 import {
+  appendCampaignChat,
+  type CampaignChatDecision,
+  classifyCampaignChatMessage,
+  deterministicCounterpartReply,
+} from "../application/campaign-chat";
+import {
+  type CampaignState,
   createCampaignState,
   jumpCampaignTimeline,
   LocalCampaignStore,
@@ -24,6 +30,7 @@ import { validateScenarioPackage } from "../domain/scenario/package";
 import { getScenarioById, listScenarios } from "../domain/scenario/registry";
 import { importCampaignExport, serializeCampaignExport } from "../persistence/export-import";
 import { planDeterministically } from "../providers/deterministic-provider";
+import { respondWithLiveDiplomacy } from "../providers/live-diplomacy";
 import { planWithLiveProvider } from "../providers/live-planner";
 import type { StrategicPlan } from "../providers/schemas";
 import { canonicalStringify, hashCanonical } from "../shared/canonical-json";
@@ -56,8 +63,19 @@ export interface ProviderPlanInput {
 }
 export type ProviderPlanner = (input: ProviderPlanInput) => Promise<StrategicPlan>;
 
+export interface ProviderDiplomacyInput {
+  readonly state: CampaignState;
+  readonly targetNationId: string;
+  readonly message: string;
+  readonly decision: CampaignChatDecision;
+}
+export type ProviderDiplomacyResponder = (input: ProviderDiplomacyInput) => Promise<string>;
+
 export interface GameAppOptions {
   readonly planners?: Partial<Readonly<Record<ProviderSelection, ProviderPlanner>>>;
+  readonly diplomacyResponders?: Partial<
+    Readonly<Record<ProviderSelection, ProviderDiplomacyResponder>>
+  >;
 }
 
 const jsonBody = async (request: Request): Promise<unknown> => {
@@ -183,6 +201,31 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
       }),
     ...options.planners,
   };
+  const liveDiplomacyResponder =
+    (provider: "codex" | "claude"): ProviderDiplomacyResponder =>
+    async (input) => {
+      const player = input.state.nations.find((nation) => nation.id === input.state.playerNationId);
+      const target = input.state.nations.find((nation) => nation.id === input.targetNationId);
+      return respondWithLiveDiplomacy({
+        provider,
+        playerNationName: player?.nameKo ?? input.state.playerNationId,
+        targetNationName: target?.nameKo ?? input.targetNationId,
+        playerMessage: input.message,
+        decision: input.decision,
+        stateJson: canonicalStringify(input.state),
+      });
+    };
+  const diplomacyResponders: Partial<Record<ProviderSelection, ProviderDiplomacyResponder>> = {
+    deterministic: async (input) =>
+      deterministicCounterpartReply({
+        state: input.state,
+        targetNationId: input.targetNationId,
+        decision: input.decision,
+      }),
+    codex: liveDiplomacyResponder("codex"),
+    claude: liveDiplomacyResponder("claude"),
+    ...options.diplomacyResponders,
+  };
 
   app.use(
     "/api/*",
@@ -205,6 +248,7 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
         ? {}
         : { customPolityName: request.customPolityName }),
       ...(request.difficulty === undefined ? {} : { difficulty: request.difficulty }),
+      plannerProvider: request.provider,
     });
     store.replace(campaign);
     return context.json({ campaign: store.read(), stateHash: store.stateHash() }, 201);
@@ -225,10 +269,36 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
 
   app.post("/api/diplomacy/chat", async (context) => {
     const request = DiplomacyChatRequestSchema.parse(await jsonBody(context.req.raw));
-    const state = appendCampaignChat({
-      state: parseCampaignState(store.read()),
+    const campaign = parseCampaignState(store.read());
+    const decision = classifyCampaignChatMessage({
+      state: campaign,
       targetNationId: request.targetNationId,
       message: request.message,
+    });
+    const responder = diplomacyResponders[request.provider];
+    if (responder === undefined) {
+      throw new ProviderTurnError(503, "provider_unavailable");
+    }
+    let replyText: string;
+    try {
+      replyText = await responder({
+        state: campaign,
+        targetNationId: request.targetNationId,
+        message: request.message,
+        decision,
+      });
+    } catch (error: unknown) {
+      if (error instanceof ProviderTurnError) {
+        throw error;
+      }
+      throw new ProviderTurnError(503, "provider_unavailable");
+    }
+    const state = appendCampaignChat({
+      state: campaign,
+      targetNationId: request.targetNationId,
+      message: request.message,
+      decision,
+      replyText,
     });
     store.replace(state);
     return context.json({ campaign: store.read(), stateHash: store.stateHash() });
@@ -335,7 +405,12 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
           stateJson: canonicalStringify(store.read()),
         }),
       reduce: (snapshot, plan) =>
-        applyStrategicPlan(parseCampaignState(snapshot), plan, request.orderText),
+        applyStrategicPlan({
+          snapshot: parseCampaignState(snapshot),
+          plan,
+          orderText: request.orderText,
+          cadence: request.cadence,
+        }),
     });
     return context.json({ campaign: result.state, plan: result.plan, stateHash: result.stateHash });
   });

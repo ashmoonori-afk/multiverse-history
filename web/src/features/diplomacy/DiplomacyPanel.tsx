@@ -12,14 +12,7 @@ interface DiplomacyPanelProps {
   readonly onDeclareWar: (targetNationId: string) => Promise<boolean>;
 }
 
-interface ChatMessage {
-  readonly id: string;
-  readonly speaker: string;
-  readonly text: string;
-}
-
 type ExtendedProposal = TreatyClause | "peace" | "threat" | "ultimatum";
-type ChatScope = "private" | "group";
 type AdvisorQuestion = "preset" | "custom";
 const proposalLabels: Readonly<Record<ExtendedProposal, string>> = {
   alliance: "동맹",
@@ -41,7 +34,6 @@ export const DiplomacyPanel = ({
   onDeclareWar,
 }: DiplomacyPanelProps): JSX.Element => {
   const targetNations = campaign.nations.filter((nation) => nation.id !== campaign.playerNationId);
-  const [targetNationId, setTargetNationId] = useState(targetNations[0]?.id ?? "");
   const [diplomacyTargetId, setDiplomacyTargetId] = useState(
     targetNations[1]?.id ?? targetNations[0]?.id ?? "",
   );
@@ -53,15 +45,11 @@ export const DiplomacyPanel = ({
   );
   const [transferProvinceId, setTransferProvinceId] = useState(ownedProvinces[0]?.id ?? "");
   const [clause, setClause] = useState<ExtendedProposal>("trade");
-  const [chatScope, setChatScope] = useState<ChatScope>("private");
-  const [message, setMessage] = useState("");
-  const [chatLog, setChatLog] = useState<readonly ChatMessage[]>([]);
   const [advisorSuggestion, setAdvisorSuggestion] = useState<string | null>(null);
   const [advisorQuestion, setAdvisorQuestion] = useState("");
   const [advisorMode, setAdvisorMode] = useState<AdvisorQuestion>("preset");
   const [proposalStatus, setProposalStatus] = useState<string | null>(null);
-  const targetNation = targetNations.find((nation) => nation.id === targetNationId);
-  const targetName = nationNameById.get(targetNationId) ?? (targetNationId || "상대 국가");
+  const targetName = nationNameById.get(diplomacyTargetId) ?? (diplomacyTargetId || "상대 국가");
   const warBlocked = campaign.treaties.some(
     (treaty) =>
       treaty.status === "active" &&
@@ -73,78 +61,25 @@ export const DiplomacyPanel = ({
   );
   const latestWar = [...campaign.wars].reverse()[0];
 
-  const sendMessage = (event: React.FormEvent<HTMLFormElement>): void => {
-    event.preventDefault();
-    const trimmedMessage = message.trim();
-    if (trimmedMessage.length === 0 || targetNation === undefined) {
-      return;
-    }
-    setChatLog((current) => {
-      const messageId = String(current.length);
-      const playerName =
-        campaign.nations.find((nation) => nation.id === campaign.playerNationId)?.nameKo ??
-        campaign.playerNationId;
-      return [
-        ...current,
-        {
-          id: `${messageId}-player`,
-          speaker: chatScope === "group" ? `${playerName} 공동 회의` : playerName,
-          text: trimmedMessage,
-        },
-        {
-          id: `${messageId}-reply`,
-          speaker: chatScope === "group" ? "외교 회의실" : targetNation.nameKo,
-          text: `${targetNation.nameKo} 측은 제안을 검토한 뒤 다음 회담에서 답하겠다고 전했습니다.`,
-        },
-      ];
-    });
-    setMessage("");
-  };
-
   return (
-    <section className="panel_section diplomacy_panel" data-testid="diplomacy-chat">
+    <section className="panel_section diplomacy_panel" data-testid="diplomacy-panel">
       <div className="diplomacy_panel_heading">
         <div>
-          <span className="eyebrow">외교 통신</span>
-          <h3>대화와 조언</h3>
+          <span className="eyebrow">외교 행동</span>
+          <h3>협정과 조언</h3>
         </div>
         <span className="status_pill">결정 전</span>
       </div>
-      <label className="field">
-        <span>대화 상대</span>
-        <select
-          data-testid="diplomacy-chat-target"
-          value={targetNationId}
-          onChange={(event) => {
-            setTargetNationId(event.target.value);
-            onSelectNation(event.target.value);
-          }}
-        >
-          {targetNations.map((nation) => (
-            <option key={nation.id} value={nation.id}>
-              {nation.nameKo}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label className="field">
-        <span>대화 채널</span>
-        <select
-          data-testid="diplomacy-chat-scope"
-          value={chatScope}
-          onChange={(event) => setChatScope(event.target.value as ChatScope)}
-        >
-          <option value="private">비공개 회담</option>
-          <option value="group">다자 외교 회의</option>
-        </select>
-      </label>
       <div className="diplomacy_action_grid">
         <label className="field">
           <span>협정 대상</span>
           <select
             data-testid="diplomacy-target"
             value={diplomacyTargetId}
-            onChange={(event) => setDiplomacyTargetId(event.target.value)}
+            onChange={(event) => {
+              setDiplomacyTargetId(event.target.value);
+              onSelectNation(event.target.value);
+            }}
           >
             {targetNations.map((nation) => (
               <option key={nation.id} value={nation.id}>
@@ -256,40 +191,6 @@ export const DiplomacyPanel = ({
           ? "전쟁을 선포하면 이곳에 상태가 기록됩니다."
           : `전쟁 상태: ${nationNameById.get(latestWar.targetNationId) ?? latestWar.targetNationId}`}
       </p>
-      <form className="diplomacy_chat_composer" onSubmit={sendMessage}>
-        <label className="field">
-          <span>메시지</span>
-          <textarea
-            data-testid="diplomacy-chat-input"
-            value={message}
-            onChange={(event) => setMessage(event.target.value)}
-            placeholder={`${targetName}에 보낼 외교 메시지`}
-            maxLength={1_000}
-          />
-        </label>
-        <button className="secondary_button" data-testid="send-diplomacy-chat" type="submit">
-          메시지 전송
-        </button>
-      </form>
-      <ul className="diplomacy_chat_log" data-testid="diplomacy-chat-log" aria-live="polite">
-        {chatLog.length === 0 ? (
-          <li className="diplomacy_empty">첫 메시지를 보내면 회담 기록이 쌓입니다.</li>
-        ) : (
-          chatLog.map((entry) => (
-            <li
-              className={
-                entry.speaker === "대한제국"
-                  ? "diplomacy_message_player"
-                  : "diplomacy_message_counterpart"
-              }
-              key={entry.id}
-            >
-              <strong>{entry.speaker}</strong>
-              <span>{entry.text}</span>
-            </li>
-          ))
-        )}
-      </ul>
       <div className="advisor_card">
         <div>
           <span className="eyebrow">궁정 고문</span>

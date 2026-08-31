@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { create } from "zustand";
 
+import { type CampaignResolution, CampaignResolutionSchema } from "./campaign-resolution-schema";
+
 const IntentSchema = z.discriminatedUnion("type", [
   z
     .object({
@@ -40,69 +42,23 @@ const StrategicPlanSchema = z
   })
   .strict();
 
-const NumericDeltaSchema = z
-  .object({
-    before: z.number().int(),
-    after: z.number().int(),
-  })
-  .strict();
-
-const CampaignResolutionSchema = z
-  .object({
-    id: z.string(),
-    turn: z.number().int().nonnegative(),
-    timestampKo: z.string().min(1),
-    orderText: z.string().min(1),
-    narrativeKo: z.string().min(1),
-    nationDeltas: z.array(
-      z
-        .object({
-          nationId: z.string(),
-          nationNameKo: z.string().min(1),
-          treasuryCredits: NumericDeltaSchema,
-          gdpCredits: NumericDeltaSchema,
-          infrastructureBps: NumericDeltaSchema,
-        })
-        .strict(),
-    ),
-    relationDeltas: z.array(
-      z
-        .object({
-          fromNationId: z.string(),
-          toNationId: z.string(),
-          before: z.number().int(),
-          after: z.number().int(),
-        })
-        .strict(),
-    ),
-    treatyDeltas: z.array(
-      z
-        .object({
-          id: z.string(),
-          proposerNationId: z.string(),
-          recipientNationId: z.string(),
-          clauses: z.array(z.string()),
-          status: z.enum(["proposed", "active"]),
-          proposedTurn: z.number().int().nonnegative(),
-        })
-        .strict(),
-    ),
-    worldImpact: z
-      .object({
-        changedNationIds: z.array(z.string()),
-        changedProvinceIds: z.array(z.string()),
-        summaryKo: z.string().min(1),
-      })
-      .strict(),
-  })
-  .strict();
-
 const CampaignChatMessageSchema = z
   .object({
     id: z.string(),
     role: z.enum(["player", "counterpart"]),
     speakerNationId: z.string(),
     targetNationId: z.string(),
+    topic: z.enum(["trade", "relations", "military", "general"]),
+    intent: z.enum([
+      "proposal",
+      "acceptance",
+      "rejection",
+      "question",
+      "statement",
+      "acknowledgement",
+    ]),
+    replyToMessageId: z.string().optional(),
+    sourceKey: z.string().optional(),
     turn: z.number().int().nonnegative(),
     date: z.object({ year: z.number().int(), quarter: z.number().int().min(1).max(4) }).strict(),
     text: z.string().min(1),
@@ -114,6 +70,7 @@ const CampaignSchema = z
     id: z.literal("cmp_local"),
     scenarioId: z.string(),
     playerNationId: z.string(),
+    plannerProvider: z.enum(["deterministic", "codex", "claude"]),
     difficulty: z.enum(["story", "standard", "hard"]),
     elapsedDays: z.number().int().nonnegative(),
     turn: z.number().int().nonnegative(),
@@ -227,7 +184,7 @@ const ApiErrorSchema = z
 
 export type Campaign = z.infer<typeof CampaignSchema>;
 export type StrategicPlan = z.infer<typeof StrategicPlanSchema>;
-export type CampaignResolution = z.infer<typeof CampaignResolutionSchema>;
+export type { CampaignResolution };
 export type CampaignChatMessage = z.infer<typeof CampaignChatMessageSchema>;
 export type CampaignExport = z.infer<typeof CampaignExportSchema>;
 export type TreatyClause = "alliance" | "non_aggression" | "trade" | "military_access";
@@ -287,7 +244,7 @@ export interface CampaignStoreState {
     provider?: PlannerProvider,
     options?: CampaignCreationOptions,
   ) => Promise<boolean>;
-  readonly advanceTurn: (orderText: string) => Promise<boolean>;
+  readonly advanceTurn: (orderText: string, cadence?: TimelineCadence) => Promise<boolean>;
   readonly sendChat: (targetNationId: string, message: string) => Promise<boolean>;
   readonly jumpTimeline: (cadence: TimelineCadence) => Promise<boolean>;
   readonly saveCampaign: () => Promise<boolean>;
@@ -345,7 +302,7 @@ export const useCampaignStore = create<CampaignStoreState>((set, get) => ({
         stateHash: result.stateHash,
         error: null,
         saveStatus: null,
-        provider: "deterministic",
+        provider: result.campaign.plannerProvider,
       });
     } catch (error: unknown) {
       if (!isCurrentCampaignLoad(epoch)) {
@@ -389,7 +346,7 @@ export const useCampaignStore = create<CampaignStoreState>((set, get) => ({
         await fetch("/api/campaigns", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ scenarioId, playerNationId, ...options }),
+          body: JSON.stringify({ scenarioId, playerNationId, provider, ...options }),
         }),
         CampaignResponseSchema,
       );
@@ -409,7 +366,7 @@ export const useCampaignStore = create<CampaignStoreState>((set, get) => ({
       return false;
     }
   },
-  advanceTurn: async (orderText) => {
+  advanceTurn: async (orderText, cadence = "quarter") => {
     const campaign = get().campaign;
     if (campaign === null) {
       return false;
@@ -424,6 +381,7 @@ export const useCampaignStore = create<CampaignStoreState>((set, get) => ({
             provider: get().provider,
             requestId: requestId(),
             orderText,
+            cadence,
           }),
         }),
         TurnResponseSchema,
@@ -451,7 +409,7 @@ export const useCampaignStore = create<CampaignStoreState>((set, get) => ({
         await fetch("/api/diplomacy/chat", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ targetNationId, message }),
+          body: JSON.stringify({ targetNationId, message, provider: get().provider }),
         }),
         CampaignResponseSchema,
       );
@@ -522,7 +480,7 @@ export const useCampaignStore = create<CampaignStoreState>((set, get) => ({
         plan: null,
         busy: false,
         saveStatus: "가져옴",
-        provider: "deterministic",
+        provider: result.campaign.plannerProvider,
       });
       return true;
     } catch (error: unknown) {
