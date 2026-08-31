@@ -226,6 +226,9 @@ export type TreatyClause = "alliance" | "non_aggression" | "trade" | "military_a
 export type PlannerProvider = "deterministic" | "codex" | "claude";
 export type CampaignDifficulty = "story" | "standard" | "hard";
 export type TimelineCadence = "week" | "month" | "quarter" | "year" | "major";
+export type TimelineProgressionRequest =
+  | { readonly mode: "months"; readonly months: number }
+  | { readonly mode: "until_major_event" };
 export interface CampaignCreationOptions {
   readonly customPolityName?: string;
   readonly difficulty?: CampaignDifficulty;
@@ -285,6 +288,7 @@ export interface CampaignStoreState {
     message: string,
   ) => Promise<boolean>;
   readonly jumpTimeline: (cadence: TimelineCadence) => Promise<boolean>;
+  readonly progressTimeline: (progression: TimelineProgressionRequest) => Promise<boolean>;
   readonly saveCampaign: () => Promise<boolean>;
   readonly exportCampaign: () => Promise<string | null>;
   readonly importCampaign: (json: string) => Promise<boolean>;
@@ -305,7 +309,7 @@ const messageForError = (error: unknown): string =>
 
 const postCampaignAction = async (
   path: string,
-  body: Record<string, string>,
+  body: Record<string, unknown>,
 ): Promise<z.infer<typeof CampaignResponseSchema>> =>
   parseResponse(
     await fetch(path, {
@@ -473,6 +477,19 @@ export const useCampaignStore = create<CampaignStoreState>((set, get) => ({
     set({ busy: true, error: null, saveStatus: null });
     try {
       const result = await postCampaignAction("/api/timeline/jump", { cadence });
+      set({ campaign: result.campaign, stateHash: result.stateHash, busy: false });
+      return true;
+    } catch (error: unknown) {
+      set({ busy: false, error: messageForError(error) });
+      return false;
+    }
+  },
+  progressTimeline: async (progression) => {
+    set({ busy: true, error: null, saveStatus: null });
+    try {
+      const result = await postCampaignAction("/api/timeline/jump", {
+        progression,
+      });
       set({ campaign: result.campaign, stateHash: result.stateHash, busy: false });
       return true;
     } catch (error: unknown) {

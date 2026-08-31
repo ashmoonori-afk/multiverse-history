@@ -78,8 +78,197 @@
   line-height: 1.55;
 }
 
+.resolution_feedback {
+  display: grid;
+  gap: var(--space-2);
+  padding-block-start: var(--space-3);
+  border-block-start: 1px solid var(--oh-stroke);
+}
+
+.resolution_feedback > h3 {
+  margin: 0;
+  color: var(--oh-text);
+  font-size: var(--text-sm);
+}
+
+.world_event {
+  display: grid;
+  gap: var(--space-2);
+  min-inline-size: 0;
+  padding: var(--space-3);
+  border: 1px solid var(--oh-stroke);
+  border-inline-start: 3px solid var(--world-event-accent, var(--color-plan));
+  border-radius: var(--oh-radius-md);
+  background: color-mix(in srgb, var(--color-surface-2) 78%, transparent);
+}
+
+.world_event[data-importance="major"] {
+  --world-event-accent: var(--color-conflict);
+}
+
+.world_event_meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--oh-text-3);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.world_event_importance {
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--world-event-accent, var(--color-plan));
+  border-radius: var(--oh-radius-sm);
+  color: var(--world-event-accent, var(--color-plan));
+  font-weight: 700;
+}
+
+.world_event_kind {
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--oh-radius-sm);
+  background: color-mix(in srgb, var(--color-surface-3) 90%, transparent);
+  color: var(--oh-text-2);
+}
+
+.world_event_headline {
+  color: var(--oh-text);
+  font-size: var(--text-sm);
+  line-height: 1.45;
+  text-wrap: pretty;
+  overflow-wrap: anywhere;
+  word-break: keep-all;
+}
+
+.world_event_summary {
+  margin: 0;
+  max-inline-size: 62ch;
+  color: var(--oh-text-2);
+  font-size: var(--text-xs);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  word-break: keep-all;
+}
+
+.world_event_nations {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.world_event_nations li {
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--oh-stroke);
+  border-radius: var(--oh-radius-sm);
+  background: color-mix(in srgb, var(--color-selection) 14%, transparent);
+  color: var(--oh-text-2);
+  font-size: var(--text-xs);
+  word-break: keep-all;
+}
+
+.reaction_grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: var(--space-2);
+  min-inline-size: 0;
+}
+
+.reaction_card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: var(--space-2);
+  min-inline-size: 0;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--oh-stroke-soft);
+  border-radius: var(--oh-radius-md);
+  background: color-mix(in srgb, var(--color-surface-1) 82%, transparent);
+  box-shadow: var(--oh-shadow-sm);
+}
+
+.reaction_card[data-stance="supportive"] {
+  --reaction-accent: var(--color-positive);
+}
+
+.reaction_card[data-stance="cautious"] {
+  --reaction-accent: var(--color-warning);
+}
+
+.reaction_card[data-stance="opposed"] {
+  --reaction-accent: var(--color-conflict);
+}
+
+.reaction_order {
+  display: grid;
+  place-items: center;
+  min-inline-size: 1.5rem;
+  block-size: 1.5rem;
+  border-radius: var(--oh-radius-sm);
+  background: color-mix(in srgb, var(--reaction-accent, var(--color-text-muted)) 22%, transparent);
+  color: var(--reaction-accent, var(--color-text-muted));
+  font-weight: 700;
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.reaction_copy {
+  display: grid;
+  gap: var(--space-1);
+  min-inline-size: 0;
+}
+
+.reaction_head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-2);
+  min-inline-size: 0;
+}
+
+.reaction_head strong {
+  color: var(--oh-text);
+  font-size: var(--text-sm);
+  word-break: keep-all;
+}
+
+.reaction_stance {
+  padding-inline: var(--space-1);
+  border-radius: var(--oh-radius-sm);
+  color: var(--reaction-accent, var(--color-text-muted));
+  font-size: var(--text-xs);
+  font-weight: 700;
+}
+
+.reaction_sentiment {
+  margin-inline-start: auto;
+  color: var(--oh-text-3);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.reaction_copy p {
+  margin: 0;
+  color: var(--oh-text-2);
+  font-size: var(--text-xs);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  word-break: keep-all;
+}
+
 @media (max-width: 700px) {
   .resolution_article_body p {
     font-size: 0.84rem;
+  }
+
+  .reaction_grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .world_event,
+  .reaction_card {
+    padding: var(--space-2);
   }
 }

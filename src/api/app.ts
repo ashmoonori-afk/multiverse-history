@@ -21,6 +21,12 @@ import {
   LocalCampaignStore,
   parseCampaignState,
 } from "../application/campaign-state";
+import { advanceCampaignTimelineProgression } from "../application/campaign-timeline-progression";
+import {
+  type CampaignReactionAuthor,
+  type CampaignReactionAuthorInput,
+  finalizeCampaignWorldFeedback,
+} from "../application/campaign-world-feedback";
 import { executeProviderTurn, ProviderTurnError } from "../application/turn-transaction";
 import {
   declareCampaignWar,
@@ -30,6 +36,10 @@ import {
   resolveCampaignCombat,
   transferCampaignProvince,
 } from "../application/warfare-actions";
+import {
+  type CampaignWorldEventFactory,
+  createCampaignWorldEvent,
+} from "../application/world-event-engine";
 import { listBuiltInScenarioMetadata, listCanonicalCountries } from "../domain/scenario/catalog";
 import { validateScenarioPackage } from "../domain/scenario/package";
 import { getScenarioById, listScenarios } from "../domain/scenario/registry";
@@ -38,6 +48,7 @@ import { planDeterministically } from "../providers/deterministic-provider";
 import { respondWithLiveDiplomacy } from "../providers/live-diplomacy";
 import { authorLiveNews } from "../providers/live-news";
 import { planWithLiveProvider } from "../providers/live-planner";
+import { authorLiveReactions } from "../providers/live-reaction";
 import type { StrategicPlan } from "../providers/schemas";
 import { canonicalStringify, hashCanonical } from "../shared/canonical-json";
 import {
@@ -78,6 +89,8 @@ export interface GameAppOptions {
     Readonly<Record<ProviderSelection, ProviderDiplomacyResponder>>
   >;
   readonly newsAuthors?: Partial<Readonly<Record<ProviderSelection, CampaignNewsAuthor>>>;
+  readonly reactionAuthors?: Partial<Readonly<Record<ProviderSelection, CampaignReactionAuthor>>>;
+  readonly worldEventFactory?: CampaignWorldEventFactory;
 }
 
 const jsonBody = async (request: Request): Promise<unknown> => {
@@ -246,6 +259,31 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
     claude: liveNewsAuthor("claude"),
     ...options.newsAuthors,
   };
+  const liveReactionAuthor =
+    (provider: "codex" | "claude"): CampaignReactionAuthor =>
+    async (input) => {
+      const output = await authorLiveReactions({
+        provider,
+        eventJson: input.eventJson,
+        contextJson: input.contextJson,
+      });
+      if (output.reactions.length !== 1) {
+        throw new TypeError("PROVIDER_REACTION_COUNT_INVALID");
+      }
+      return output.reactions[0];
+    };
+  const reactionAuthors: Partial<Record<ProviderSelection, CampaignReactionAuthor>> = {
+    deterministic: async (input: CampaignReactionAuthorInput) => ({
+      nationId: input.nationId,
+      stance: "neutral",
+      sentimentBps: 0,
+      statementKo: `${input.nationNameKo} 정부는 사건의 영향을 검토하고 후속 입장을 정리한다.`,
+    }),
+    codex: liveReactionAuthor("codex"),
+    claude: liveReactionAuthor("claude"),
+    ...options.reactionAuthors,
+  };
+  const worldEventFactory = options.worldEventFactory ?? createCampaignWorldEvent;
 
   app.use(
     "/api/*",
@@ -282,7 +320,33 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
 
   app.post("/api/timeline/jump", async (context) => {
     const request = JumpTimelineRequestSchema.parse(await jsonBody(context.req.raw));
-    const state = jumpCampaignTimeline(parseCampaignState(store.read()), request.cadence);
+    const campaign = parseCampaignState(store.read());
+    if ("cadence" in request && request.cadence !== "major") {
+      const state = jumpCampaignTimeline(campaign, request.cadence);
+      store.replace(state);
+      return context.json({ campaign: store.read(), stateHash: store.stateHash() });
+    }
+    const reactionAuthor = reactionAuthors[campaign.plannerProvider];
+    if (reactionAuthor === undefined) {
+      throw new ProviderTurnError(503, "provider_unavailable");
+    }
+    const snapshotHash = store.stateHash();
+    let state: CampaignState;
+    try {
+      state = await advanceCampaignTimelineProgression({
+        state: campaign,
+        progression: "progression" in request ? request.progression : { mode: "until_major_event" },
+        reactionAuthor,
+      });
+    } catch (error: unknown) {
+      if (error instanceof RangeError) {
+        throw error;
+      }
+      throw new ProviderTurnError(503, "provider_unavailable");
+    }
+    if (store.stateHash() !== snapshotHash) {
+      throw new ProviderTurnError(409, "campaign_conflict");
+    }
     store.replace(state);
     return context.json({ campaign: store.read(), stateHash: store.stateHash() });
   });
@@ -409,6 +473,10 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
     if (newsAuthor === undefined) {
       throw new ProviderTurnError(503, "provider_unavailable");
     }
+    const reactionAuthor = reactionAuthors[request.provider];
+    if (reactionAuthor === undefined) {
+      throw new ProviderTurnError(503, "provider_unavailable");
+    }
     const result = await executeProviderTurn({
       store,
       requestId: request.requestId,
@@ -427,9 +495,15 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
           orderText: request.orderText,
           cadence: request.cadence,
         });
-        return finalizeCampaignNews({
+        const withFeedback = await finalizeCampaignWorldFeedback({
           before: campaign,
           reduced,
+          eventFactory: worldEventFactory,
+          reactionAuthor,
+        });
+        return finalizeCampaignNews({
+          before: campaign,
+          reduced: withFeedback,
           plan,
           orderText: request.orderText,
           author: newsAuthor,

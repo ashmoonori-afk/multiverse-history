@@ -88,8 +88,27 @@ export const MoveUnitRequestSchema = z
   })
   .strict();
 
-export const JumpTimelineRequestSchema = z
+const LegacyTimelineJumpRequestSchema = z
   .object({
     cadence: z.enum(["week", "month", "quarter", "year", "major"]),
   })
   .strict();
+
+const TimelineProgressionRequestSchema = z
+  .object({
+    progression: z.discriminatedUnion("mode", [
+      z
+        .object({
+          mode: z.literal("months"),
+          months: z.number().safe().int().min(1).max(18),
+        })
+        .strict(),
+      z.object({ mode: z.literal("until_major_event") }).strict(),
+    ]),
+  })
+  .strict();
+
+export const JumpTimelineRequestSchema = z.union([
+  LegacyTimelineJumpRequestSchema,
+  TimelineProgressionRequestSchema,
+]);

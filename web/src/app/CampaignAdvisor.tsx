@@ -4,7 +4,12 @@ import { ProvinceInspector } from "../features/map/ProvinceInspector";
 import { MilitaryPanel } from "../features/military/MilitaryPanel";
 import { ResolutionFeed } from "../features/resolution/ResolutionFeed";
 import { TimelinePanel } from "../features/timeline/TimelinePanel";
-import type { Campaign, TimelineCadence, TreatyClause } from "../state/campaign-store";
+import type {
+  Campaign,
+  TimelineCadence,
+  TimelineProgressionRequest,
+  TreatyClause,
+} from "../state/campaign-store";
 
 const integerFormatter = new Intl.NumberFormat("ko-KR");
 export const inspectorPanels = ["국가", "외교", "군사", "기록"] as const;
@@ -20,6 +25,7 @@ interface CampaignAdvisorProps {
   readonly onSelectPanel: (panel: InspectorPanel) => void;
   readonly busy: boolean;
   readonly onJumpTimeline: (cadence: TimelineCadence) => Promise<boolean>;
+  readonly onProgressTimeline: (progression: TimelineProgressionRequest) => Promise<boolean>;
   readonly onSave: () => Promise<boolean>;
   readonly onProposeTreaty: (targetNationId: string, clause: TreatyClause) => Promise<boolean>;
   readonly onTransferTerritory: (targetNationId: string, provinceId: string) => Promise<boolean>;
@@ -39,6 +45,7 @@ const ActivePanel = ({
   onSelectNation,
   busy,
   onJumpTimeline,
+  onProgressTimeline,
   onSave,
   onProposeTreaty,
   onTransferTerritory,
@@ -70,7 +77,14 @@ const ActivePanel = ({
         />
       );
     case "기록":
-      return <TimelinePanel campaign={campaign} onJump={onJumpTimeline} onSave={onSave} />;
+      return (
+        <TimelinePanel
+          campaign={campaign}
+          onJump={onJumpTimeline}
+          onSave={onSave}
+          onProgression={onProgressTimeline}
+        />
+      );
     case "군사":
       return (
         <MilitaryPanel
@@ -95,6 +109,7 @@ export const CampaignAdvisor = ({
   onSelectPanel,
   busy,
   onJumpTimeline,
+  onProgressTimeline,
   onSave,
   onProposeTreaty,
   onTransferTerritory,
@@ -174,6 +189,7 @@ export const CampaignAdvisor = ({
           onSelectNation={onSelectNation}
           busy={busy}
           onJumpTimeline={onJumpTimeline}
+          onProgressTimeline={onProgressTimeline}
           onSave={onSave}
           onProposeTreaty={onProposeTreaty}
           onTransferTerritory={onTransferTerritory}

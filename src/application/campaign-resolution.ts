@@ -203,10 +203,25 @@ export const createCampaignResolution = (
       ? []
       : [Object.freeze({ ...treaty, clauses: Object.freeze([...treaty.clauses]) })],
   );
+  const changedUnitOwnerIds = input.after.units.flatMap((unit) => {
+    const beforeUnit = input.before.units.find((candidate) => candidate.id === unit.id);
+    return beforeUnit === undefined ||
+      beforeUnit.provinceId !== unit.provinceId ||
+      beforeUnit.manpower !== unit.manpower
+      ? [unit.ownerNationId]
+      : [];
+  });
+  const changedConstructionOwnerIds = input.after.constructionProjects.flatMap((project) =>
+    input.before.constructionProjects.some((candidate) => candidate.id === project.id)
+      ? []
+      : [project.ownerNationId],
+  );
   const changedNationIds = unique([
     ...nationDeltas.map((delta) => delta.nationId),
     ...relationDeltas.flatMap((delta) => [delta.fromNationId, delta.toNationId]),
     ...treatyDeltas.flatMap((delta) => [delta.proposerNationId, delta.recipientNationId]),
+    ...changedUnitOwnerIds,
+    ...changedConstructionOwnerIds,
   ]);
   const changedProvinceIds = unique([
     ...input.changedProvinceIds,

@@ -11,6 +11,7 @@ import type {
   Campaign,
   StrategicPlan,
   TimelineCadence,
+  TimelineProgressionRequest,
   TreatyClause,
 } from "../state/campaign-store";
 import { CampaignAdvisor, type InspectorPanel } from "./CampaignAdvisor";
@@ -29,6 +30,7 @@ interface CampaignShellProps {
     message: string,
   ) => Promise<boolean>;
   readonly onJumpTimeline: (cadence: TimelineCadence) => Promise<boolean>;
+  readonly onProgressTimeline: (progression: TimelineProgressionRequest) => Promise<boolean>;
   readonly onSave: () => Promise<boolean>;
   readonly onExport: () => Promise<string | null>;
   readonly onProposeTreaty: (targetNationId: string, clause: TreatyClause) => Promise<boolean>;
@@ -63,6 +65,7 @@ export const CampaignShell = ({
   onAdvance,
   onSendChat,
   onJumpTimeline,
+  onProgressTimeline,
   onSave,
   onExport,
   onProposeTreaty,
@@ -201,6 +204,7 @@ export const CampaignShell = ({
             onSelectPanel={setActivePanel}
             busy={busy}
             onJumpTimeline={onJumpTimeline}
+            onProgressTimeline={onProgressTimeline}
             onSave={onSave}
             onProposeTreaty={onProposeTreaty}
             onTransferTerritory={onTransferTerritory}

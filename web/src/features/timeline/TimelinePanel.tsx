@@ -3,14 +3,25 @@ import { useState } from "react";
 import type { Campaign, TimelineCadence } from "../../state/campaign-store";
 import { TimelineNews } from "./TimelineNews";
 import { TimelineProcessedEventList } from "./TimelineProcessedEventList";
+import { TimelineProgression, type TimelineProgressionRequest } from "./TimelineProgression";
+
+export type { TimelineProgressionRequest };
 
 interface TimelinePanelProps {
   readonly campaign: Campaign;
   readonly onJump: (cadence: TimelineCadence) => Promise<boolean>;
   readonly onSave: () => Promise<boolean>;
+  readonly onProgression?:
+    | ((progression: TimelineProgressionRequest) => Promise<boolean>)
+    | undefined;
 }
 
-export const TimelinePanel = ({ campaign, onJump, onSave }: TimelinePanelProps): JSX.Element => {
+export const TimelinePanel = ({
+  campaign,
+  onJump,
+  onSave,
+  onProgression,
+}: TimelinePanelProps): JSX.Element => {
   const [selectedEventIndex, setSelectedEventIndex] = useState(() =>
     Math.max(0, campaign.resolutions.length - 1),
   );
@@ -140,6 +151,7 @@ export const TimelinePanel = ({ campaign, onJump, onSave }: TimelinePanelProps):
           시뮬레이션 저장
         </button>
       </fieldset>
+      <TimelineProgression campaign={campaign} onProgression={onProgression} />
       <TimelineProcessedEventList
         resolutions={campaign.resolutions}
         selectedIndex={selectedEventIndex}

@@ -19,6 +19,7 @@ export const App = (): JSX.Element => {
   const advanceTurn = useCampaignStore((state) => state.advanceTurn);
   const sendChat = useCampaignStore((state) => state.sendChat);
   const jumpTimeline = useCampaignStore((state) => state.jumpTimeline);
+  const progressTimeline = useCampaignStore((state) => state.progressTimeline);
   const saveCampaign = useCampaignStore((state) => state.saveCampaign);
   const exportCampaign = useCampaignStore((state) => state.exportCampaign);
   const importCampaign = useCampaignStore((state) => state.importCampaign);
@@ -63,6 +64,7 @@ export const App = (): JSX.Element => {
       onAdvance={advanceTurn}
       onSendChat={sendChat}
       onJumpTimeline={jumpTimeline}
+      onProgressTimeline={progressTimeline}
       onSave={saveCampaign}
       onExport={exportCampaign}
       onProposeTreaty={proposeTreaty}

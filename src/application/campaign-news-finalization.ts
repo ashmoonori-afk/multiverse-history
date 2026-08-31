@@ -52,6 +52,12 @@ const newsContext = (input: FinalizeCampaignNewsInput, resolutionIndex: number):
       constructionProjects: input.reduced.constructionProjects.filter(
         (project) => project.startedTurn === resolution.turn,
       ),
+      worldEvents: resolution.worldEventIds.map((eventId) =>
+        input.reduced.worldEvents.find((event) => event.id === eventId),
+      ),
+      nationReactions: resolution.reactionIds.map((reactionId) =>
+        input.reduced.nationReactions.find((reaction) => reaction.id === reactionId),
+      ),
     },
     planFacts: {
       playerIntentTypes: input.plan.playerIntents.map((intent) => intent.type),

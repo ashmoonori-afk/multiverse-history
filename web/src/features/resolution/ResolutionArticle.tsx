@@ -1,4 +1,5 @@
 import type { CampaignResolution, TimelineCadence } from "../../state/campaign-store";
+import { ResolutionWorldFeedback } from "./ResolutionWorldFeedback";
 import "./campaign-result.css";
 import "./processed-news.css";
 
@@ -140,6 +141,8 @@ export const ResolutionArticle = ({
           </div>
         </dl>
       </section>
+
+      <ResolutionWorldFeedback resolution={resolution} nationNameById={nationNameById} />
 
       <details className="resolution_map_disclosure">
         <summary data-testid="resolution-map-impact">지도 변경 보기</summary>
