@@ -20,9 +20,15 @@ const invest = (
   state: CampaignState,
   intent: Extract<StrategicIntent, { readonly type: "economy.invest" }>,
   turn: number,
+  sequence: number,
 ): CampaignState => {
   const actor = state.nations.find((nation) => nation.id === intent.actorNationId);
-  if (actor === undefined || actor.treasuryCredits < intent.budgetCredits) {
+  const province = state.provinces.find((candidate) => candidate.id === intent.provinceId);
+  if (
+    actor === undefined ||
+    province?.ownerNationId !== actor.id ||
+    actor.treasuryCredits < intent.budgetCredits
+  ) {
     throw new RangeError("INTENT_ECONOMY_INVALID");
   }
   const infrastructureGainBps = Math.min(500, intent.budgetCredits * 10);
@@ -40,6 +46,18 @@ const invest = (
       treasuryCredits: nation.treasuryCredits - intent.budgetCredits,
       infrastructureBps: Math.min(10_000, nation.infrastructureBps + infrastructureGainBps),
     })),
+    constructionProjects: Object.freeze([
+      ...state.constructionProjects,
+      Object.freeze({
+        id: `cst_${turn}_${sequence}`,
+        ownerNationId: actor.id,
+        provinceId: province.id,
+        kind: "rail" as const,
+        investedCredits: intent.budgetCredits,
+        startedTurn: turn,
+        status: "active" as const,
+      }),
+    ]),
     events: Object.freeze([...state.events, chronicle.textKo]),
   };
 };
@@ -136,7 +154,7 @@ const applyIntent = (
 ): CampaignState => {
   switch (intent.type) {
     case "economy.invest":
-      return invest(state, intent, turn);
+      return invest(state, intent, turn, sequence);
     case "diplomacy.propose_treaty":
       return proposeTrade(state, intent, turn, sequence);
     case "military.recruit":

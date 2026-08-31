@@ -25,6 +25,28 @@ export interface OpenHistoriaLabelProperties {
   readonly isCapital: boolean;
 }
 
+export interface OpenHistoriaConstructionProperties {
+  readonly projectId: string;
+  readonly provinceId: string;
+  readonly ownerNationId: string;
+  readonly ownerName: string;
+  readonly kind: string;
+  readonly investedCredits: number;
+  readonly startedTurn: number;
+  readonly accentColor: string;
+}
+
+export interface OpenHistoriaUnitProperties {
+  readonly unitId: string;
+  readonly provinceId: string;
+  readonly ownerNationId: string;
+  readonly ownerName: string;
+  readonly manpower: number;
+  readonly stackIndex: number;
+  readonly strengthLabel: string;
+  readonly accentColor: string;
+}
+
 interface RawRegionProperties {
   readonly provinceId: string;
   readonly sourceNames: readonly string[];
@@ -36,6 +58,22 @@ interface RawRegionProperties {
 type RawCollection = FeatureCollection<Geometry, RawRegionProperties>;
 export type RegionCollection = FeatureCollection<Geometry, OpenHistoriaRegionProperties>;
 export type LabelCollection = FeatureCollection<Point, OpenHistoriaLabelProperties>;
+export type ConstructionCollection = FeatureCollection<Point, OpenHistoriaConstructionProperties>;
+export type UnitCollection = FeatureCollection<Point, OpenHistoriaUnitProperties>;
+
+/** The slice of persisted campaign state the map presentation lane reads. */
+export type MapCampaign = Pick<
+  Campaign,
+  "provinces" | "resolutions" | "units" | "constructionProjects"
+>;
+
+export interface OpenHistoriaMapData {
+  readonly regions: RegionCollection;
+  readonly labels: LabelCollection;
+  readonly constructions: ConstructionCollection;
+  readonly units: UnitCollection;
+  readonly unitProvinceIds: readonly string[];
+}
 
 const rawCollection = eastAsiaProvinceCollection as unknown as RawCollection;
 
@@ -58,10 +96,19 @@ const nationColor = (nationId: string): string => {
   return `hsl(${hash % 360} 54% 55%)`;
 };
 
+const anchorByProvinceId: ReadonlyMap<string, readonly [number, number]> = new Map(
+  rawCollection.features.map((feature) => [
+    feature.properties.provinceId,
+    feature.properties.labelAnchor,
+  ]),
+);
+
+const strengthLabel = (manpower: number): string => `${Math.round(manpower / 1000)}k`;
+
 export const buildOpenHistoriaMapData = (
-  campaign: Campaign,
+  campaign: MapCampaign,
   nationNameById: ReadonlyMap<string, string>,
-): { readonly regions: RegionCollection; readonly labels: LabelCollection } => {
+): OpenHistoriaMapData => {
   const provinceById = new Map(campaign.provinces.map((province) => [province.id, province]));
   const changedProvinceIds = new Set(
     campaign.resolutions.at(-1)?.worldImpact.changedProvinceIds ?? [],
@@ -111,5 +158,68 @@ export const buildOpenHistoriaMapData = (
     })),
   };
 
-  return { regions, labels };
+  const constructions: ConstructionCollection = {
+    type: "FeatureCollection",
+    features: campaign.constructionProjects.flatMap((project) => {
+      const anchor = anchorByProvinceId.get(project.provinceId);
+      if (anchor === undefined) {
+        return [];
+      }
+      return [
+        {
+          type: "Feature" as const,
+          id: project.id,
+          properties: {
+            projectId: project.id,
+            provinceId: project.provinceId,
+            ownerNationId: project.ownerNationId,
+            ownerName: nationNameById.get(project.ownerNationId) ?? project.ownerNationId,
+            kind: project.kind,
+            investedCredits: project.investedCredits,
+            startedTurn: project.startedTurn,
+            accentColor: nationColor(project.ownerNationId),
+          },
+          geometry: { type: "Point" as const, coordinates: [...anchor] },
+        },
+      ];
+    }),
+  };
+
+  const stackByProvinceId = new Map<string, number>();
+  const units: UnitCollection = {
+    type: "FeatureCollection",
+    features: campaign.units.flatMap((unit) => {
+      const anchor = anchorByProvinceId.get(unit.provinceId);
+      if (anchor === undefined) {
+        return [];
+      }
+      const stackIndex = stackByProvinceId.get(unit.provinceId) ?? 0;
+      stackByProvinceId.set(unit.provinceId, stackIndex + 1);
+      return [
+        {
+          type: "Feature" as const,
+          id: unit.id,
+          properties: {
+            unitId: unit.id,
+            provinceId: unit.provinceId,
+            ownerNationId: unit.ownerNationId,
+            ownerName: nationNameById.get(unit.ownerNationId) ?? unit.ownerNationId,
+            manpower: unit.manpower,
+            stackIndex,
+            strengthLabel: strengthLabel(unit.manpower),
+            accentColor: nationColor(unit.ownerNationId),
+          },
+          geometry: { type: "Point" as const, coordinates: [...anchor] },
+        },
+      ];
+    }),
+  };
+
+  return {
+    regions,
+    labels,
+    constructions,
+    units,
+    unitProvinceIds: [...stackByProvinceId.keys()].sort(),
+  };
 };

@@ -17,14 +17,19 @@ import {
 } from "./open-historia-map-data";
 import {
   capitalLayer,
+  constructionMarkerLayer,
+  OPEN_HISTORIA_CONSTRUCTION_SOURCE,
   OPEN_HISTORIA_LABEL_SOURCE,
   OPEN_HISTORIA_REGION_SOURCE,
+  OPEN_HISTORIA_UNIT_SOURCE,
   openHistoriaMapStyle,
   regionFillLayer,
   regionLabelLayer,
   regionLineLayer,
   selectedFillLayer,
   selectedLineLayer,
+  unitCounterLayer,
+  unitStrengthLabelLayer,
 } from "./open-historia-map-style";
 
 interface WorldMapProps {
@@ -121,6 +126,9 @@ export const WorldMap = ({
       data-map-engine="maplibre"
       data-map-data-state={loaded ? "ready" : "loading"}
       data-region-count={mapData.regions.features.length}
+      data-construction-count={mapData.constructions.features.length}
+      data-unit-count={mapData.units.features.length}
+      data-unit-provinces={mapData.unitProvinceIds.join(" ")}
       data-camera={cameraAttribute(camera)}
       aria-label="Open Historia MapLibre 동아시아 전략 지도"
     >
@@ -140,7 +148,13 @@ export const WorldMap = ({
         cursor={cursor}
         interactiveLayerIds={[regionFillLayer.id]}
         onClick={selectFeature}
-        onLoad={() => setLoaded(true)}
+        onLoad={(event) => {
+          setLoaded(true);
+          if (import.meta.env.DEV) {
+            // Dev-only handle so end-to-end runs can read live MapLibre sources.
+            Reflect.set(window, "__openHistoriaMap", event.target);
+          }
+        }}
         onMove={updateCamera}
         onMouseDown={() => setCursor("grabbing")}
         onMouseUp={() => setCursor("grab")}
@@ -158,6 +172,13 @@ export const WorldMap = ({
         <Source id={OPEN_HISTORIA_LABEL_SOURCE} type="geojson" data={mapData.labels}>
           <Layer {...regionLabelLayer} />
           <Layer {...capitalLayer} />
+        </Source>
+        <Source id={OPEN_HISTORIA_CONSTRUCTION_SOURCE} type="geojson" data={mapData.constructions}>
+          <Layer {...constructionMarkerLayer} />
+        </Source>
+        <Source id={OPEN_HISTORIA_UNIT_SOURCE} type="geojson" data={mapData.units}>
+          <Layer {...unitCounterLayer} />
+          <Layer {...unitStrengthLabelLayer} />
         </Source>
         {selectedRegion === undefined ? null : (
           <Popup
