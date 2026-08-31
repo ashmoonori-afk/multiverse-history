@@ -12,6 +12,13 @@ interface CampaignChatDrawerProps {
   readonly busy: boolean;
   readonly onClose: () => void;
   readonly onSendChat: (targetNationId: string, message: string) => Promise<boolean>;
+  /**
+   * Ordered multilateral send seam. When absent the drawer degrades to the bilateral
+   * `onSendChat` contract and only the first participant receives the message.
+   */
+  readonly onSendGroupChat?:
+    | ((targetNationIds: readonly string[], message: string) => Promise<boolean>)
+    | undefined;
 }
 
 export const CampaignChatDrawer = ({
@@ -20,6 +27,7 @@ export const CampaignChatDrawer = ({
   busy,
   onClose,
   onSendChat,
+  onSendGroupChat,
 }: CampaignChatDrawerProps): JSX.Element => {
   const targetNations = campaign.nations.filter((nation) => nation.id !== campaign.playerNationId);
   const rooms = projectCampaignChatRooms({
@@ -29,14 +37,34 @@ export const CampaignChatDrawer = ({
   });
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
   const [startingNew, setStartingNew] = useState(false);
-  const [newTargetNationId, setNewTargetNationId] = useState(targetNations[0]?.id ?? "");
+  const [newParticipantNationIds, setNewParticipantNationIds] = useState<readonly string[]>(() =>
+    targetNations[0] === undefined ? [] : [targetNations[0].id],
+  );
   const [readRoomKeys, setReadRoomKeys] = useState<ReadonlySet<string>>(() => new Set());
   const selectedRoom = rooms.find((room) => room.id === selectedRoomId);
   const visibleRooms = rooms.map((room) =>
     readRoomKeys.has(`${campaign.turn}:${room.id}`) ? { ...room, unreadCount: 0 } : room,
   );
-  const targetNationId = selectedRoom?.counterpartNationId ?? newTargetNationId;
   const showThread = startingNew || selectedRoom !== undefined;
+
+  const sendToParticipants = async (
+    targetNationIds: readonly string[],
+    message: string,
+  ): Promise<boolean> => {
+    const [primaryNationId] = targetNationIds;
+    if (primaryNationId === undefined) {
+      return false;
+    }
+    const sent =
+      onSendGroupChat === undefined
+        ? await onSendChat(primaryNationId, message)
+        : await onSendGroupChat(targetNationIds, message);
+    if (sent && startingNew) {
+      setStartingNew(false);
+      setSelectedRoomId(null);
+    }
+    return sent;
+  };
 
   return (
     <aside className="chat_drawer" aria-label="외교 채팅" data-testid="chat-drawer">
@@ -54,22 +82,22 @@ export const CampaignChatDrawer = ({
           campaign={campaign}
           room={selectedRoom}
           nationNameById={nationNameById}
-          targetNationId={targetNationId}
+          participantNationIds={newParticipantNationIds}
           busy={busy}
           startingNew={startingNew}
           onBack={() => {
             setSelectedRoomId(null);
             setStartingNew(false);
           }}
-          onChangeTarget={setNewTargetNationId}
-          onSendChat={async (nationId, message) => {
-            const sent = await onSendChat(nationId, message);
-            if (sent && startingNew) {
-              setStartingNew(false);
-              setSelectedRoomId(null);
-            }
-            return sent;
-          }}
+          onSelectPrimaryParticipant={(nationId) => setNewParticipantNationIds([nationId])}
+          onToggleParticipant={(nationId) =>
+            setNewParticipantNationIds((current) =>
+              current.includes(nationId)
+                ? current.filter((participantId) => participantId !== nationId)
+                : [...current, nationId],
+            )
+          }
+          onSendChat={sendToParticipants}
         />
       ) : (
         <CampaignChatRoomList

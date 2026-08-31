@@ -280,7 +280,10 @@ export interface CampaignStoreState {
     options?: CampaignCreationOptions,
   ) => Promise<boolean>;
   readonly advanceTurn: (orderText: string, cadence?: TimelineCadence) => Promise<boolean>;
-  readonly sendChat: (targetNationId: string, message: string) => Promise<boolean>;
+  readonly sendChat: (
+    targetNationIdOrIds: string | readonly string[],
+    message: string,
+  ) => Promise<boolean>;
   readonly jumpTimeline: (cadence: TimelineCadence) => Promise<boolean>;
   readonly saveCampaign: () => Promise<boolean>;
   readonly exportCampaign: () => Promise<string | null>;
@@ -434,7 +437,7 @@ export const useCampaignStore = create<CampaignStoreState>((set, get) => ({
       return false;
     }
   },
-  sendChat: async (targetNationId, message) => {
+  sendChat: async (targetNationIdOrIds, message) => {
     if (get().campaign === null) {
       return false;
     }
@@ -444,7 +447,13 @@ export const useCampaignStore = create<CampaignStoreState>((set, get) => ({
         await fetch("/api/diplomacy/chat", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ targetNationId, message, provider: get().provider }),
+          body: JSON.stringify({
+            ...(typeof targetNationIdOrIds === "string"
+              ? { targetNationId: targetNationIdOrIds }
+              : { targetNationIds: [...targetNationIdOrIds] }),
+            message,
+            provider: get().provider,
+          }),
         }),
         CampaignResponseSchema,
       );

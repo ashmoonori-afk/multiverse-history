@@ -26,13 +26,41 @@ export const ProposeTreatyRequestSchema = z
   })
   .strict();
 
-export const DiplomacyChatRequestSchema = z
+const DiplomacyChatFields = {
+  message: z.string().trim().min(1).max(4_000),
+  provider: z.enum(["deterministic", "codex", "claude"]).default("deterministic"),
+} as const;
+
+const SingularDiplomacyChatRequestSchema = z
   .object({
     targetNationId: z.string().regex(/^nat_[a-z0-9_]+$/),
-    message: z.string().trim().min(1).max(4_000),
-    provider: z.enum(["deterministic", "codex", "claude"]).default("deterministic"),
+    ...DiplomacyChatFields,
   })
   .strict();
+
+const GroupDiplomacyChatRequestSchema = z
+  .object({
+    targetNationIds: z
+      .array(z.string().regex(/^nat_[a-z0-9_]+$/))
+      .min(1)
+      .max(8)
+      .refine((nationIds) => new Set(nationIds).size === nationIds.length, {
+        message: "CHAT_TARGETS_DUPLICATED",
+      }),
+    ...DiplomacyChatFields,
+  })
+  .strict();
+
+export const DiplomacyChatRequestSchema = z
+  .union([GroupDiplomacyChatRequestSchema, SingularDiplomacyChatRequestSchema])
+  .transform((request) => ({
+    targetNationIds:
+      "targetNationIds" in request
+        ? Object.freeze([...request.targetNationIds])
+        : Object.freeze([request.targetNationId]),
+    message: request.message,
+    provider: request.provider,
+  }));
 
 export const TransferTerritoryRequestSchema = z
   .object({

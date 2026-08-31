@@ -24,7 +24,10 @@ interface CampaignShellProps {
   readonly saveStatus: string | null;
   readonly onNewCampaign: () => void;
   readonly onAdvance: (orderText: string, cadence?: TimelineCadence) => Promise<boolean>;
-  readonly onSendChat: (targetNationId: string, message: string) => Promise<boolean>;
+  readonly onSendChat: (
+    targetNationIdOrIds: string | readonly string[],
+    message: string,
+  ) => Promise<boolean>;
   readonly onJumpTimeline: (cadence: TimelineCadence) => Promise<boolean>;
   readonly onSave: () => Promise<boolean>;
   readonly onExport: () => Promise<string | null>;
@@ -166,6 +169,7 @@ export const CampaignShell = ({
             busy={busy}
             onClose={closeChat}
             onSendChat={onSendChat}
+            onSendGroupChat={onSendChat}
           />
         )}
         actionsContent={

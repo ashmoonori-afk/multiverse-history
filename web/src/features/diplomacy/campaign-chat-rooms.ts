@@ -3,6 +3,7 @@ import type { CampaignChatMessage } from "../../state/campaign-store";
 export interface CampaignChatRoom {
   readonly id: string;
   readonly counterpartNationId: string;
+  readonly counterpartNationIds: readonly string[];
   readonly topic: CampaignChatMessage["topic"];
   readonly subjectKo: string;
   readonly previewKo: string;
@@ -25,8 +26,21 @@ const subjectByTopic: Readonly<Record<CampaignChatMessage["topic"], string>> = O
   general: "외교 회담",
 });
 
-const counterpartNationId = (message: CampaignChatMessage, playerNationId: string): string =>
-  message.speakerNationId === playerNationId ? message.targetNationId : message.speakerNationId;
+const counterpartNationIds = (
+  message: CampaignChatMessage,
+  playerNationId: string,
+): readonly string[] => {
+  const participants =
+    message.participantNationIds.length > 0
+      ? message.participantNationIds
+      : [message.speakerNationId, message.targetNationId];
+  return participants.filter((nationId) => nationId !== playerNationId);
+};
+
+const roomKey = (message: CampaignChatMessage, counterpartIds: readonly string[]): string =>
+  message.roomId.length > 0
+    ? message.roomId
+    : `${counterpartIds[0] ?? message.speakerNationId}:${message.topic}`;
 
 export const projectCampaignChatRooms = ({
   messages,
@@ -35,11 +49,10 @@ export const projectCampaignChatRooms = ({
 }: ProjectCampaignChatRoomsInput): readonly CampaignChatRoom[] => {
   const grouped = new Map<string, CampaignChatMessage[]>();
   for (const message of messages) {
-    const counterpartId = counterpartNationId(message, playerNationId);
-    const roomId = `${counterpartId}:${message.topic}`;
-    const roomMessages = grouped.get(roomId);
+    const key = roomKey(message, counterpartNationIds(message, playerNationId));
+    const roomMessages = grouped.get(key);
     if (roomMessages === undefined) {
-      grouped.set(roomId, [message]);
+      grouped.set(key, [message]);
     } else {
       roomMessages.push(message);
     }
@@ -49,12 +62,18 @@ export const projectCampaignChatRooms = ({
     [...grouped.entries()]
       .map(([id, roomMessages]) => {
         const latestMessage = roomMessages.reduce((_, current) => current);
-        const counterpartId = counterpartNationId(latestMessage, playerNationId);
+        const counterpartIds = [
+          ...new Set(
+            roomMessages.flatMap((message) => counterpartNationIds(message, playerNationId)),
+          ),
+        ];
+        const subjectKo = subjectByTopic[latestMessage.topic];
         return Object.freeze({
           id,
-          counterpartNationId: counterpartId,
+          counterpartNationId: counterpartIds[0] ?? latestMessage.speakerNationId,
+          counterpartNationIds: Object.freeze(counterpartIds),
           topic: latestMessage.topic,
-          subjectKo: subjectByTopic[latestMessage.topic],
+          subjectKo: counterpartIds.length > 1 ? `다자 ${subjectKo}` : subjectKo,
           previewKo: latestMessage.text,
           latestTurn: latestMessage.turn,
           latestDate: latestMessage.date,

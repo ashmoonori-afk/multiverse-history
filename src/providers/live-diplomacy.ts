@@ -11,6 +11,7 @@ export interface LiveDiplomacyInput {
   readonly provider: ProviderId;
   readonly playerNationName: string;
   readonly targetNationName: string;
+  readonly roomParticipantNationNames?: readonly string[];
   readonly playerMessage: string;
   readonly decision: CampaignChatDecision;
   readonly stateJson: string;
@@ -24,11 +25,12 @@ export interface LiveGroupDiplomacyInput extends LiveDiplomacyInput {
 
 const buildDiplomacyPrompt = (
   input: LiveDiplomacyInput,
-  participantNationNames: readonly string[],
+  speakingNationNames: readonly string[],
 ): string =>
   [
     "Pax Historia 외교 역할극",
-    `당신은 ${participantNationNames.join(", ")}의 외교 책임자들이다.`,
+    `당신은 ${speakingNationNames.join(", ")}의 외교 책임자들이다.`,
+    `대화방 전체 참가국: ${(input.roomParticipantNationNames ?? speakingNationNames).join(", ")}`,
     `${input.playerNationName}의 플레이어와 국가 대 국가로 대화한다.`,
     "최근 사건, 조약, 관계, 전체 대화 기록과 국가 식별자는 STATE_JSON에 있다.",
     "각 reply의 speakerNationId는 해당 발언국의 STATE_JSON 식별자를 사용한다.",

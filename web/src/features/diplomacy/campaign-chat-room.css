@@ -238,7 +238,89 @@
 }
 
 .chat_thread_target {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: var(--space-2);
   margin-block: var(--space-1);
+}
+
+.chat_participants {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chat_participant {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-block-size: 2.75rem;
+  padding-inline: var(--space-3);
+  border: 1px solid var(--oh-active-stroke);
+  border-radius: var(--oh-radius-2xl);
+  background: var(--oh-active-bg);
+  color: var(--oh-text);
+  font-size: var(--text-xs);
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.chat_participant_order {
+  display: grid;
+  place-items: center;
+  min-inline-size: 1.35rem;
+  block-size: 1.35rem;
+  border-radius: var(--oh-radius-sm);
+  background: var(--color-selection);
+  color: var(--color-canvas);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.chat_participant_dismiss {
+  color: var(--oh-text-3);
+  font-size: var(--text-sm);
+  line-height: 1;
+}
+
+button.chat_participant {
+  transition: transform var(--motion-fast) var(--ease-enter);
+}
+
+button.chat_participant:hover .chat_participant_dismiss,
+button.chat_participant:focus-visible .chat_participant_dismiss {
+  color: var(--color-conflict);
+}
+
+button.chat_participant:active {
+  transform: scale(0.96);
+}
+
+.chat_room_participant_count {
+  display: inline-block;
+  min-inline-size: 1.9rem;
+  margin-inline-end: var(--space-2);
+  padding-inline: var(--space-1);
+  border: 1px solid var(--oh-active-stroke);
+  border-radius: var(--oh-radius-sm);
+  color: var(--color-selection);
+  font-style: normal;
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button.chat_participant {
+    transition: none;
+  }
+
+  button.chat_participant:active {
+    transform: none;
+  }
 }
 
 .chat_thread_messages {
@@ -263,5 +345,13 @@
 
   .chat_room_marks {
     inline-size: 2.35rem;
+  }
+
+  .chat_participants {
+    gap: var(--space-1);
+  }
+
+  .chat_participant {
+    padding-inline: var(--space-2);
   }
 }
