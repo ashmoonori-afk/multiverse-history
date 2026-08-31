@@ -54,7 +54,7 @@ export const openHudPanel = async (
     await control.click();
   }
   await expect(control).toHaveAttribute("aria-expanded", "true");
-  await expect(page.getByRole("region", { name: panelName })).toBeVisible();
+  await expect(page.getByRole("region", { name: panelName, exact: true })).toBeVisible();
 };
 
 export const openAdvisor = async (page: Page): Promise<void> => {

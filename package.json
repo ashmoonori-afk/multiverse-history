@@ -14,7 +14,7 @@
     "check": "biome check .",
     "check:write": "biome check --write .",
     "typecheck": "tsc --noEmit",
-    "test": "bun test tests/api tests/domain tests/integration tests/persistence tests/providers tests/shared tests/web",
+    "test": "bun test tests/application tests/api tests/domain tests/integration tests/persistence tests/providers tests/shared tests/web",
     "test:e2e": "playwright test",
     "build": "bun run build:api && bun run build:web",
     "build:api": "bun build src/api/server.ts --outdir dist/api --target bun",

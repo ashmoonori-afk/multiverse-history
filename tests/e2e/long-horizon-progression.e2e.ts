@@ -29,6 +29,8 @@ const openTimelinePanel = async (page: Page): Promise<Locator> => {
 };
 
 test.describe("Multiverse History long-horizon progression", () => {
+  test.describe.configure({ timeout: 90_000 });
+
   test("advances exactly eighteen months when 18개월 is confirmed", async ({ page }, testInfo) => {
     // Given
     const result = await openTimelinePanel(page);

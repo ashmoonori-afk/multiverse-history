@@ -48,7 +48,7 @@ export const TurnResultPanel = (props: TurnResultPanelProps): JSX.Element => {
         <section className="campaign_result_panel" data-testid="campaign-result-panel">
           <header className="campaign_result_heading">
             <div>
-              <strong>타임라인</strong>
+              <strong data-testid="resolution-summary">최근 확정 결과</strong>
               <span>선택한 행동 이후 달라진 역사</span>
             </div>
           </header>

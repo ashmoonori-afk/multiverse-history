@@ -25,14 +25,20 @@ test.describe("Open Historia visible gameplay loop", () => {
     await startKoreanCampaign(page);
     await openHudPanel(page, "oh-chat", "외교 채팅");
 
-    const replies = page.getByTestId("chat-reply");
-    const replyCount = await replies.count();
+    await page.getByTestId("new-chat").click();
     await page.getByTestId("chat-target").selectOption("nat_jpn");
     await page.getByTestId("chat-input").fill("상호 통상을 제안합니다.");
+    const responsePromise = page.waitForResponse(
+      (response) => response.url().endsWith("/api/diplomacy/chat") && response.ok(),
+    );
     await page.getByTestId("send-chat").click();
-    await expect(page.getByTestId("chat-history")).toContainText("일본제국");
-    await expect(replies).toHaveCount(replyCount + 1);
-    await expect(replies.last()).toBeVisible();
+    await responsePromise;
+    const japanRoom = page.getByTestId("chat-room").filter({ hasText: "일본제국" });
+    await expect(japanRoom).toHaveCount(1);
+    await japanRoom.click();
+    await expect(page.getByTestId("chat-room-thread")).toContainText("일본제국");
+    await expect(page.getByTestId("chat-reply")).toHaveCount(1);
+    await expect(page.getByTestId("chat-reply").last()).toBeVisible();
 
     await page.getByTestId("close-chat").click();
     await expect(page.getByRole("region", { name: "외교 채팅" })).toHaveCount(0);
