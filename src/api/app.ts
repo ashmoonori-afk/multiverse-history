@@ -10,6 +10,11 @@ import {
   executeCampaignGroupChat,
 } from "../application/campaign-group-chat";
 import {
+  type CampaignNewsAuthor,
+  type CampaignNewsAuthorInput,
+  finalizeCampaignNews,
+} from "../application/campaign-news-finalization";
+import {
   type CampaignState,
   createCampaignState,
   jumpCampaignTimeline,
@@ -31,6 +36,7 @@ import { getScenarioById, listScenarios } from "../domain/scenario/registry";
 import { importCampaignExport, serializeCampaignExport } from "../persistence/export-import";
 import { planDeterministically } from "../providers/deterministic-provider";
 import { respondWithLiveDiplomacy } from "../providers/live-diplomacy";
+import { authorLiveNews } from "../providers/live-news";
 import { planWithLiveProvider } from "../providers/live-planner";
 import type { StrategicPlan } from "../providers/schemas";
 import { canonicalStringify, hashCanonical } from "../shared/canonical-json";
@@ -71,6 +77,7 @@ export interface GameAppOptions {
   readonly diplomacyResponders?: Partial<
     Readonly<Record<ProviderSelection, ProviderDiplomacyResponder>>
   >;
+  readonly newsAuthors?: Partial<Readonly<Record<ProviderSelection, CampaignNewsAuthor>>>;
 }
 
 const jsonBody = async (request: Request): Promise<unknown> => {
@@ -224,6 +231,20 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
     codex: liveDiplomacyResponder("codex"),
     claude: liveDiplomacyResponder("claude"),
     ...options.diplomacyResponders,
+  };
+  const liveNewsAuthor =
+    (provider: "codex" | "claude"): CampaignNewsAuthor =>
+    (input) =>
+      authorLiveNews({
+        provider,
+        orderText: input.orderText,
+        contextJson: input.contextJson,
+      });
+  const newsAuthors: Partial<Record<ProviderSelection, CampaignNewsAuthor>> = {
+    deterministic: async (input: CampaignNewsAuthorInput) => input.deterministicArticle,
+    codex: liveNewsAuthor("codex"),
+    claude: liveNewsAuthor("claude"),
+    ...options.newsAuthors,
   };
 
   app.use(
@@ -384,6 +405,10 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
     if (planner === undefined) {
       throw new ProviderTurnError(503, "provider_unavailable");
     }
+    const newsAuthor = newsAuthors[request.provider];
+    if (newsAuthor === undefined) {
+      throw new ProviderTurnError(503, "provider_unavailable");
+    }
     const result = await executeProviderTurn({
       store,
       requestId: request.requestId,
@@ -394,13 +419,22 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
           turn: store.read().turn,
           stateJson: canonicalStringify(store.read()),
         }),
-      reduce: (snapshot, plan) =>
-        applyStrategicPlan({
-          snapshot: parseCampaignState(snapshot),
+      prepare: async (snapshot, plan) => {
+        const campaign = parseCampaignState(snapshot);
+        const reduced = applyStrategicPlan({
+          snapshot: campaign,
           plan,
           orderText: request.orderText,
           cadence: request.cadence,
-        }),
+        });
+        return finalizeCampaignNews({
+          before: campaign,
+          reduced,
+          plan,
+          orderText: request.orderText,
+          author: newsAuthor,
+        });
+      },
     });
     return context.json({ campaign: result.state, plan: result.plan, stateHash: result.stateHash });
   });

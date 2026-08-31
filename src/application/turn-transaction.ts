@@ -18,6 +18,10 @@ export interface ExecuteProviderTurnInput {
   readonly requestId: string;
   readonly plan: () => Promise<StrategicPlan>;
   readonly reduce?: (snapshot: CampaignTurnState, plan: StrategicPlan) => CampaignTurnState;
+  readonly prepare?: (
+    snapshot: CampaignTurnState,
+    plan: StrategicPlan,
+  ) => Promise<CampaignTurnState> | CampaignTurnState;
 }
 
 export type ProviderTurnErrorCode =
@@ -89,14 +93,25 @@ export const executeProviderTurn = async (
   if (hashCanonical(input.store.read()) !== snapshotHash) {
     throw new ProviderTurnError(409, "campaign_conflict");
   }
-  const reduced = input.reduce?.(snapshot, plan) ?? snapshot;
+  let reduced: CampaignTurnState;
+  try {
+    reduced =
+      input.prepare === undefined
+        ? (input.reduce?.(snapshot, plan) ?? snapshot)
+        : await input.prepare(snapshot, plan);
+  } catch (error: unknown) {
+    throw mappedProviderError(error);
+  }
+  if (hashCanonical(input.store.read()) !== snapshotHash) {
+    throw new ProviderTurnError(409, "campaign_conflict");
+  }
+  const hasReducer = input.reduce !== undefined || input.prepare !== undefined;
   const state = Object.freeze({
     ...reduced,
     turn: snapshot.turn + 1,
-    events:
-      input.reduce === undefined
-        ? Object.freeze([...snapshot.events, `provider_plan:${input.requestId}`])
-        : reduced.events,
+    events: hasReducer
+      ? reduced.events
+      : Object.freeze([...snapshot.events, `provider_plan:${input.requestId}`]),
   });
   input.store.replace(state);
   return Object.freeze({ plan, state, stateHash: hashCanonical(state) });

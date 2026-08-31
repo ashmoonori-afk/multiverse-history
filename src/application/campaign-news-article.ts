@@ -29,8 +29,6 @@ export const CampaignNewsArticleSchema = z
   })
   .strict();
 
-const cleanSentence = (value: string): string => value.trim().replace(/[.!?]+$/u, "");
-
 const formatInteger = (value: number): string => new Intl.NumberFormat("ko-KR").format(value);
 
 const directionParticle = (value: number): "로" | "으로" => {
@@ -86,7 +84,7 @@ export const createCampaignNewsArticle = (
       : "이번 정책의 성과를 지표로 확인하고 다음 조치를 결정하겠다";
   return Object.freeze({
     headlineKo: headline(draft, nationNameById),
-    ledeKo: `‘${cleanSentence(draft.orderText)}’ 방침이 ${formatInteger(draft.advanceDays)}일간의 집행 검토를 거쳐 공식 확정됐다.`,
+    ledeKo: `확정된 정책 조치가 ${formatInteger(draft.advanceDays)}일간의 집행 검토를 거쳐 공식 발표됐다.`,
     paragraphsKo: Object.freeze([economyParagraph, diplomacyParagraph]),
     quote: Object.freeze({
       textKo: quoteTextKo,
