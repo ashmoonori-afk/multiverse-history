@@ -2,6 +2,12 @@ import { z } from "zod";
 import { create } from "zustand";
 
 import { type CampaignResolution, CampaignResolutionSchema } from "./campaign-resolution-schema";
+import {
+  CampaignConstructionProjectSchema,
+  CampaignNationReactionSchema,
+  CampaignWorldEventSchema,
+  TimelineProgressionResultSchema,
+} from "./campaign-world-schema";
 
 const IntentSchema = z.discriminatedUnion("type", [
   z
@@ -48,6 +54,9 @@ const CampaignChatMessageSchema = z
     role: z.enum(["player", "counterpart"]),
     speakerNationId: z.string(),
     targetNationId: z.string(),
+    roomId: z.string().default(""),
+    participantNationIds: z.array(z.string()).default([]),
+    sequence: z.number().int().nonnegative().default(0),
     topic: z.enum(["trade", "relations", "military", "general"]),
     intent: z.enum([
       "proposal",
@@ -145,8 +154,34 @@ const CampaignSchema = z
     lastPlan: StrategicPlanSchema.nullable(),
     resolutions: z.array(CampaignResolutionSchema),
     chatMessages: z.array(CampaignChatMessageSchema),
+    constructionProjects: z.array(CampaignConstructionProjectSchema).default([]),
+    worldEvents: z.array(CampaignWorldEventSchema).default([]),
+    nationReactions: z.array(CampaignNationReactionSchema).default([]),
+    lastProgression: TimelineProgressionResultSchema.nullable().default(null),
   })
-  .strict();
+  .strict()
+  .transform((campaign) => ({
+    ...campaign,
+    chatMessages: campaign.chatMessages.map((message) => {
+      const participantNationIds =
+        message.participantNationIds.length === 0
+          ? [...new Set([campaign.playerNationId, message.speakerNationId, message.targetNationId])]
+          : [...new Set(message.participantNationIds)];
+      const counterparts = participantNationIds
+        .filter((nationId) => nationId !== campaign.playerNationId)
+        .sort();
+      return {
+        ...message,
+        participantNationIds,
+        roomId:
+          message.roomId.length > 0
+            ? message.roomId
+            : counterparts.length === 1
+              ? `${counterparts[0]}:${message.topic}`
+              : `group:${counterparts.join("+")}:${message.topic}`,
+      };
+    }),
+  }));
 
 const CampaignResponseSchema = z
   .object({

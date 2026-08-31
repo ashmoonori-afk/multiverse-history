@@ -57,6 +57,8 @@ export interface CampaignResolution {
   readonly nationDeltas: readonly CampaignNationDelta[];
   readonly relationDeltas: readonly CampaignRelationDelta[];
   readonly treatyDeltas: readonly CampaignTreatyDelta[];
+  readonly worldEventIds: readonly string[];
+  readonly reactionIds: readonly string[];
   readonly worldImpact: CampaignWorldImpact;
 }
 
@@ -118,6 +120,8 @@ export const CampaignResolutionSchema = z
         })
         .strict(),
     ),
+    worldEventIds: z.array(z.string().regex(/^evt_[a-z0-9_]+$/)).default([]),
+    reactionIds: z.array(z.string().regex(/^rct_[a-z0-9_]+$/)).default([]),
     worldImpact: z
       .object({
         changedNationIds: z.array(z.string().regex(/^nat_[a-z0-9_]+$/)),
@@ -232,6 +236,8 @@ export const createCampaignResolution = (
     nationDeltas: Object.freeze(nationDeltas),
     relationDeltas: Object.freeze(relationDeltas),
     treatyDeltas: Object.freeze(treatyDeltas),
+    worldEventIds: Object.freeze([]),
+    reactionIds: Object.freeze([]),
     worldImpact: Object.freeze({
       changedNationIds,
       changedProvinceIds,

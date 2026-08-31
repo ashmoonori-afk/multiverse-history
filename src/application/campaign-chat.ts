@@ -16,6 +16,9 @@ export interface CampaignChatMessage {
   readonly role: "player" | "counterpart";
   readonly speakerNationId: string;
   readonly targetNationId: string;
+  readonly roomId: string;
+  readonly participantNationIds: readonly string[];
+  readonly sequence: number;
   readonly topic: CampaignChatTopic;
   readonly intent: CampaignChatIntent;
   readonly replyToMessageId?: string;
@@ -40,6 +43,9 @@ export const CampaignChatMessageSchema = z
     role: z.enum(["player", "counterpart"]),
     speakerNationId: z.string().regex(/^nat_[a-z0-9_]+$/),
     targetNationId: z.string().regex(/^nat_[a-z0-9_]+$/),
+    roomId: z.string().default(""),
+    participantNationIds: z.array(z.string().regex(/^nat_[a-z0-9_]+$/)).default([]),
+    sequence: z.number().safe().int().nonnegative().default(0),
     topic: z.enum(["trade", "relations", "military", "general"]).default("general"),
     intent: z
       .enum(["proposal", "acceptance", "rejection", "question", "statement", "acknowledgement"])
@@ -59,6 +65,40 @@ export const CampaignChatMessageSchema = z
     text: z.string().min(1).max(4_000),
   })
   .strict();
+
+const orderedUnique = (values: readonly string[]): readonly string[] =>
+  Object.freeze([...new Set(values)]);
+
+export const campaignChatRoomId = (
+  playerNationId: string,
+  participantNationIds: readonly string[],
+  topic: CampaignChatTopic,
+): string => {
+  const counterparts = [...new Set(participantNationIds)]
+    .filter((nationId) => nationId !== playerNationId)
+    .sort();
+  return counterparts.length === 1
+    ? `${counterparts[0]}:${topic}`
+    : `group:${counterparts.join("+")}:${topic}`;
+};
+
+export const normalizeCampaignChatMessage = (
+  message: CampaignChatMessage,
+  playerNationId: string,
+): CampaignChatMessage => {
+  const participantNationIds =
+    message.participantNationIds.length === 0
+      ? orderedUnique([playerNationId, message.speakerNationId, message.targetNationId])
+      : orderedUnique(message.participantNationIds);
+  return Object.freeze({
+    ...message,
+    roomId:
+      message.roomId.length === 0
+        ? campaignChatRoomId(playerNationId, participantNationIds, message.topic)
+        : message.roomId,
+    participantNationIds,
+  });
+};
 
 export interface AppendCampaignChatInput {
   readonly state: CampaignState;
@@ -100,12 +140,17 @@ export const appendCampaignChat = (input: AppendCampaignChatInput): CampaignStat
       message,
     });
   const playerMessageId = `chat_${input.state.turn}_${offset}`;
+  const participantNationIds = Object.freeze([player.id, target.id]);
+  const roomId = campaignChatRoomId(player.id, participantNationIds, decision.topic);
   const messages: readonly CampaignChatMessage[] = Object.freeze([
     Object.freeze({
       id: playerMessageId,
       role: "player" as const,
       speakerNationId: player.id,
       targetNationId: target.id,
+      roomId,
+      participantNationIds,
+      sequence: 0,
       topic: decision.topic,
       intent: decision.intent,
       ...(decision.replyToMessageId === undefined
@@ -120,6 +165,9 @@ export const appendCampaignChat = (input: AppendCampaignChatInput): CampaignStat
       role: "counterpart" as const,
       speakerNationId: target.id,
       targetNationId: player.id,
+      roomId,
+      participantNationIds,
+      sequence: 1,
       topic: decision.topic,
       intent: "acknowledgement" as const,
       replyToMessageId: playerMessageId,
@@ -168,6 +216,9 @@ export const appendIncomingCampaignChat = (
     role: "counterpart",
     speakerNationId: speaker.id,
     targetNationId: player.id,
+    roomId: campaignChatRoomId(player.id, [player.id, speaker.id], input.topic),
+    participantNationIds: Object.freeze([player.id, speaker.id]),
+    sequence: 1,
     topic: input.topic,
     intent: input.intent,
     sourceKey: input.sourceKey,

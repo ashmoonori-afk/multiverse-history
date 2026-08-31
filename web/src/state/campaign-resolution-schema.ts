@@ -66,6 +66,8 @@ export const CampaignResolutionSchema = z
         })
         .strict(),
     ),
+    worldEventIds: z.array(z.string()).default([]),
+    reactionIds: z.array(z.string()).default([]),
     worldImpact: z
       .object({
         changedNationIds: z.array(z.string()),

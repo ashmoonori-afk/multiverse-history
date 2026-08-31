@@ -6,8 +6,22 @@ import type { StrategicPlan } from "../providers/schemas";
 import { parseStrategicPlan } from "../providers/schemas";
 import { hashCanonical } from "../shared/canonical-json";
 import { parseNationId, parseScenarioId } from "../shared/ids";
-import { type CampaignChatMessage, CampaignChatMessageSchema } from "./campaign-chat";
+import {
+  type CampaignChatMessage,
+  CampaignChatMessageSchema,
+  normalizeCampaignChatMessage,
+} from "./campaign-chat";
+import {
+  type CampaignConstructionProject,
+  CampaignConstructionProjectSchema,
+} from "./campaign-construction";
+import {
+  type TimelineProgressionResult,
+  TimelineProgressionResultSchema,
+} from "./campaign-progression";
+import { type CampaignNationReaction, CampaignNationReactionSchema } from "./campaign-reaction";
 import { type CampaignResolution, CampaignResolutionSchema } from "./campaign-resolution";
+import { type CampaignWorldEvent, CampaignWorldEventSchema } from "./campaign-world-event";
 import type { CampaignStore, CampaignTurnState } from "./turn-transaction";
 
 export interface CampaignTreatyState {
@@ -50,6 +64,10 @@ export interface CampaignState extends CampaignTurnState {
   readonly lastPlan: StrategicPlan | null;
   readonly resolutions: readonly CampaignResolution[];
   readonly chatMessages: readonly CampaignChatMessage[];
+  readonly constructionProjects: readonly CampaignConstructionProject[];
+  readonly worldEvents: readonly CampaignWorldEvent[];
+  readonly nationReactions: readonly CampaignNationReaction[];
+  readonly lastProgression: TimelineProgressionResult | null;
 }
 
 const CampaignStateSchema = z
@@ -137,6 +155,10 @@ const CampaignStateSchema = z
     lastPlan: z.unknown().nullable(),
     resolutions: z.array(CampaignResolutionSchema).default([]),
     chatMessages: z.array(CampaignChatMessageSchema).default([]),
+    constructionProjects: z.array(CampaignConstructionProjectSchema).default([]),
+    worldEvents: z.array(CampaignWorldEventSchema).default([]),
+    nationReactions: z.array(CampaignNationReactionSchema).default([]),
+    lastProgression: TimelineProgressionResultSchema.nullable().default(null),
   })
   .strict();
 
@@ -188,6 +210,10 @@ export const createCampaignState = (
     lastPlan: null,
     resolutions: Object.freeze([]),
     chatMessages: Object.freeze([]),
+    constructionProjects: Object.freeze([]),
+    worldEvents: Object.freeze([]),
+    nationReactions: Object.freeze([]),
+    lastProgression: null,
   });
 };
 
@@ -229,15 +255,37 @@ export const parseCampaignState = (value: unknown): CampaignState => {
     ),
     battleReports: Object.freeze([...parsed.battleReports]),
     resolutions: Object.freeze(parsed.resolutions.map((resolution) => Object.freeze(resolution))),
+    constructionProjects: Object.freeze(
+      parsed.constructionProjects.map((project) => Object.freeze(project)),
+    ),
+    worldEvents: Object.freeze(
+      parsed.worldEvents.map((event) =>
+        Object.freeze({
+          ...event,
+          date: Object.freeze({ ...event.date }),
+          actorNationIds: Object.freeze([...event.actorNationIds]),
+          affectedNationIds: Object.freeze([...event.affectedNationIds]),
+        }),
+      ),
+    ),
+    nationReactions: Object.freeze(
+      parsed.nationReactions.map((reaction) => Object.freeze(reaction)),
+    ),
+    lastProgression:
+      parsed.lastProgression === null ? null : Object.freeze({ ...parsed.lastProgression }),
     chatMessages: Object.freeze(
       parsed.chatMessages.map((message) => {
         const { replyToMessageId, sourceKey, ...base } = message;
-        return Object.freeze({
-          ...base,
-          ...(replyToMessageId === undefined ? {} : { replyToMessageId }),
-          ...(sourceKey === undefined ? {} : { sourceKey }),
-          date: Object.freeze({ ...message.date }),
-        });
+        return normalizeCampaignChatMessage(
+          Object.freeze({
+            ...base,
+            ...(replyToMessageId === undefined ? {} : { replyToMessageId }),
+            ...(sourceKey === undefined ? {} : { sourceKey }),
+            date: Object.freeze({ ...message.date }),
+            participantNationIds: Object.freeze([...message.participantNationIds]),
+          }),
+          parsed.playerNationId,
+        );
       }),
     ),
     lastPlan,
