@@ -22,18 +22,29 @@ export type ReactionOutput = z.infer<typeof ReactionOutputSchema>;
 export const parseReactionOutput = (value: unknown): ReactionOutput =>
   ReactionOutputSchema.parse(value);
 
-export const reactionJsonSchema = (): object => ({
+export const parseReactionOutputForNation = (value: unknown, nationId: string): ReactionOutput => {
+  const output = ReactionOutputSchema.parse(value);
+  if (output.reactions.length !== 1 || output.reactions[0]?.nationId !== nationId) {
+    throw new TypeError("PROVIDER_REACTION_NATION_MISMATCH");
+  }
+  return output;
+};
+
+const reactionJsonSchemaWithNation = (nationId?: string): object => ({
   $schema: "http://json-schema.org/draft-07/schema#",
   type: "object",
   properties: {
     reactions: {
       type: "array",
       minItems: 1,
-      maxItems: 16,
+      maxItems: nationId === undefined ? 16 : 1,
       items: {
         type: "object",
         properties: {
-          nationId: { type: "string", pattern: "^nat_[a-z0-9_]+$" },
+          nationId:
+            nationId === undefined
+              ? { type: "string", pattern: "^nat_[a-z0-9_]+$" }
+              : { type: "string", enum: [nationId] },
           stance: {
             type: "string",
             enum: ["supportive", "cautious", "opposed", "neutral"],
@@ -49,3 +60,8 @@ export const reactionJsonSchema = (): object => ({
   required: ["reactions"],
   additionalProperties: false,
 });
+
+export const reactionJsonSchema = (): object => reactionJsonSchemaWithNation();
+
+export const reactionJsonSchemaForNation = (nationId: string): object =>
+  reactionJsonSchemaWithNation(nationId);

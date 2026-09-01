@@ -81,8 +81,10 @@ describe("live structured authors", () => {
   test("authors reactions through one serial structured invocation", async () => {
     // Given
     let calls = 0;
-    const runner: StructuredInvocationRunner = async () => {
+    let processInput: ProviderProcessInput | undefined;
+    const runner: StructuredInvocationRunner = async (input) => {
       calls += 1;
+      processInput = input;
       return {
         exitCode: 0,
         stdout: JSON.stringify({
@@ -107,13 +109,47 @@ describe("live structured authors", () => {
     const output = await authorLiveReactions({
       provider: "claude",
       eventJson: '{"id":"evt_1_1"}',
-      contextJson: '{"nations":["nat_jpn"]}',
+      contextJson:
+        '{"reactingNation":{"id":"nat_jpn","nameKo":"일본제국","capitalLabelKo":"도쿄"}}',
       runner,
     });
 
     // Then
     expect(output.reactions).toHaveLength(1);
     expect(calls).toBe(1);
+    const schemaFlagIndex = processInput?.args.indexOf("--json-schema") ?? -1;
+    const schemaValue = processInput?.args.at(schemaFlagIndex + 1);
+    expect(schemaFlagIndex).toBeGreaterThanOrEqual(0);
+    expect(schemaValue).toBeDefined();
+    const schema = JSON.parse(schemaValue ?? "{}");
+    expect(schema.properties.reactions.maxItems).toBe(1);
+    expect(schema.properties.reactions.items.properties.nationId.enum).toEqual(["nat_jpn"]);
+  });
+
+  test("rejects a reaction authored for a different requested nation", async () => {
+    // Given
+    const runner = claudeRunner({
+      reactions: [
+        {
+          nationId: "nat_rus",
+          stance: "cautious",
+          sentimentBps: -100,
+          statementKo: "상황을 검토하겠습니다.",
+        },
+      ],
+    });
+
+    // When
+    const invocation = authorLiveReactions({
+      provider: "claude",
+      eventJson: '{"id":"evt_1_1"}',
+      contextJson:
+        '{"reactingNation":{"id":"nat_kor","nameKo":"대한제국","capitalLabelKo":"한성"}}',
+      runner,
+    });
+
+    // Then
+    await expect(invocation).rejects.toThrow("PROVIDER_REACTION_NATION_MISMATCH");
   });
 
   test("authors diplomacy with the shared structured invocation", async () => {
