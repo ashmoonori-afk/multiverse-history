@@ -329,7 +329,7 @@ export const useCampaignStore = create<CampaignStoreState>((set, get) => ({
   busy: false,
   error: null,
   saveStatus: null,
-  provider: "deterministic",
+  provider: "codex",
   loadCampaign: async () => {
     const epoch = ++campaignLoadEpoch;
     try {
@@ -376,10 +376,10 @@ export const useCampaignStore = create<CampaignStoreState>((set, get) => ({
       plan: null,
       error: null,
       saveStatus: null,
-      provider: "deterministic",
+      provider: "codex",
     });
   },
-  createCampaign: async (scenarioId, playerNationId, provider = "deterministic", options = {}) => {
+  createCampaign: async (scenarioId, playerNationId, provider = "codex", options = {}) => {
     newCampaignRequested = false;
     campaignLoadEpoch += 1;
     set({ busy: true, error: null });

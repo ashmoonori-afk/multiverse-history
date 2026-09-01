@@ -7,9 +7,16 @@ const difficultyLabels = {
 } as const;
 
 const modelLabels = {
-  deterministic: "규칙 기반",
+  deterministic: "규칙 기반 (테스트 전용)",
   codex: "Codex",
   claude: "Claude",
+} as const;
+
+/** Player-selectable models: LLM only. The deterministic rules engine stays as a
+ * hidden test-only option so automated e2e runs can still select it. */
+const selectableModels = {
+  codex: modelLabels.codex,
+  claude: modelLabels.claude,
 } as const;
 
 interface CampaignSetupOptionsProps {
@@ -87,11 +94,14 @@ export const CampaignSetupOptions = ({
             value={provider}
             onChange={(event) => onProviderChange(event.target.value as PlannerProvider)}
           >
-            {Object.entries(modelLabels).map(([value, label]) => (
+            {Object.entries(selectableModels).map(([value, label]) => (
               <option key={value} value={value}>
                 {label}
               </option>
             ))}
+            <option value="deterministic" hidden>
+              {modelLabels.deterministic}
+            </option>
           </select>
         </label>
       </div>
