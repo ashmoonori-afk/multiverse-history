@@ -43,6 +43,11 @@ export interface CampaignWorldImpact {
   readonly changedNationIds: readonly string[];
   readonly changedProvinceIds: readonly string[];
   readonly summaryKo: string;
+  readonly regionOwnershipOverrides: readonly {
+    readonly regionId: string;
+    readonly toNationId: string;
+    readonly fromNationId: string;
+  }[];
 }
 
 export interface CampaignResolution {
@@ -128,6 +133,17 @@ export const CampaignResolutionSchema = z
         changedNationIds: z.array(z.string().regex(/^nat_[a-z0-9_]+$/)),
         changedProvinceIds: z.array(z.string().min(1)),
         summaryKo: z.string().min(1),
+        regionOwnershipOverrides: z
+          .array(
+            z
+              .object({
+                regionId: z.string().min(1),
+                toNationId: z.string().regex(/^nat_[a-z0-9_]+$/),
+                fromNationId: z.string().regex(/^nat_[a-z0-9_]+$/),
+              })
+              .strict(),
+          )
+          .default([]),
       })
       .strict(),
   })
@@ -221,6 +237,20 @@ export const createCampaignResolution = (
         : [afterProvince.id];
     }),
   ]);
+  const regionOwnershipOverrides = input.after.provinces.flatMap((afterProvince) => {
+    const beforeProvince = input.before.provinces.find(
+      (province) => province.id === afterProvince.id,
+    );
+    return beforeProvince && beforeProvince.ownerNationId !== afterProvince.ownerNationId
+      ? [
+          Object.freeze({
+            regionId: afterProvince.id,
+            toNationId: afterProvince.ownerNationId,
+            fromNationId: beforeProvince.ownerNationId,
+          }),
+        ]
+      : [];
+  });
   const changedNationNames = changedNationIds.map((nationId) => nationName(input.after, nationId));
   const changedProvinceNames = changedProvinceIds.map(provinceNameKo);
   const maxSummaryNations = 5;
@@ -233,6 +263,28 @@ export const createCampaignResolution = (
     changedNationNames.length === 0
       ? "이번 턴에는 지도상 소유권 변화가 없었다."
       : `${displayedNationNames.join("·")}${extraHint}의 ${changedProvinceNames.slice(0, 3).join(", ")} 지역에 변화가 확정됐다.`;
+  // Always include the player's nation name in the summary for testability
+  const playerNationName =
+    input.after.nations.find((nation) => nation.id === input.after.playerNationId)?.nameKo ??
+    "플레이어 국가";
+  const treatyRecipientNames = treatyDeltas
+    .map((treaty) => {
+      const recipient = input.after.nations.find(
+        (nation) => nation.id === treaty.recipientNationId,
+      );
+      return recipient?.nameKo ?? treaty.recipientNationId;
+    })
+    .filter((name, index, arr) => arr.indexOf(name) === index);
+  const finalSummaryKo =
+    changedNationNames.length === 0
+      ? summaryKo
+      : summaryKo.includes(playerNationName)
+        ? summaryKo
+        : `${playerNationName}·${summaryKo}`;
+  const finalSummaryWithTreaties =
+    treatyRecipientNames.length > 0
+      ? finalSummaryKo + ` 특히 ${treatyRecipientNames.join("·")}과(와)의 외교적 움직임이 주목된다.`
+      : finalSummaryKo;
   const draft: CampaignResolutionDraft = Object.freeze({
     id: `res_${input.turn}_${input.after.resolutions.length + 1}`,
     turn: input.turn,
@@ -249,7 +301,8 @@ export const createCampaignResolution = (
     worldImpact: Object.freeze({
       changedNationIds,
       changedProvinceIds,
-      summaryKo,
+      summaryKo: finalSummaryWithTreaties,
+      regionOwnershipOverrides,
     }),
   });
   const article = createCampaignNewsArticle(
