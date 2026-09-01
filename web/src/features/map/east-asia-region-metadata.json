@@ -3,25 +3,40 @@
     "id": "prv_rus_core",
     "labelKo": "러시아 본토",
     "terrain": "forest",
-    "neighbors": ["prv_rus_transbaikal", "prv_qing_west"]
+    "neighbors": [
+      "prv_rus_transbaikal",
+      "prv_qing_west"
+    ]
   },
   {
     "id": "prv_rus_transbaikal",
     "labelKo": "자바이칼",
     "terrain": "mountain",
-    "neighbors": ["prv_rus_core", "prv_rus_amur", "prv_qing_manchuria"]
+    "neighbors": [
+      "prv_rus_core",
+      "prv_rus_amur",
+      "prv_qing_manchuria"
+    ]
   },
   {
     "id": "prv_rus_amur",
     "labelKo": "아무르",
     "terrain": "forest",
-    "neighbors": ["prv_rus_transbaikal", "prv_rus_primorye", "prv_qing_manchuria"]
+    "neighbors": [
+      "prv_rus_transbaikal",
+      "prv_rus_primorye",
+      "prv_qing_manchuria"
+    ]
   },
   {
     "id": "prv_rus_primorye",
     "labelKo": "연해주",
     "terrain": "coast",
-    "neighbors": ["prv_rus_amur", "prv_qing_manchuria", "prv_kor_hamgyeong"],
+    "neighbors": [
+      "prv_rus_amur",
+      "prv_qing_manchuria",
+      "prv_kor_hamgyeong"
+    ],
     "marker": "city",
     "markerLabelKo": "블라디보스토크"
   },
@@ -42,7 +57,11 @@
     "id": "prv_qing_zhili",
     "labelKo": "직례",
     "terrain": "plain",
-    "neighbors": ["prv_qing_manchuria", "prv_qing_central", "prv_qing_shandong"],
+    "neighbors": [
+      "prv_qing_manchuria",
+      "prv_qing_central",
+      "prv_qing_shandong"
+    ],
     "marker": "capital",
     "markerLabelKo": "베이징"
   },
@@ -50,43 +69,72 @@
     "id": "prv_qing_shandong",
     "labelKo": "산둥",
     "terrain": "coast",
-    "neighbors": ["prv_qing_manchuria", "prv_qing_zhili", "prv_qing_jiangnan"]
+    "neighbors": [
+      "prv_qing_manchuria",
+      "prv_qing_zhili",
+      "prv_qing_jiangnan"
+    ]
   },
   {
     "id": "prv_qing_jiangnan",
     "labelKo": "강남",
     "terrain": "coast",
-    "neighbors": ["prv_qing_central", "prv_qing_shandong", "prv_qing_south"]
+    "neighbors": [
+      "prv_qing_central",
+      "prv_qing_shandong",
+      "prv_qing_south"
+    ]
   },
   {
     "id": "prv_qing_central",
     "labelKo": "중부",
     "terrain": "plain",
-    "neighbors": ["prv_qing_west", "prv_qing_zhili", "prv_qing_jiangnan", "prv_qing_south"]
+    "neighbors": [
+      "prv_qing_west",
+      "prv_qing_zhili",
+      "prv_qing_jiangnan",
+      "prv_qing_south"
+    ]
   },
   {
     "id": "prv_qing_south",
     "labelKo": "남부",
     "terrain": "plain",
-    "neighbors": ["prv_qing_west", "prv_qing_central", "prv_qing_jiangnan"]
+    "neighbors": [
+      "prv_qing_west",
+      "prv_qing_central",
+      "prv_qing_jiangnan"
+    ]
   },
   {
     "id": "prv_qing_west",
     "labelKo": "서부",
     "terrain": "mountain",
-    "neighbors": ["prv_rus_core", "prv_qing_central", "prv_qing_south"]
+    "neighbors": [
+      "prv_rus_core",
+      "prv_qing_central",
+      "prv_qing_south"
+    ]
   },
   {
     "id": "prv_kor_hamgyeong",
     "labelKo": "함경",
     "terrain": "mountain",
-    "neighbors": ["prv_rus_primorye", "prv_qing_manchuria", "prv_kor_pyeongan"]
+    "neighbors": [
+      "prv_rus_primorye",
+      "prv_qing_manchuria",
+      "prv_kor_pyeongan"
+    ]
   },
   {
     "id": "prv_kor_pyeongan",
     "labelKo": "평안",
     "terrain": "mountain",
-    "neighbors": ["prv_kor_hamgyeong", "prv_qing_manchuria", "prv_kor_hanseong"],
+    "neighbors": [
+      "prv_kor_hamgyeong",
+      "prv_qing_manchuria",
+      "prv_kor_hanseong"
+    ],
     "marker": "city",
     "markerLabelKo": "평양"
   },
@@ -94,7 +142,11 @@
     "id": "prv_kor_hanseong",
     "labelKo": "한성",
     "terrain": "plain",
-    "neighbors": ["prv_kor_pyeongan", "prv_kor_gyeonggi", "prv_kor_chungcheong"],
+    "neighbors": [
+      "prv_kor_pyeongan",
+      "prv_kor_gyeonggi",
+      "prv_kor_chungcheong"
+    ],
     "marker": "capital",
     "markerLabelKo": "한성"
   },
@@ -102,25 +154,41 @@
     "id": "prv_kor_gyeonggi",
     "labelKo": "경기",
     "terrain": "coast",
-    "neighbors": ["prv_kor_hanseong", "prv_kor_chungcheong", "prv_kor_gyeongsang"]
+    "neighbors": [
+      "prv_kor_hanseong",
+      "prv_kor_chungcheong",
+      "prv_kor_gyeongsang"
+    ]
   },
   {
     "id": "prv_kor_chungcheong",
     "labelKo": "충청",
     "terrain": "plain",
-    "neighbors": ["prv_kor_hanseong", "prv_kor_gyeonggi", "prv_kor_jeolla", "prv_kor_gyeongsang"]
+    "neighbors": [
+      "prv_kor_hanseong",
+      "prv_kor_gyeonggi",
+      "prv_kor_jeolla",
+      "prv_kor_gyeongsang"
+    ]
   },
   {
     "id": "prv_kor_jeolla",
     "labelKo": "전라",
     "terrain": "coast",
-    "neighbors": ["prv_kor_chungcheong", "prv_kor_gyeongsang"]
+    "neighbors": [
+      "prv_kor_chungcheong",
+      "prv_kor_gyeongsang"
+    ]
   },
   {
     "id": "prv_kor_gyeongsang",
     "labelKo": "경상",
     "terrain": "mountain",
-    "neighbors": ["prv_kor_gyeonggi", "prv_kor_chungcheong", "prv_kor_jeolla"],
+    "neighbors": [
+      "prv_kor_gyeonggi",
+      "prv_kor_chungcheong",
+      "prv_kor_jeolla"
+    ],
     "marker": "city",
     "markerLabelKo": "부산"
   },
@@ -128,19 +196,27 @@
     "id": "prv_jpn_hokkaido",
     "labelKo": "홋카이도",
     "terrain": "forest",
-    "neighbors": ["prv_jpn_tohoku"]
+    "neighbors": [
+      "prv_jpn_tohoku"
+    ]
   },
   {
     "id": "prv_jpn_tohoku",
     "labelKo": "도호쿠",
     "terrain": "mountain",
-    "neighbors": ["prv_jpn_hokkaido", "prv_jpn_kanto"]
+    "neighbors": [
+      "prv_jpn_hokkaido",
+      "prv_jpn_kanto"
+    ]
   },
   {
     "id": "prv_jpn_kanto",
     "labelKo": "간토",
     "terrain": "plain",
-    "neighbors": ["prv_jpn_tohoku", "prv_jpn_chubu"],
+    "neighbors": [
+      "prv_jpn_tohoku",
+      "prv_jpn_chubu"
+    ],
     "marker": "capital",
     "markerLabelKo": "도쿄"
   },
@@ -148,24 +224,1615 @@
     "id": "prv_jpn_chubu",
     "labelKo": "주부",
     "terrain": "mountain",
-    "neighbors": ["prv_jpn_kanto", "prv_jpn_kansai", "prv_jpn_chugoku_shikoku"]
+    "neighbors": [
+      "prv_jpn_kanto",
+      "prv_jpn_kansai",
+      "prv_jpn_chugoku_shikoku"
+    ]
   },
   {
     "id": "prv_jpn_kansai",
     "labelKo": "간사이",
     "terrain": "plain",
-    "neighbors": ["prv_jpn_chubu", "prv_jpn_chugoku_shikoku"]
+    "neighbors": [
+      "prv_jpn_chubu",
+      "prv_jpn_chugoku_shikoku"
+    ]
   },
   {
     "id": "prv_jpn_chugoku_shikoku",
     "labelKo": "주고쿠·시코쿠",
     "terrain": "coast",
-    "neighbors": ["prv_jpn_chubu", "prv_jpn_kansai", "prv_jpn_kyushu"]
+    "neighbors": [
+      "prv_jpn_chubu",
+      "prv_jpn_kansai",
+      "prv_jpn_kyushu"
+    ]
   },
   {
     "id": "prv_jpn_kyushu",
     "labelKo": "규슈",
     "terrain": "coast",
-    "neighbors": ["prv_jpn_chugoku_shikoku"]
+    "neighbors": [
+      "prv_jpn_chugoku_shikoku"
+    ]
+  },
+  {
+    "id": "prv_gbr_hongkong",
+    "labelKo": "홍콩",
+    "terrain": "coast",
+    "neighbors": [
+      "prv_qing_south"
+    ],
+    "marker": "city",
+    "markerLabelKo": "홍콩"
+  },
+  {
+    "id": "prv_gbr_burma",
+    "labelKo": "버마",
+    "terrain": "forest",
+    "neighbors": [
+      "prv_qing_south",
+      "prv_tha_siam",
+      "prv_fra_indochina"
+    ]
+  },
+  {
+    "id": "prv_gbr_malaya",
+    "labelKo": "말라야",
+    "terrain": "coast",
+    "neighbors": [
+      "prv_tha_siam"
+    ]
+  },
+  {
+    "id": "prv_fra_indochina",
+    "labelKo": "인도차이나",
+    "terrain": "coast",
+    "neighbors": [
+      "prv_qing_south",
+      "prv_tha_siam",
+      "prv_gbr_burma"
+    ],
+    "marker": "city",
+    "markerLabelKo": "하노이"
+  },
+  {
+    "id": "prv_deu_qingdao",
+    "labelKo": "칭다오",
+    "terrain": "coast",
+    "neighbors": [
+      "prv_qing_shandong"
+    ],
+    "marker": "city",
+    "markerLabelKo": "칭다오"
+  },
+  {
+    "id": "prv_deu_pacific",
+    "labelKo": "독일령 태평양",
+    "terrain": "coast",
+    "neighbors": []
+  },
+  {
+    "id": "prv_usa_philippines",
+    "labelKo": "필리핀",
+    "terrain": "coast",
+    "neighbors": [],
+    "marker": "city",
+    "markerLabelKo": "마닐라"
+  },
+  {
+    "id": "prv_nld_east_indies",
+    "labelKo": "네덜란드령 동인도",
+    "terrain": "coast",
+    "neighbors": [],
+    "marker": "city",
+    "markerLabelKo": "바타비아"
+  },
+  {
+    "id": "prv_tha_siam",
+    "labelKo": "시암",
+    "terrain": "plain",
+    "neighbors": [
+      "prv_gbr_burma",
+      "prv_fra_indochina",
+      "prv_gbr_malaya"
+    ],
+    "marker": "city",
+    "markerLabelKo": "방콕"
+  },
+  {
+    "id": "prv_fji_adm0",
+    "labelKo": "피지",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_tza_adm0",
+    "labelKo": "탄자니아",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_esh_adm0",
+    "labelKo": "W. Sahara",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_can_adm0",
+    "labelKo": "캐나다",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_usa_adm0",
+    "labelKo": "United States of America",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_kaz_adm0",
+    "labelKo": "카자흐스탄",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_uzb_adm0",
+    "labelKo": "우즈베키스탄",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_png_adm0",
+    "labelKo": "파푸아뉴기니",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_idn_adm0",
+    "labelKo": "인도네시아",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_arg_adm0",
+    "labelKo": "아르헨티나",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_chl_adm0",
+    "labelKo": "칠레",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_cod_adm0",
+    "labelKo": "콩고민주공화국",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_som_adm0",
+    "labelKo": "소말리아",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_ken_adm0",
+    "labelKo": "케냐",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_sdn_adm0",
+    "labelKo": "수단",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_tcd_adm0",
+    "labelKo": "차드",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_hti_adm0",
+    "labelKo": "아이티",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_dom_adm0",
+    "labelKo": "도미니카공화국",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_rus_adm0",
+    "labelKo": "Russia",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_bhs_adm0",
+    "labelKo": "바하마",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_flk_adm0",
+    "labelKo": "Falkland Is.",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_grl_adm0",
+    "labelKo": "Greenland",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_atf_adm0",
+    "labelKo": "Fr. S. Antarctic Lands",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_tls_adm0",
+    "labelKo": "동티모르",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_zaf_adm0",
+    "labelKo": "남아프리카공화국",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_lso_adm0",
+    "labelKo": "레소토",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_mex_adm0",
+    "labelKo": "멕시코",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_ury_adm0",
+    "labelKo": "우루과이",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_bra_adm0",
+    "labelKo": "브라질",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_bol_adm0",
+    "labelKo": "볼리비아",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_per_adm0",
+    "labelKo": "페루",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_col_adm0",
+    "labelKo": "콜롬비아",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_pan_adm0",
+    "labelKo": "파나마",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_cri_adm0",
+    "labelKo": "코스타리카",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_nic_adm0",
+    "labelKo": "니카라과",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_hnd_adm0",
+    "labelKo": "온두라스",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_slv_adm0",
+    "labelKo": "엘살바도르",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_gtm_adm0",
+    "labelKo": "과테말라",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_blz_adm0",
+    "labelKo": "벨리즈",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_ven_adm0",
+    "labelKo": "베네수엘라",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_guy_adm0",
+    "labelKo": "가이아나",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_sur_adm0",
+    "labelKo": "수리남",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_ecu_adm0",
+    "labelKo": "에콰도르",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_pri_adm0",
+    "labelKo": "Puerto Rico",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_jam_adm0",
+    "labelKo": "자메이카",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_cub_adm0",
+    "labelKo": "쿠바",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_zwe_adm0",
+    "labelKo": "짐바브웨",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_bwa_adm0",
+    "labelKo": "보츠와나",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_nam_adm0",
+    "labelKo": "나미비아",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_sen_adm0",
+    "labelKo": "세네갈",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_mli_adm0",
+    "labelKo": "말리",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_mrt_adm0",
+    "labelKo": "모리타니",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_ben_adm0",
+    "labelKo": "베냉",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_ner_adm0",
+    "labelKo": "니제르",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_nga_adm0",
+    "labelKo": "나이지리아",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_cmr_adm0",
+    "labelKo": "카메룬",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_tgo_adm0",
+    "labelKo": "토고",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_gha_adm0",
+    "labelKo": "가나",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_civ_adm0",
+    "labelKo": "코트디부아르",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_gin_adm0",
+    "labelKo": "기니",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_gnb_adm0",
+    "labelKo": "기니비사우",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_lbr_adm0",
+    "labelKo": "라이베리아",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_sle_adm0",
+    "labelKo": "시에라리온",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_bfa_adm0",
+    "labelKo": "부르키나파소",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_caf_adm0",
+    "labelKo": "중앙아프리카",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_cog_adm0",
+    "labelKo": "콩고",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_gab_adm0",
+    "labelKo": "가봉",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_gnq_adm0",
+    "labelKo": "적도기니",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_zmb_adm0",
+    "labelKo": "잠비아",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_mwi_adm0",
+    "labelKo": "말라위",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_moz_adm0",
+    "labelKo": "모잠비크",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_swz_adm0",
+    "labelKo": "에스와티니",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_ago_adm0",
+    "labelKo": "앙골라",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_bdi_adm0",
+    "labelKo": "부룬디",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_isr_adm0",
+    "labelKo": "이스라엘",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_lbn_adm0",
+    "labelKo": "레바논",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_mdg_adm0",
+    "labelKo": "마다가스카르",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_pse_adm0",
+    "labelKo": "팔레스타인",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_gmb_adm0",
+    "labelKo": "감비아",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_tun_adm0",
+    "labelKo": "튀니지",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_dza_adm0",
+    "labelKo": "알제리",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_jor_adm0",
+    "labelKo": "요르단",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_are_adm0",
+    "labelKo": "아랍에미리트",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_qat_adm0",
+    "labelKo": "카타르",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_kwt_adm0",
+    "labelKo": "쿠웨이트",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_irq_adm0",
+    "labelKo": "이라크",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_omn_adm0",
+    "labelKo": "오만",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_vut_adm0",
+    "labelKo": "바누아투",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_khm_adm0",
+    "labelKo": "캄보디아",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_tha_adm0",
+    "labelKo": "Thailand",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_lao_adm0",
+    "labelKo": "라오스",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_mmr_adm0",
+    "labelKo": "미얀마",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_vnm_adm0",
+    "labelKo": "베트남",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_prk_adm0",
+    "labelKo": "북한",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_kor_adm0",
+    "labelKo": "South Korea",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_mng_adm0",
+    "labelKo": "몽골",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_ind_adm0",
+    "labelKo": "인도",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_bgd_adm0",
+    "labelKo": "방글라데시",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_btn_adm0",
+    "labelKo": "부탄",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_npl_adm0",
+    "labelKo": "네팔",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_pak_adm0",
+    "labelKo": "파키스탄",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_afg_adm0",
+    "labelKo": "아프가니스탄",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_tjk_adm0",
+    "labelKo": "타지키스탄",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_kgz_adm0",
+    "labelKo": "키르기스스탄",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_tkm_adm0",
+    "labelKo": "투르크메니스탄",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_irn_adm0",
+    "labelKo": "이란",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_syr_adm0",
+    "labelKo": "시리아",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_arm_adm0",
+    "labelKo": "아르메니아",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_swe_adm0",
+    "labelKo": "스웨덴",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_blr_adm0",
+    "labelKo": "벨라루스",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_ukr_adm0",
+    "labelKo": "우크라이나",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_pol_adm0",
+    "labelKo": "폴란드",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_aut_adm0",
+    "labelKo": "오스트리아",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_hun_adm0",
+    "labelKo": "헝가리",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_mda_adm0",
+    "labelKo": "몰도바",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_rou_adm0",
+    "labelKo": "루마니아",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_ltu_adm0",
+    "labelKo": "리투아니아",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_lva_adm0",
+    "labelKo": "라트비아",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_est_adm0",
+    "labelKo": "에스토니아",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_deu_adm0",
+    "labelKo": "Germany",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_bgr_adm0",
+    "labelKo": "불가리아",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_grc_adm0",
+    "labelKo": "그리스",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_tur_adm0",
+    "labelKo": "튀르키예",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_alb_adm0",
+    "labelKo": "알바니아",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_hrv_adm0",
+    "labelKo": "크로아티아",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_che_adm0",
+    "labelKo": "스위스",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_lux_adm0",
+    "labelKo": "룩셈부르크",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_bel_adm0",
+    "labelKo": "벨기에",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_nld_adm0",
+    "labelKo": "Netherlands",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_prt_adm0",
+    "labelKo": "포르투갈",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_esp_adm0",
+    "labelKo": "스페인",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_irl_adm0",
+    "labelKo": "아일랜드",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_ncl_adm0",
+    "labelKo": "New Caledonia",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_slb_adm0",
+    "labelKo": "솔로몬제도",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_nzl_adm0",
+    "labelKo": "뉴질랜드",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_aus_adm0",
+    "labelKo": "오스트레일리아",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_lka_adm0",
+    "labelKo": "스리랑카",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_chn_adm0",
+    "labelKo": "China",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_twn_adm0",
+    "labelKo": "대만",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_ita_adm0",
+    "labelKo": "이탈리아",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_dnk_adm0",
+    "labelKo": "덴마크",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_gbr_adm0",
+    "labelKo": "United Kingdom",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_isl_adm0",
+    "labelKo": "아이슬란드",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_aze_adm0",
+    "labelKo": "아제르바이잔",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_geo_adm0",
+    "labelKo": "조지아",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_phl_adm0",
+    "labelKo": "필리핀",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_mys_adm0",
+    "labelKo": "말레이시아",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_brn_adm0",
+    "labelKo": "브루나이",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_svn_adm0",
+    "labelKo": "슬로베니아",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_fin_adm0",
+    "labelKo": "핀란드",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_svk_adm0",
+    "labelKo": "슬로바키아",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_cze_adm0",
+    "labelKo": "체코",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_eri_adm0",
+    "labelKo": "에리트레아",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_jpn_adm0",
+    "labelKo": "Japan",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_pry_adm0",
+    "labelKo": "파라과이",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_yem_adm0",
+    "labelKo": "예멘",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_sau_adm0",
+    "labelKo": "사우디아라비아",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_ata_adm0",
+    "labelKo": "Antarctica",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_cyp_adm0",
+    "labelKo": "키프로스",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_mar_adm0",
+    "labelKo": "모로코",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_egy_adm0",
+    "labelKo": "이집트",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_lby_adm0",
+    "labelKo": "리비아",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_eth_adm0",
+    "labelKo": "에티오피아",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_dji_adm0",
+    "labelKo": "지부티",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_uga_adm0",
+    "labelKo": "우간다",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_rwa_adm0",
+    "labelKo": "르완다",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_bih_adm0",
+    "labelKo": "보스니아",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_mkd_adm0",
+    "labelKo": "북마케도니아",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_srb_adm0",
+    "labelKo": "세르비아",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_mne_adm0",
+    "labelKo": "몬테네그로",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_tto_adm0",
+    "labelKo": "트리니다드토바고",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_ssd_adm0",
+    "labelKo": "남수단",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_and_adm0",
+    "labelKo": "AND",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_atg_adm0",
+    "labelKo": "ATG",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_aia_adm0",
+    "labelKo": "AIA",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_asm_adm0",
+    "labelKo": "ASM",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_abw_adm0",
+    "labelKo": "ABW",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_ala_adm0",
+    "labelKo": "ALA",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_brb_adm0",
+    "labelKo": "BRB",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_bhr_adm0",
+    "labelKo": "BHR",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_blm_adm0",
+    "labelKo": "BLM",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_bmu_adm0",
+    "labelKo": "BMU",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_bes_adm0",
+    "labelKo": "BES",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_bvt_adm0",
+    "labelKo": "BVT",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_cck_adm0",
+    "labelKo": "CCK",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_cok_adm0",
+    "labelKo": "COK",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_cpv_adm0",
+    "labelKo": "CPV",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_cuw_adm0",
+    "labelKo": "CUW",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_cxr_adm0",
+    "labelKo": "CXR",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_dma_adm0",
+    "labelKo": "DMA",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_fsm_adm0",
+    "labelKo": "FSM",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_fro_adm0",
+    "labelKo": "FRO",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_grd_adm0",
+    "labelKo": "GRD",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_guf_adm0",
+    "labelKo": "GUF",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_ggy_adm0",
+    "labelKo": "GGY",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_gib_adm0",
+    "labelKo": "GIB",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_glp_adm0",
+    "labelKo": "GLP",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_sgs_adm0",
+    "labelKo": "SGS",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_gum_adm0",
+    "labelKo": "GUM",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_hkg_adm0",
+    "labelKo": "HKG",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_hmd_adm0",
+    "labelKo": "HMD",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_imn_adm0",
+    "labelKo": "IMN",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_iot_adm0",
+    "labelKo": "IOT",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_jey_adm0",
+    "labelKo": "JEY",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_kir_adm0",
+    "labelKo": "KIR",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_com_adm0",
+    "labelKo": "COM",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_kna_adm0",
+    "labelKo": "KNA",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_cym_adm0",
+    "labelKo": "CYM",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_lca_adm0",
+    "labelKo": "LCA",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_lie_adm0",
+    "labelKo": "LIE",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_mco_adm0",
+    "labelKo": "MCO",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_maf_adm0",
+    "labelKo": "MAF",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_mhl_adm0",
+    "labelKo": "MHL",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_mac_adm0",
+    "labelKo": "MAC",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_mnp_adm0",
+    "labelKo": "MNP",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_mtq_adm0",
+    "labelKo": "MTQ",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_msr_adm0",
+    "labelKo": "MSR",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_mlt_adm0",
+    "labelKo": "MLT",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_mus_adm0",
+    "labelKo": "MUS",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_mdv_adm0",
+    "labelKo": "MDV",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_nfk_adm0",
+    "labelKo": "NFK",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_nor_adm0",
+    "labelKo": "NOR",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_nru_adm0",
+    "labelKo": "NRU",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_niu_adm0",
+    "labelKo": "NIU",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_pyf_adm0",
+    "labelKo": "PYF",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_spm_adm0",
+    "labelKo": "SPM",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_pcn_adm0",
+    "labelKo": "PCN",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_plw_adm0",
+    "labelKo": "PLW",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_reu_adm0",
+    "labelKo": "REU",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_syc_adm0",
+    "labelKo": "SYC",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_sgp_adm0",
+    "labelKo": "SGP",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_shn_adm0",
+    "labelKo": "SHN",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_sjm_adm0",
+    "labelKo": "SJM",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_smr_adm0",
+    "labelKo": "SMR",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_stp_adm0",
+    "labelKo": "STP",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_sxm_adm0",
+    "labelKo": "SXM",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_tca_adm0",
+    "labelKo": "TCA",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_tkl_adm0",
+    "labelKo": "TKL",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_ton_adm0",
+    "labelKo": "TON",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_tuv_adm0",
+    "labelKo": "TUV",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_umi_adm0",
+    "labelKo": "UMI",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_vat_adm0",
+    "labelKo": "VAT",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_vct_adm0",
+    "labelKo": "VCT",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_vgb_adm0",
+    "labelKo": "VGB",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_vir_adm0",
+    "labelKo": "VIR",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_wlf_adm0",
+    "labelKo": "WLF",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_wsm_adm0",
+    "labelKo": "WSM",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_xkk_adm0",
+    "labelKo": "XKK",
+    "terrain": "plain",
+    "neighbors": []
+  },
+  {
+    "id": "prv_myt_adm0",
+    "labelKo": "MYT",
+    "terrain": "plain",
+    "neighbors": []
   }
 ]

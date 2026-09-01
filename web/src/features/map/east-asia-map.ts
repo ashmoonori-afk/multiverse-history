@@ -23,6 +23,12 @@ export const capitalProvinceByNationId: Readonly<Record<string, string>> = Objec
   nat_jpn: "prv_jpn_kanto",
   nat_qing: "prv_qing_zhili",
   nat_rus: "prv_rus_primorye",
+  nat_gbr: "prv_gbr_hongkong",
+  nat_fra: "prv_fra_indochina",
+  nat_deu: "prv_deu_qingdao",
+  nat_usa: "prv_usa_philippines",
+  nat_nld: "prv_nld_east_indies",
+  nat_tha: "prv_tha_siam",
 });
 
 interface ProvinceGeoFeatureProperties {

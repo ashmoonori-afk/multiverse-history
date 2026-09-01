@@ -82,6 +82,12 @@ const knownNationColors: Readonly<Record<string, string>> = {
   nat_jpn: "#d7a34e",
   nat_qing: "#c46f62",
   nat_rus: "#6d9bc9",
+  nat_gbr: "#d44c7a",
+  nat_fra: "#4c7ad4",
+  nat_deu: "#8b8b8b",
+  nat_usa: "#4c8bd4",
+  nat_nld: "#e8913a",
+  nat_tha: "#a67cd4",
 };
 
 const nationColor = (nationId: string): string => {
