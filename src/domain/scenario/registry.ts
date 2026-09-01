@@ -78,7 +78,7 @@ const neutralScenario = (metadata: ScenarioPackageMetadata): ScenarioDefinition 
   const provinces = Object.freeze(
     countries.map((country) =>
       Object.freeze({
-        id: `prv_${country.alpha2.toLowerCase()}_capital`,
+        id: `prv_${country.alpha3.toLowerCase()}_adm0`,
         ownerNationId: country.id,
         population: 100_000 + Number(country.numericCode) * 1_000,
       }),

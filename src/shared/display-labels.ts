@@ -24,6 +24,15 @@ const provinceLabelsKo: Readonly<Record<string, string>> = Object.freeze({
   prv_jpn_kansai: "간사이",
   prv_jpn_chugoku_shikoku: "주고쿠·시코쿠",
   prv_jpn_kyushu: "규슈",
+  prv_gbr_hongkong: "홍콩",
+  prv_gbr_burma: "버마",
+  prv_gbr_malaya: "말라야",
+  prv_fra_indochina: "인도차이나",
+  prv_deu_qingdao: "칭다오",
+  prv_deu_pacific: "독일령 태평양",
+  prv_usa_philippines: "필리핀",
+  prv_nld_east_indies: "네덜란드령 동인도",
+  prv_tha_siam: "시암",
 });
 
 export const provinceNameKo = (provinceId: string): string =>

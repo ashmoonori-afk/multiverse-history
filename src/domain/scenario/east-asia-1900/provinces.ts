@@ -34,4 +34,13 @@ export const eastAsiaProvinces: readonly ProvinceDefinition[] = Object.freeze([
   province("prv_rus_amur", "nat_rus", 1_500_000),
   province("prv_rus_transbaikal", "nat_rus", 3_000_000),
   province("prv_rus_core", "nat_rus", 129_500_000),
+  province("prv_gbr_hongkong", "nat_gbr", 300_000),
+  province("prv_gbr_burma", "nat_gbr", 10_000_000),
+  province("prv_gbr_malaya", "nat_gbr", 2_000_000),
+  province("prv_fra_indochina", "nat_fra", 15_000_000),
+  province("prv_deu_qingdao", "nat_deu", 200_000),
+  province("prv_deu_pacific", "nat_deu", 500_000),
+  province("prv_usa_philippines", "nat_usa", 7_000_000),
+  province("prv_nld_east_indies", "nat_nld", 38_000_000),
+  province("prv_tha_siam", "nat_tha", 8_000_000),
 ]);
