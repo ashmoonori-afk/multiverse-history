@@ -15,6 +15,7 @@ export interface LivePlannerInput {
   readonly orderText: string;
   readonly stateJson: string;
   readonly timeoutMs?: number;
+  readonly nationCount?: number;
 }
 
 const schemaJson = JSON.stringify(strategicPlanJsonSchema());
@@ -77,6 +78,7 @@ export const planWithLiveProvider = async (input: LivePlannerInput): Promise<Str
     requestId: input.requestId,
     orderText: input.orderText,
     stateJson: input.stateJson,
+    ...(input.nationCount === undefined ? {} : { nationCount: input.nationCount }),
   });
   try {
     return input.provider === "codex"

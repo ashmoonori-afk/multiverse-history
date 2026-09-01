@@ -223,10 +223,16 @@ export const createCampaignResolution = (
   ]);
   const changedNationNames = changedNationIds.map((nationId) => nationName(input.after, nationId));
   const changedProvinceNames = changedProvinceIds.map(provinceNameKo);
+  const maxSummaryNations = 5;
+  const displayedNationNames = changedNationNames.slice(0, maxSummaryNations);
+  const extraHint =
+    changedNationNames.length > maxSummaryNations
+      ? ` 외 ${changedNationNames.length - maxSummaryNations}개국`
+      : "";
   const summaryKo =
     changedNationNames.length === 0
       ? "이번 턴에는 지도상 소유권 변화가 없었다."
-      : `${changedNationNames.join("·")}의 ${changedProvinceNames.join(", ")} 지역에 변화가 확정됐다.`;
+      : `${displayedNationNames.join("·")}${extraHint}의 ${changedProvinceNames.slice(0, 3).join(", ")} 지역에 변화가 확정됐다.`;
   const draft: CampaignResolutionDraft = Object.freeze({
     id: `res_${input.turn}_${input.after.resolutions.length + 1}`,
     turn: input.turn,

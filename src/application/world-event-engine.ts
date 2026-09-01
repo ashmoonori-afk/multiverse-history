@@ -27,30 +27,51 @@ const eventKind = (input: CampaignWorldEventFactoryInput): CampaignWorldEvent["k
   return "political";
 };
 
-const headlineByKind: Readonly<Record<CampaignWorldEvent["kind"], string>> = Object.freeze({
-  economic: "새 경제 정책이 역내 질서에 파장",
-  diplomatic: "외교 협정 제안에 주변국 대응",
-  military: "군사 동향 변화에 각국 촉각",
-  political: "새 국가 방침 발표와 국제 반응",
-});
+const headlineForEvent = (
+  input: CampaignWorldEventFactoryInput,
+  kind: CampaignWorldEvent["kind"],
+): string => {
+  const actorName =
+    input.reduced.nations.find((nation) => nation.id === input.reduced.playerNationId)?.nameKo ??
+    "플레이어 국가";
+  const affectedNames = input.resolution.worldImpact.changedNationIds
+    .filter((nationId) => nationId !== input.reduced.playerNationId)
+    .slice(0, 2)
+    .map(
+      (nationId) =>
+        input.reduced.nations.find((nation) => nation.id === nationId)?.nameKo ?? nationId,
+    );
+  const affectedText = affectedNames.length > 0 ? ` ${affectedNames.join("·")} ` : " 주변국 ";
+  switch (kind) {
+    case "economic":
+      return `${actorName}의 경제 정책,${affectedText}파장 확산`;
+    case "diplomatic":
+      return `${actorName}의 외교 행보에${affectedText}촉각`;
+    case "military":
+      return `${actorName}의 군사 움직임,${affectedText}긴장 고조`;
+    case "political":
+      return `${actorName}의 정치적 결정,${affectedText}반응 주목`;
+  }
+};
 
 export const createCampaignWorldEvent = (
   input: CampaignWorldEventFactoryInput,
 ): CampaignWorldEvent => {
+  const kind = eventKind(input);
   const affectedNationIds =
     input.resolution.worldImpact.changedNationIds.length === 0
       ? Object.freeze([input.reduced.playerNationId])
       : Object.freeze([...input.resolution.worldImpact.changedNationIds]);
   return Object.freeze({
     id: `evt_${input.resolution.turn}_${input.reduced.worldEvents.length + 1}`,
-    kind: eventKind(input),
+    kind,
     importance: "minor",
     occurredAtElapsedDays: input.reduced.elapsedDays,
     turn: input.resolution.turn,
     date: Object.freeze({ ...input.reduced.date }),
     actorNationIds: Object.freeze([input.reduced.playerNationId]),
     affectedNationIds,
-    headlineKo: headlineByKind[eventKind(input)],
+    headlineKo: headlineForEvent(input, kind),
     summaryKo: input.resolution.worldImpact.summaryKo,
     sourceResolutionId: input.resolution.id,
   });
