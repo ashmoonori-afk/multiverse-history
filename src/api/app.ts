@@ -3,7 +3,6 @@ import { cors } from "hono/cors";
 import { ZodError } from "zod";
 
 import { applyStrategicPlan } from "../application/apply-strategic-plan";
-import { buildPlannerStateJson } from "../application/planner-context";
 import { deterministicCounterpartReply } from "../application/campaign-chat";
 import {
   type CampaignGroupChatResponder,
@@ -28,6 +27,7 @@ import {
   type CampaignReactionAuthorInput,
   finalizeCampaignWorldFeedback,
 } from "../application/campaign-world-feedback";
+import { buildPlannerStateJson } from "../application/planner-context";
 import { executeProviderTurn, ProviderTurnError } from "../application/turn-transaction";
 import {
   declareCampaignWar,
@@ -207,7 +207,7 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
         requestId: input.requestId,
         orderText: input.orderText,
         stateJson: input.stateJson,
-        nationCount: store.hasCampaign() ? store.read().nations?.length : undefined,
+        ...(store.hasCampaign() ? { nationCount: store.read().nations.length } : {}),
       }),
     claude: async (input) =>
       planWithLiveProvider({
@@ -215,7 +215,7 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
         requestId: input.requestId,
         orderText: input.orderText,
         stateJson: input.stateJson,
-        nationCount: store.hasCampaign() ? store.read().nations?.length : undefined,
+        ...(store.hasCampaign() ? { nationCount: store.read().nations.length } : {}),
       }),
     ...options.planners,
   };

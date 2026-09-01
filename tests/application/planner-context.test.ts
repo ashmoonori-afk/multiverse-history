@@ -1,7 +1,6 @@
 import { describe, expect, test } from "bun:test";
-
-import { buildPlannerStateJson } from "../../src/application/planner-context";
 import { createCampaignState } from "../../src/application/campaign-state";
+import { buildPlannerStateJson } from "../../src/application/planner-context";
 import { canonicalStringify } from "../../src/shared/canonical-json";
 
 describe("planner context slimming", () => {
