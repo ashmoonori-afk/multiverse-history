@@ -4,7 +4,7 @@ import { z } from "zod";
 import { createGameApp } from "../../src/api/app";
 
 interface TestReactionInput {
-  readonly nationId: string;
+  readonly nations: readonly { readonly id: string; readonly nameKo: string }[];
   readonly eventJson: string;
   readonly contextJson: string;
 }
@@ -46,15 +46,16 @@ describe("world-event feedback", () => {
     const app = createGameApp({
       worldEventFactory: () => majorCrisis,
       reactionAuthors: {
-        deterministic: async (input: TestReactionInput) => {
-          calls.push(input.nationId);
-          return {
-            nationId: input.nationId,
-            stance: input.nationId === "nat_kor" ? "supportive" : "cautious",
-            sentimentBps: input.nationId === "nat_kor" ? 500 : 100,
-            statementKo: `${input.nationId} 정부는 공동 대응 방안을 검토한다.`,
-          };
-        },
+        deterministic: async (input: TestReactionInput) =>
+          input.nations.map((nation) => {
+            calls.push(nation.id);
+            return {
+              nationId: nation.id,
+              stance: nation.id === "nat_kor" ? ("supportive" as const) : ("cautious" as const),
+              sentimentBps: nation.id === "nat_kor" ? 500 : 100,
+              statementKo: `${nation.id} 정부는 공동 대응 방안을 검토한다.`,
+            };
+          }),
       },
     });
     await createCampaign(app);
@@ -126,16 +127,20 @@ describe("world-event feedback", () => {
       worldEventFactory: () => majorCrisis,
       reactionAuthors: {
         deterministic: async (input: TestReactionInput) => {
-          calls.push(input.nationId);
-          if (input.nationId === "nat_jpn") {
-            throw new Error("fixture reaction failure");
+          const reactions = [];
+          for (const nation of input.nations) {
+            calls.push(nation.id);
+            if (nation.id === "nat_jpn") {
+              throw new Error("fixture reaction failure");
+            }
+            reactions.push({
+              nationId: nation.id,
+              stance: "neutral" as const,
+              sentimentBps: 0,
+              statementKo: "상황을 주시한다.",
+            });
           }
-          return {
-            nationId: input.nationId,
-            stance: "neutral",
-            sentimentBps: 0,
-            statementKo: "상황을 주시한다.",
-          };
+          return reactions;
         },
       },
     });

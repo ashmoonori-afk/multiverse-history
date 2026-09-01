@@ -3,6 +3,7 @@ import { cors } from "hono/cors";
 import { ZodError } from "zod";
 
 import { applyStrategicPlan } from "../application/apply-strategic-plan";
+import { buildPlannerStateJson } from "../application/planner-context";
 import { deterministicCounterpartReply } from "../application/campaign-chat";
 import {
   type CampaignGroupChatResponder,
@@ -48,7 +49,7 @@ import { planDeterministically } from "../providers/deterministic-provider";
 import { respondWithLiveDiplomacy } from "../providers/live-diplomacy";
 import { authorLiveNews } from "../providers/live-news";
 import { planWithLiveProvider } from "../providers/live-planner";
-import { authorLiveReactions } from "../providers/live-reaction";
+import { authorLiveReactionsBatch } from "../providers/live-reaction";
 import type { StrategicPlan } from "../providers/schemas";
 import { canonicalStringify, hashCanonical } from "../shared/canonical-json";
 import {
@@ -264,23 +265,22 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
   const liveReactionAuthor =
     (provider: "codex" | "claude"): CampaignReactionAuthor =>
     async (input) => {
-      const output = await authorLiveReactions({
+      const output = await authorLiveReactionsBatch({
         provider,
         eventJson: input.eventJson,
         contextJson: input.contextJson,
+        nations: input.nations,
       });
-      if (output.reactions.length !== 1) {
-        throw new TypeError("PROVIDER_REACTION_COUNT_INVALID");
-      }
-      return output.reactions[0];
+      return output.reactions;
     };
   const reactionAuthors: Partial<Record<ProviderSelection, CampaignReactionAuthor>> = {
-    deterministic: async (input: CampaignReactionAuthorInput) => ({
-      nationId: input.nationId,
-      stance: "neutral",
-      sentimentBps: 0,
-      statementKo: `${input.nationNameKo} 정부는 사건의 영향을 검토하고 후속 입장을 정리한다.`,
-    }),
+    deterministic: async (input: CampaignReactionAuthorInput) =>
+      input.nations.map((nation) => ({
+        nationId: nation.id,
+        stance: "neutral",
+        sentimentBps: 0,
+        statementKo: `${nation.nameKo} 정부는 사건의 영향을 검토하고 후속 입장을 정리한다.`,
+      })),
     codex: liveReactionAuthor("codex"),
     claude: liveReactionAuthor("claude"),
     ...options.reactionAuthors,
@@ -492,7 +492,9 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
           requestId: request.requestId,
           orderText: request.orderText,
           turn: store.read().turn,
-          stateJson: canonicalStringify(store.read()),
+          // Decision-relevant slice only: the full 251-nation state multiplies
+          // planner latency without adding usable signal.
+          stateJson: buildPlannerStateJson(parseCampaignState(store.read())),
         }),
       prepare: async (snapshot, plan) => {
         const campaign = parseCampaignState(snapshot);

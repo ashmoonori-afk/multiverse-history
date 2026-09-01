@@ -17,13 +17,16 @@ const ReactionAuthorOutputSchema = z
   .strict();
 
 export interface CampaignReactionAuthorInput {
-  readonly nationId: string;
-  readonly nationNameKo: string;
+  /** Every nation that must answer, in event order — ONE provider call total. */
+  readonly nations: readonly { readonly id: string; readonly nameKo: string }[];
   readonly eventJson: string;
   readonly contextJson: string;
 }
 
 export type CampaignReactionAuthor = (input: CampaignReactionAuthorInput) => Promise<unknown>;
+
+/** Reaction output stays bounded (provider schema caps at 16 entries). */
+const MAX_REACTING_NATIONS = 12;
 
 export interface FinalizeCampaignWorldFeedbackInput {
   readonly before: CampaignState;
@@ -49,58 +52,65 @@ const latestResolution = (state: CampaignState): CampaignResolution => {
 const reactionContext = (
   state: CampaignState,
   event: CampaignWorldEvent,
-  nationId: string,
-): string => {
-  const nation = state.nations.find((candidate) => candidate.id === nationId);
-  if (nation === undefined) {
-    throw new RangeError("REACTION_NATION_INVALID");
-  }
-  return canonicalStringify({
+  nations: readonly { readonly id: string; readonly nameKo: string }[],
+): string =>
+  canonicalStringify({
     campaign: {
       scenarioId: state.scenarioId,
       playerNationId: state.playerNationId,
       turn: event.turn,
       date: state.date,
     },
-    reactingNation: {
-      id: nation.id,
-      nameKo: nation.nameKo,
-      capitalLabelKo: nation.capitalLabelKo,
-    },
+    reactingNations: nations,
     worldEvent: event,
   });
+
+const BatchReactionOutputSchema = z.array(ReactionAuthorOutputSchema).min(1).max(16);
+
+const normalizeBatchOutput = (
+  output: unknown,
+): readonly z.infer<typeof ReactionAuthorOutputSchema>[] => {
+  if (Array.isArray(output)) {
+    return BatchReactionOutputSchema.parse(output);
+  }
+  if (typeof output === "object" && output !== null && "reactions" in output) {
+    return BatchReactionOutputSchema.parse((output as { reactions: unknown }).reactions);
+  }
+  throw new TypeError("PROVIDER_REACTION_OUTPUT_INVALID");
 };
 
 export const authorCampaignEventReactions = async (
   input: AuthorCampaignEventReactionsInput,
 ): Promise<readonly CampaignNationReaction[]> => {
-  const eventJson = canonicalStringify(input.event);
-  const reactions: CampaignNationReaction[] = [];
-  for (const nationId of input.event.affectedNationIds) {
+  const reactingNationIds = input.event.affectedNationIds.slice(0, MAX_REACTING_NATIONS);
+  const nations = reactingNationIds.map((nationId) => {
     const nation = input.state.nations.find((candidate) => candidate.id === nationId);
     if (nation === undefined) {
       throw new RangeError("REACTION_NATION_INVALID");
     }
-    const output = ReactionAuthorOutputSchema.parse(
-      await input.reactionAuthor({
-        nationId,
-        nationNameKo: nation.nameKo,
-        eventJson,
-        contextJson: reactionContext(input.state, input.event, nationId),
-      }),
-    );
-    if (output.nationId !== nationId) {
-      throw new TypeError("PROVIDER_REACTION_NATION_MISMATCH");
-    }
-    reactions.push(
-      CampaignNationReactionSchema.parse({
+    return Object.freeze({ id: nation.id, nameKo: nation.nameKo });
+  });
+  const output = normalizeBatchOutput(
+    await input.reactionAuthor({
+      nations,
+      eventJson: canonicalStringify(input.event),
+      contextJson: reactionContext(input.state, input.event, nations),
+    }),
+  );
+  const byNationId = new Map(output.map((reaction) => [reaction.nationId, reaction]));
+  return Object.freeze(
+    reactingNationIds.map((nationId) => {
+      const reaction = byNationId.get(nationId);
+      if (reaction === undefined) {
+        throw new TypeError("PROVIDER_REACTION_NATION_MISMATCH");
+      }
+      return CampaignNationReactionSchema.parse({
         id: `rct_${input.event.id}_${nationId}`,
         worldEventId: input.event.id,
-        ...output,
-      }),
-    );
-  }
-  return Object.freeze(reactions);
+        ...reaction,
+      });
+    }),
+  );
 };
 
 export const finalizeCampaignWorldFeedback = async (

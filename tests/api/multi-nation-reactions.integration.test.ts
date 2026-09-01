@@ -4,7 +4,7 @@ import { z } from "zod";
 import { createGameApp } from "../../src/api/app";
 
 interface TestReactionInput {
-  readonly nationId: string;
+  readonly nations: readonly { readonly id: string; readonly nameKo: string }[];
 }
 
 test("generates one distinct reaction per affected nation", async () => {
@@ -42,15 +42,16 @@ test("generates one distinct reaction per affected nation", async () => {
       }),
     },
     reactionAuthors: {
-      deterministic: async (input: TestReactionInput) => {
-        calls.push(input.nationId);
-        return {
-          nationId: input.nationId,
-          stance: input.nationId === "nat_kor" ? "supportive" : "cautious",
-          sentimentBps: calls.length * 100,
-          statementKo: `${input.nationId}의 ${calls.length}번째 독립 반응`,
-        };
-      },
+      deterministic: async (input: TestReactionInput) =>
+        input.nations.map((nation, index) => {
+          calls.push(nation.id);
+          return {
+            nationId: nation.id,
+            stance: nation.id === "nat_kor" ? ("supportive" as const) : ("cautious" as const),
+            sentimentBps: (index + 1) * 100,
+            statementKo: `${nation.id}의 ${index + 1}번째 독립 반응`,
+          };
+        }),
     },
   });
   const created = await app.request("/api/campaigns", {
