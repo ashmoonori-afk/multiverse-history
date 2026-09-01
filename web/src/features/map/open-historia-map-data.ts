@@ -115,19 +115,24 @@ export const buildOpenHistoriaMapData = (
   campaign: MapCampaign,
   nationNameById: ReadonlyMap<string, string>,
 ): OpenHistoriaMapData => {
-  const provinceById = new Map(campaign.provinces.map((province) => [province.id, province]));
-  const changedProvinceIds = new Set(
-    campaign.resolutions.at(-1)?.worldImpact.changedProvinceIds ?? [],
+  const provinceByOwnerId = new Map(
+    campaign.provinces.map((province) => [province.ownerNationId, province]),
+  );
+  const changedNationIds = new Set(
+    campaign.resolutions.at(-1)?.worldImpact.changedNationIds ?? [],
   );
 
   const regions: RegionCollection = {
     type: "FeatureCollection",
     features: rawCollection.features.flatMap((feature) => {
-      const province = provinceById.get(feature.properties.provinceId);
-      const metadata = eastAsiaProvinceById.get(feature.properties.provinceId);
-      if (province === undefined || metadata === undefined) {
+      const ownerNationId = feature.properties.ownerNationId;
+      const province = ownerNationId !== undefined
+        ? provinceByOwnerId.get(ownerNationId)
+        : provinceByOwnerId.get(feature.properties.provinceId);
+      if (province === undefined) {
         return [];
       }
+      const metadata = eastAsiaProvinceById.get(feature.properties.provinceId);
       return [
         {
           ...feature,
@@ -135,11 +140,11 @@ export const buildOpenHistoriaMapData = (
             ...feature.properties,
             ownerNationId: province.ownerNationId,
             ownerName: nationNameById.get(province.ownerNationId) ?? province.ownerNationId,
-            label: metadata.labelKo,
+            label: metadata?.labelKo ?? feature.properties.sourceNames?.[0] ?? province.ownerNationId,
             fillColor: nationColor(province.ownerNationId),
-            terrain: metadata.terrain,
+            terrain: metadata?.terrain ?? "plain",
             population: province.population,
-            changed: changedProvinceIds.has(province.id),
+            changed: changedNationIds.has(province.ownerNationId),
           },
         },
       ];
