@@ -372,12 +372,6 @@
     "neighbors": []
   },
   {
-    "id": "prv_hist_spain",
-    "labelKo": "Spain",
-    "terrain": "plain",
-    "neighbors": []
-  },
-  {
     "id": "prv_hist_portugal",
     "labelKo": "Portugal",
     "terrain": "plain",
@@ -560,12 +554,6 @@
   {
     "id": "prv_hist_portuguese_guinea",
     "labelKo": "Portuguese Guinea",
-    "terrain": "plain",
-    "neighbors": []
-  },
-  {
-    "id": "prv_hist_egypt",
-    "labelKo": "Egypt",
     "terrain": "plain",
     "neighbors": []
   },

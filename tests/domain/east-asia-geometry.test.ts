@@ -17,7 +17,7 @@ describe("East Asia sourced region geometry", () => {
     const campaignIds = new Set(eastAsiaProvinceMap.map((province) => province.id));
     const representedIds = new Set<string>();
 
-    expect(features).toHaveLength(25);
+    expect(features).toHaveLength(92);
     for (const feature of features) {
       const properties = feature.properties as SourcedFeatureProperties;
       expect(properties.sourceIso).toBeArray();

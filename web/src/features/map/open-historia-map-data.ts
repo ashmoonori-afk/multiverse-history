@@ -49,6 +49,7 @@ export interface OpenHistoriaUnitProperties {
 
 interface RawRegionProperties {
   readonly provinceId: string;
+  readonly ownerNationId?: string;
   readonly sourceNames: readonly string[];
   readonly sourceIso: readonly string[];
   readonly labelAnchor: readonly [number, number];
@@ -115,20 +116,24 @@ export const buildOpenHistoriaMapData = (
   campaign: MapCampaign,
   nationNameById: ReadonlyMap<string, string>,
 ): OpenHistoriaMapData => {
-  const provinceByOwnerId = new Map(
-    campaign.provinces.map((province) => [province.ownerNationId, province]),
-  );
-  const changedNationIds = new Set(
-    campaign.resolutions.at(-1)?.worldImpact.changedNationIds ?? [],
-  );
+  const provinceById = new Map(campaign.provinces.map((province) => [province.id, province]));
+  const provinceByOwnerId = new Map<string, MapCampaign["provinces"][number]>();
+  for (const province of campaign.provinces) {
+    if (!provinceByOwnerId.has(province.ownerNationId)) {
+      provinceByOwnerId.set(province.ownerNationId, province);
+    }
+  }
+  const lastImpact = campaign.resolutions.at(-1)?.worldImpact;
+  const changedNationIds = new Set(lastImpact?.changedNationIds ?? []);
+  const changedProvinceIds = new Set(lastImpact?.changedProvinceIds ?? []);
 
   const regions: RegionCollection = {
     type: "FeatureCollection",
     features: rawCollection.features.flatMap((feature) => {
       const ownerNationId = feature.properties.ownerNationId;
-      const province = ownerNationId !== undefined
-        ? provinceByOwnerId.get(ownerNationId)
-        : provinceByOwnerId.get(feature.properties.provinceId);
+      const province =
+        provinceById.get(feature.properties.provinceId) ??
+        (ownerNationId === undefined ? undefined : provinceByOwnerId.get(ownerNationId));
       if (province === undefined) {
         return [];
       }
@@ -140,11 +145,13 @@ export const buildOpenHistoriaMapData = (
             ...feature.properties,
             ownerNationId: province.ownerNationId,
             ownerName: nationNameById.get(province.ownerNationId) ?? province.ownerNationId,
-            label: metadata?.labelKo ?? feature.properties.sourceNames?.[0] ?? province.ownerNationId,
+            label:
+              metadata?.labelKo ?? feature.properties.sourceNames?.[0] ?? province.ownerNationId,
             fillColor: nationColor(province.ownerNationId),
             terrain: metadata?.terrain ?? "plain",
             population: province.population,
-            changed: changedNationIds.has(province.ownerNationId),
+            changed:
+              changedProvinceIds.has(province.id) || changedNationIds.has(province.ownerNationId),
           },
         },
       ];

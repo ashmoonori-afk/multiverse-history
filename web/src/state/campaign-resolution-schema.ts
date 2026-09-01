@@ -73,6 +73,17 @@ export const CampaignResolutionSchema = z
         changedNationIds: z.array(z.string()),
         changedProvinceIds: z.array(z.string()),
         summaryKo: z.string().min(1),
+        regionOwnershipOverrides: z
+          .array(
+            z
+              .object({
+                regionId: z.string(),
+                toNationId: z.string(),
+                fromNationId: z.string(),
+              })
+              .strict(),
+          )
+          .default([]),
       })
       .strict(),
   })
