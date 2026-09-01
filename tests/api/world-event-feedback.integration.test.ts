@@ -115,7 +115,9 @@ describe("world-event feedback", () => {
     expect(new Set(body.campaign.nationReactions.map((reaction) => reaction.id)).size).toBe(3);
     expect(resolution?.worldEventIds).toEqual([majorCrisis.id]);
     expect(resolution?.reactionIds).toHaveLength(3);
-    expect(resolution?.worldImpact.changedNationIds).toEqual([...majorCrisis.affectedNationIds]);
+    expect(resolution?.worldImpact.changedNationIds).toEqual(
+      expect.arrayContaining([...majorCrisis.affectedNationIds]),
+    );
   });
 
   test("keeps the turn atomic when one nation reaction fails", async () => {

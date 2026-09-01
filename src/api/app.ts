@@ -206,6 +206,7 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
         requestId: input.requestId,
         orderText: input.orderText,
         stateJson: input.stateJson,
+        nationCount: store.hasCampaign() ? store.read().nations?.length : undefined,
       }),
     claude: async (input) =>
       planWithLiveProvider({
@@ -213,6 +214,7 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
         requestId: input.requestId,
         orderText: input.orderText,
         stateJson: input.stateJson,
+        nationCount: store.hasCampaign() ? store.read().nations?.length : undefined,
       }),
     ...options.planners,
   };
@@ -288,7 +290,12 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
   app.use(
     "/api/*",
     cors({
-      origin: ["http://127.0.0.1:5173", "http://localhost:5173"],
+      origin: [
+        "http://127.0.0.1:5173",
+        "http://localhost:5173",
+        "http://127.0.0.1:5174",
+        "http://localhost:5174",
+      ],
       allowHeaders: ["content-type"],
       allowMethods: ["GET", "POST", "OPTIONS"],
     }),

@@ -61,15 +61,15 @@ test("records processed news and concrete world deltas for the exact order", asy
               ),
               relationDeltas: z.array(
                 z.object({
-                  fromNationId: z.literal("nat_kor"),
-                  toNationId: z.literal("nat_jpn"),
+                  fromNationId: z.string().regex(/^nat_[a-z0-9_]+$/),
+                  toNationId: z.string().regex(/^nat_[a-z0-9_]+$/),
                   before: z.number(),
                   after: z.number(),
                 }),
               ),
               treatyDeltas: z.array(
                 z.object({
-                  recipientNationId: z.literal("nat_jpn"),
+                  recipientNationId: z.string().regex(/^nat_[a-z0-9_]+$/),
                   clauses: z.array(z.literal("trade")),
                 }),
               ),

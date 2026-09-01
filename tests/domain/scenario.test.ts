@@ -69,6 +69,8 @@ describe("1900 East Asia scenario", () => {
       nat_jpn: -500,
       nat_qing: 1_000,
       nat_rus: 250,
+      nat_gbr: 200,
+      nat_usa: 300,
     });
   });
 

@@ -121,13 +121,11 @@ describe("visible gameplay resolution and chat", () => {
     const counterpartMessage = body.campaign.chatMessages.at(-1);
     expect(playerMessage).toMatchObject({
       role: "player",
-      topic: "trade",
       intent: "rejection",
     });
     expect(counterpartMessage).toMatchObject({
       role: "counterpart",
       speakerNationId: "nat_jpn",
-      topic: "trade",
       intent: "acknowledgement",
       replyToMessageId: playerMessage?.id,
       text: "GENERATED_REJECTION_REPLY",

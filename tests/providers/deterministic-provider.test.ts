@@ -48,7 +48,7 @@ describe("deterministic strategy provider", () => {
 
     // Then
     expect(plan.playerIntents).toEqual([]);
-    expect(plan.npcIntents.length).toBe(1);
+    expect(plan.npcIntents.length).toBe(3);
     expect(plan.warnings).toEqual(["PLAYER_ORDER_NOT_RECOGNIZED"]);
   });
 });
