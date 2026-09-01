@@ -99,6 +99,35 @@ export const selectedLineLayer = {
   },
 } satisfies LineLayerSpecification;
 
+export const DISPUTED_HATCH_IMAGE = "oh-disputed-hatch";
+
+/** Diagonal hatching over regions a former owner still claims (DESIGN.md:
+ * disputes use texture plus labels, never color alone). */
+export const disputedFillLayer = {
+  id: "open-historia-disputed-fill",
+  type: "fill",
+  source: OPEN_HISTORIA_REGION_SOURCE,
+  filter: ["==", ["get", "disputed"], true],
+  paint: {
+    "fill-pattern": DISPUTED_HATCH_IMAGE,
+    "fill-opacity": 0.55,
+  },
+} satisfies FillLayerSpecification;
+
+/** Claimant-colored dashed outline so the dispute names its second party. */
+export const disputedLineLayer = {
+  id: "open-historia-disputed-line",
+  type: "line",
+  source: OPEN_HISTORIA_REGION_SOURCE,
+  filter: ["==", ["get", "disputed"], true],
+  paint: {
+    "line-color": ["get", "claimantColor"],
+    "line-width": ["interpolate", ["linear"], ["zoom"], 2, 1.2, 5, 2.2, 8, 3.4],
+    "line-dasharray": [2, 1.4],
+    "line-opacity": 0.95,
+  },
+} satisfies LineLayerSpecification;
+
 export const regionLabelLayer = {
   id: "open-historia-region-label",
   type: "symbol",

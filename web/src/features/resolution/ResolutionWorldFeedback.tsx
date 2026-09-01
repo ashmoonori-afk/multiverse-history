@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import {
   type Campaign,
   type CampaignResolution,
@@ -112,21 +114,44 @@ export const ResolutionWorldFeedback = ({
     (reactionId) => nationReactions?.find((candidate) => candidate.id === reactionId) ?? [],
   );
 
+  // Staged reveal (Open Historia pattern): events surface one at a time so a
+  // multi-event turn reads as history unfolding, not a dump. Reactions wait
+  // until the last event is on screen.
+  const [revealedCount, setRevealedCount] = useState(1);
+  useEffect(() => {
+    setRevealedCount(1);
+  }, [resolution.id]);
+
   if (events.length === 0) {
     return null;
   }
+
+  const visibleEvents = events.slice(0, Math.max(1, revealedCount));
+  const allRevealed = visibleEvents.length >= events.length;
 
   return (
     <section
       className="resolution_feedback"
       aria-labelledby={`feedback-${resolution.id}`}
       data-testid="resolution-world-feedback"
+      data-revealed-events={visibleEvents.length}
+      data-total-events={events.length}
     >
       <h3 id={`feedback-${resolution.id}`}>세계 반향</h3>
-      {events.map((event) => (
+      {visibleEvents.map((event) => (
         <WorldEventCard key={event.id} event={event} nationNameById={nationNameById} />
       ))}
-      {reactions.length === 0 ? null : (
+      {allRevealed ? null : (
+        <button
+          type="button"
+          className="reveal_next_event"
+          data-testid="reveal-next-event"
+          onClick={() => setRevealedCount((count) => count + 1)}
+        >
+          다음 사건 공개 ({visibleEvents.length}/{events.length})
+        </button>
+      )}
+      {reactions.length === 0 || !allRevealed ? null : (
         <div
           className="reaction_grid"
           data-testid="resolution-reactions"

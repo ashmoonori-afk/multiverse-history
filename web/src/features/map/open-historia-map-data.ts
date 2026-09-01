@@ -12,6 +12,10 @@ export interface OpenHistoriaRegionProperties {
   readonly terrain: string;
   readonly population: number;
   readonly changed: boolean;
+  /** True when a former owner still claims this region after a transfer. */
+  readonly disputed: boolean;
+  readonly claimantNationId: string;
+  readonly claimantColor: string;
   readonly sourceNames: readonly string[];
   readonly sourceIso: readonly string[];
   readonly labelAnchor: readonly [number, number];
@@ -127,6 +131,15 @@ export const buildOpenHistoriaMapData = (
   const changedNationIds = new Set(lastImpact?.changedNationIds ?? []);
   const changedProvinceIds = new Set(lastImpact?.changedProvinceIds ?? []);
 
+  // Latest ownership override per region across the whole campaign history:
+  // the former owner keeps a visible claim until it retakes the region.
+  const latestClaimByRegionId = new Map<string, string>();
+  for (const resolution of campaign.resolutions) {
+    for (const override of resolution.worldImpact.regionOwnershipOverrides ?? []) {
+      latestClaimByRegionId.set(override.regionId, override.fromNationId);
+    }
+  }
+
   const regions: RegionCollection = {
     type: "FeatureCollection",
     features: rawCollection.features.flatMap((feature) => {
@@ -152,6 +165,19 @@ export const buildOpenHistoriaMapData = (
             population: province.population,
             changed:
               changedProvinceIds.has(province.id) || changedNationIds.has(province.ownerNationId),
+            ...((): {
+              disputed: boolean;
+              claimantNationId: string;
+              claimantColor: string;
+            } => {
+              const claimant = latestClaimByRegionId.get(province.id);
+              const disputed = claimant !== undefined && claimant !== province.ownerNationId;
+              return {
+                disputed,
+                claimantNationId: disputed ? claimant : "",
+                claimantColor: disputed ? nationColor(claimant) : "",
+              };
+            })(),
           },
         },
       ];

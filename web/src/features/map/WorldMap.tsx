@@ -18,6 +18,9 @@ import {
 import {
   capitalLayer,
   constructionMarkerLayer,
+  DISPUTED_HATCH_IMAGE,
+  disputedFillLayer,
+  disputedLineLayer,
   OPEN_HISTORIA_CONSTRUCTION_SOURCE,
   OPEN_HISTORIA_LABEL_SOURCE,
   OPEN_HISTORIA_REGION_SOURCE,
@@ -55,6 +58,43 @@ const initialCamera: CameraSnapshot = {
 
 const cameraAttribute = (camera: CameraSnapshot): string =>
   `longitude=${camera.longitude.toFixed(4)};latitude=${camera.latitude.toFixed(4)};zoom=${camera.zoom.toFixed(3)}`;
+
+/** Procedural diagonal hatch tile for disputed regions (no sprite assets). */
+const createDisputedHatchImage = (): ImageData | null => {
+  const size = 12;
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  const context = canvas.getContext("2d");
+  if (context === null) {
+    return null;
+  }
+  context.clearRect(0, 0, size, size);
+  context.strokeStyle = "rgba(255,255,255,0.85)";
+  context.lineWidth = 2;
+  context.beginPath();
+  context.moveTo(-3, size + 3);
+  context.lineTo(size + 3, -3);
+  context.moveTo(-3, 3);
+  context.lineTo(3, -3);
+  context.moveTo(size - 3, size + 3);
+  context.lineTo(size + 3, size - 3);
+  context.stroke();
+  return context.getImageData(0, 0, size, size);
+};
+
+const ensureDisputedHatchImage = (map: {
+  hasImage: (id: string) => boolean;
+  addImage: (id: string, image: ImageData) => void;
+}): void => {
+  if (map.hasImage(DISPUTED_HATCH_IMAGE)) {
+    return;
+  }
+  const image = createDisputedHatchImage();
+  if (image !== null) {
+    map.addImage(DISPUTED_HATCH_IMAGE, image);
+  }
+};
 
 export const WorldMap = ({
   campaign,
@@ -126,6 +166,9 @@ export const WorldMap = ({
       data-map-engine="maplibre"
       data-map-data-state={loaded ? "ready" : "loading"}
       data-region-count={mapData.regions.features.length}
+      data-disputed-count={
+        mapData.regions.features.filter((feature) => feature.properties.disputed).length
+      }
       data-construction-count={mapData.constructions.features.length}
       data-unit-count={mapData.units.features.length}
       data-unit-provinces={mapData.unitProvinceIds.join(" ")}
@@ -149,6 +192,12 @@ export const WorldMap = ({
         interactiveLayerIds={[regionFillLayer.id]}
         onClick={selectFeature}
         onLoad={(event) => {
+          ensureDisputedHatchImage(event.target);
+          event.target.on("styleimagemissing", (missing: { id: string }) => {
+            if (missing.id === DISPUTED_HATCH_IMAGE) {
+              ensureDisputedHatchImage(event.target);
+            }
+          });
           setLoaded(true);
           if (import.meta.env.DEV) {
             // Dev-only handle so end-to-end runs can read live MapLibre sources.
@@ -166,6 +215,8 @@ export const WorldMap = ({
         <Source id={OPEN_HISTORIA_REGION_SOURCE} type="geojson" data={mapData.regions}>
           <Layer {...regionFillLayer} />
           <Layer {...regionLineLayer} />
+          <Layer {...disputedFillLayer} />
+          <Layer {...disputedLineLayer} />
           <Layer {...selectedFillLayer} filter={selectedFilter} />
           <Layer {...selectedLineLayer} filter={selectedFilter} />
         </Source>
