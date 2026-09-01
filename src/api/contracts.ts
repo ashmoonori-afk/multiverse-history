@@ -28,7 +28,7 @@ export const ProposeTreatyRequestSchema = z
 
 const DiplomacyChatFields = {
   message: z.string().trim().min(1).max(4_000),
-  provider: z.enum(["deterministic", "codex", "claude"]).default("deterministic"),
+  provider: z.enum(["deterministic", "codex", "claude"]).optional(),
 } as const;
 
 const SingularDiplomacyChatRequestSchema = z

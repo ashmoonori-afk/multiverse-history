@@ -361,7 +361,7 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
   app.post("/api/diplomacy/chat", async (context) => {
     const request = DiplomacyChatRequestSchema.parse(await jsonBody(context.req.raw));
     const campaign = parseCampaignState(store.read());
-    const responder = diplomacyResponders[request.provider];
+    const responder = diplomacyResponders[request.provider ?? campaign.plannerProvider];
     if (responder === undefined) {
       throw new ProviderTurnError(503, "provider_unavailable");
     }
