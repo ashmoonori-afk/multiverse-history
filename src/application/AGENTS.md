@@ -1,6 +1,6 @@
 # src/application
 
-Score 12 (32 TS files, 5286 LOC) — the heaviest and most-referenced subtree.
+Score 12 (32 TS files, 5289 LOC) — the heaviest and most-referenced subtree.
 
 ## OVERVIEW
 Orchestration layer between `src/api` and `src/domain`: owns the campaign aggregate, the turn transaction, and the assembly of a turn's resolution, narrative, news and reactions.
