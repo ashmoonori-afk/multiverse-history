@@ -1,4 +1,6 @@
-import type { CampaignResolution } from "../../state/campaign-store";
+import { useEffect, useRef } from "react";
+
+import type { CampaignResolution, StrategicPlan } from "../../state/campaign-store";
 import { ResolutionArticle } from "./ResolutionArticle";
 
 type TurnResultPanelProps =
@@ -8,6 +10,7 @@ type TurnResultPanelProps =
   | {
       readonly state: "committed";
       readonly resolution: CampaignResolution;
+      readonly plan: StrategicPlan | null;
       readonly playerNationId: string;
       readonly nationNameById: ReadonlyMap<string, string>;
       readonly onContinue: () => void;
@@ -40,12 +43,23 @@ const ResultSkeleton = (): JSX.Element => (
 );
 
 export const TurnResultPanel = (props: TurnResultPanelProps): JSX.Element => {
+  const panelRef = useRef<HTMLElement>(null);
+  const resolutionId = props.state === "committed" ? props.resolution.id : null;
+
+  useEffect(() => {
+    if (resolutionId !== null) panelRef.current?.scrollTo({ top: 0 });
+  }, [resolutionId]);
+
   switch (props.state) {
     case "resolving":
       return <ResultSkeleton />;
     case "committed":
       return (
-        <section className="campaign_result_panel" data-testid="campaign-result-panel">
+        <section
+          className="campaign_result_panel"
+          data-testid="campaign-result-panel"
+          ref={panelRef}
+        >
           <header className="campaign_result_heading">
             <div>
               <strong data-testid="resolution-summary">최근 확정 결과</strong>
@@ -54,6 +68,7 @@ export const TurnResultPanel = (props: TurnResultPanelProps): JSX.Element => {
           </header>
           <ResolutionArticle
             resolution={props.resolution}
+            plan={props.plan}
             playerNationId={props.playerNationId}
             nationNameById={props.nationNameById}
           />

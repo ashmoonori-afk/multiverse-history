@@ -13,6 +13,8 @@ export const App = (): JSX.Element => {
   const busy = useCampaignStore((state) => state.busy);
   const error = useCampaignStore((state) => state.error);
   const saveStatus = useCampaignStore((state) => state.saveStatus);
+  const slots = useCampaignStore((state) => state.slots);
+  const slotsBusy = useCampaignStore((state) => state.slotsBusy);
   const loadCampaign = useCampaignStore((state) => state.loadCampaign);
   const beginNewCampaign = useCampaignStore((state) => state.beginNewCampaign);
   const createCampaign = useCampaignStore((state) => state.createCampaign);
@@ -21,6 +23,9 @@ export const App = (): JSX.Element => {
   const jumpTimeline = useCampaignStore((state) => state.jumpTimeline);
   const progressTimeline = useCampaignStore((state) => state.progressTimeline);
   const saveCampaign = useCampaignStore((state) => state.saveCampaign);
+  const loadSlots = useCampaignStore((state) => state.loadSlots);
+  const saveSlot = useCampaignStore((state) => state.saveSlot);
+  const loadSlot = useCampaignStore((state) => state.loadSlot);
   const exportCampaign = useCampaignStore((state) => state.exportCampaign);
   const importCampaign = useCampaignStore((state) => state.importCampaign);
   const proposeTreaty = useCampaignStore((state) => state.proposeTreaty);
@@ -60,12 +65,17 @@ export const App = (): JSX.Element => {
       busy={busy}
       error={error}
       saveStatus={saveStatus}
+      slots={slots}
+      slotsBusy={slotsBusy}
       onNewCampaign={beginNewCampaign}
       onAdvance={advanceTurn}
       onSendChat={sendChat}
       onJumpTimeline={jumpTimeline}
       onProgressTimeline={progressTimeline}
       onSave={saveCampaign}
+      onLoadSlots={loadSlots}
+      onSaveSlot={saveSlot}
+      onLoadSlot={loadSlot}
       onExport={exportCampaign}
       onProposeTreaty={proposeTreaty}
       onTransferTerritory={transferTerritory}

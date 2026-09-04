@@ -34,13 +34,27 @@ export const MilitaryPanel = ({
     (province) => province.ownerNationId === campaign.playerNationId,
   );
   const [recruitProvinceId, setRecruitProvinceId] = useState(playerProvinces[0]?.id ?? "");
-  const [selectedUnitId, setSelectedUnitId] = useState("latest");
-  const [moveProvinceId, setMoveProvinceId] = useState("prv_rus_primorye");
-  const latestUnit = useMemo(() => [...campaign.units].reverse()[0], [campaign.units]);
-  const selectedUnit =
-    selectedUnitId === "latest"
-      ? latestUnit
-      : campaign.units.find((unit) => unit.id === selectedUnitId);
+  const playerUnits = useMemo(
+    () => campaign.units.filter((unit) => unit.ownerNationId === campaign.playerNationId),
+    [campaign.playerNationId, campaign.units],
+  );
+  const [selectedUnitId, setSelectedUnitId] = useState("");
+  const [moveProvinceId, setMoveProvinceId] = useState("");
+  const selectedUnit = playerUnits.find((unit) => unit.id === selectedUnitId) ?? playerUnits.at(-1);
+  const selectedProvince = campaign.provinces.find(
+    (province) => province.id === selectedUnit?.provinceId,
+  );
+  const legalDestinations = campaign.provinces.filter((province) =>
+    (selectedProvince?.adjacentProvinceIds ?? []).includes(province.id),
+  );
+  const legalMoveProvinceId = legalDestinations.some((province) => province.id === moveProvinceId)
+    ? moveProvinceId
+    : (legalDestinations[0]?.id ?? "");
+  const activeWars = campaign.wars.filter(
+    (war) =>
+      war.status === "active" &&
+      [war.attackerNationId, war.targetNationId].includes(campaign.playerNationId),
+  );
   const latestBattle = [...campaign.battleReports].reverse()[0];
   const controlProvince = campaign.provinces.find(
     (province) => province.id === selectedUnit?.provinceId,
@@ -85,11 +99,11 @@ export const MilitaryPanel = ({
           <span>이동 병력</span>
           <select
             data-testid="unit-select"
-            value={selectedUnitId}
+            value={selectedUnit?.id ?? ""}
             onChange={(event) => setSelectedUnitId(event.target.value)}
           >
-            <option value="latest">최근 모집 병력</option>
-            {campaign.units.map((unit) => (
+            {playerUnits.length === 0 ? <option value="">병력 없음</option> : null}
+            {playerUnits.map((unit) => (
               <option key={unit.id} value={unit.id}>
                 {unit.id} · {unit.manpower}명
               </option>
@@ -100,10 +114,11 @@ export const MilitaryPanel = ({
           <span>이동 지역</span>
           <select
             data-testid="move-province"
-            value={moveProvinceId}
+            value={legalMoveProvinceId}
             onChange={(event) => setMoveProvinceId(event.target.value)}
           >
-            {campaign.provinces.map((province) => (
+            {legalDestinations.length === 0 ? <option value="">인접 이동지 없음</option> : null}
+            {legalDestinations.map((province) => (
               <option key={province.id} value={province.id}>
                 {provinceNameKo(province.id)}
               </option>
@@ -115,10 +130,10 @@ export const MilitaryPanel = ({
         className="secondary_button"
         data-testid="move-unit"
         type="button"
-        disabled={busy || selectedUnit === undefined}
+        disabled={busy || selectedUnit === undefined || legalMoveProvinceId.length === 0}
         onClick={() => {
           if (selectedUnit !== undefined) {
-            void onMove(selectedUnit.id, moveProvinceId);
+            void onMove(selectedUnit.id, legalMoveProvinceId);
           }
         }}
       >
@@ -128,11 +143,29 @@ export const MilitaryPanel = ({
         className="primary_button"
         data-testid="resolve-combat"
         type="button"
-        disabled={busy || selectedUnit === undefined}
+        disabled={busy || activeWars.length === 0}
         onClick={() => void onCombat()}
       >
         전투 해결
       </button>
+      <ul className="military_war_list" data-testid="military-war-list">
+        {activeWars.length === 0 ? (
+          <li>진행 중인 전쟁이 없습니다.</li>
+        ) : (
+          activeWars.map((war) => {
+            const counterpartId =
+              war.attackerNationId === campaign.playerNationId
+                ? war.targetNationId
+                : war.attackerNationId;
+            return (
+              <li key={war.id}>
+                전쟁 중 · {nationNameById.get(counterpartId) ?? counterpartId} · 턴{" "}
+                {war.declaredTurn}
+              </li>
+            );
+          })
+        )}
+      </ul>
       <p className="battle_report" data-testid="battle-report" role="status">
         {latestBattle ?? "전투 결과가 아직 없습니다."}
       </p>

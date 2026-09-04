@@ -139,6 +139,7 @@
   position: fixed;
   z-index: 10040;
   inset: 0;
+  container-type: inline-size;
   pointer-events: none;
 }
 
@@ -470,6 +471,13 @@ button.oh_island:active {
   .oh_hud[data-open-panel="advisor"] .oh_island {
     visibility: hidden;
     pointer-events: none;
+  }
+}
+
+@container (max-width: 49rem) {
+  .oh_exit {
+    inset-block-start: calc(4.75rem - 2rem - var(--space-1));
+    inset-inline-start: 5rem;
   }
 }
 

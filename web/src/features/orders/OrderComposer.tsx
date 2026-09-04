@@ -50,6 +50,11 @@ export const OrderComposer = ({ busy, error, onSubmit }: OrderComposerProps): JS
     }
   };
 
+  const advanceTimeOnly = async (): Promise<void> => {
+    if (busy) return;
+    await onSubmit("", cadence);
+  };
+
   return (
     <form className="order_composer" onSubmit={submit}>
       <div className="composer_header">
@@ -149,18 +154,31 @@ export const OrderComposer = ({ busy, error, onSubmit }: OrderComposerProps): JS
           <option value="year">1년</option>
           <option value="major">다음 주요 사건까지</option>
         </select>
-        <small>확정한 행동의 파급 효과를 이 기간 동안 계산합니다.</small>
+        <small>
+          직접 결과가 없어도 선택한 기간만큼 시간이 흐르며 경제·전쟁·NPC의 자율 행동이 진행됩니다.
+        </small>
       </label>
       <div className="order_footer">
         <span className="order_hint">비용과 외교 결과를 확인한 뒤 턴을 확정합니다.</span>
-        <button
-          className="primary_button"
-          data-testid="advance-turn"
-          type="submit"
-          disabled={busy || (orderText.trim().length === 0 && actions.length === 0)}
-        >
-          {busy ? "분석 중…" : "턴 확정"}
-        </button>
+        <div className="cluster order_submit_actions">
+          <button
+            className="quiet_button"
+            data-testid="advance-time-only"
+            type="button"
+            disabled={busy}
+            onClick={() => void advanceTimeOnly()}
+          >
+            시간만 진행
+          </button>
+          <button
+            className="primary_button"
+            data-testid="advance-turn"
+            type="submit"
+            disabled={busy || (orderText.trim().length === 0 && actions.length === 0)}
+          >
+            {busy ? "분석 중…" : "턴 확정"}
+          </button>
+        </div>
       </div>
       {error !== null ? (
         <div className="error_banner" role="alert">

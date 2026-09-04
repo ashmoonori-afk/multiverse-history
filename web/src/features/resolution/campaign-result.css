@@ -5,6 +5,25 @@
   gap: var(--space-3);
 }
 
+.oh_panel.oh_actions_panel {
+  inset-block-start: 4.75rem;
+  block-size: auto;
+  max-block-size: none;
+}
+
+.oh_actions_panel .oh_panel_body {
+  padding: var(--space-3);
+}
+
+.campaign_result_panel {
+  align-content: start;
+  block-size: 100%;
+  min-block-size: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
 .campaign_result_heading {
   display: flex;
   align-items: center;
@@ -161,44 +180,74 @@
   color: var(--oh-text-2);
 }
 
-.resolution_before_after {
+.resolution_delta_groups,
+.resolution_delta_group {
   display: grid;
   gap: var(--space-2);
 }
 
-.resolution_before_after h3,
+.resolution_delta_groups {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+}
+
+.resolution_delta_group h3,
+.resolution_failures h3,
 .resolution_impact h3 {
   margin: 0;
   font-size: var(--text-sm);
 }
 
-.resolution_before_after dl {
+.resolution_delta_rows,
+.resolution_failures ul {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-2);
   margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-.resolution_before_after dl > div {
-  display: grid;
-  gap: var(--space-1);
+.resolution_delta_rows li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
   min-inline-size: 0;
   padding: var(--space-2);
   border-radius: var(--oh-radius-sm);
   background: color-mix(in srgb, var(--color-surface-2) 84%, transparent);
 }
 
-.resolution_before_after dt {
+.resolution_delta_rows span,
+.resolution_delta_group p {
+  margin: 0;
   color: var(--oh-text-3);
   font-size: var(--text-xs);
+  overflow-wrap: normal;
+  word-break: keep-all;
 }
 
-.resolution_before_after dd {
-  margin: 0;
+.resolution_delta_rows strong {
   color: var(--oh-text);
   font-size: var(--text-sm);
   font-variant-numeric: tabular-nums;
   overflow-wrap: anywhere;
+  text-align: end;
+}
+
+.resolution_failures {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-inline-start: 2px solid var(--color-danger);
+  background: var(--color-surface-2);
+}
+
+.resolution_failures li {
+  color: var(--oh-text-2);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  word-break: keep-all;
 }
 
 .result_continue {
@@ -306,8 +355,13 @@
     grid-column: auto;
   }
 
-  .resolution_before_after dl {
-    grid-template-columns: 1fr;
+  .resolution_delta_rows li {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .resolution_delta_rows strong {
+    text-align: start;
   }
 }
 

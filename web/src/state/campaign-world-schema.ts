@@ -1,12 +1,6 @@
 import { z } from "zod";
 
-import {
-  EventIdSchema,
-  NationIdSchema,
-  ProvinceIdSchema,
-  RequestIdSchema,
-  UnitIdSchema,
-} from "./campaign-id-schemas";
+import { EventIdSchema, NationIdSchema, ProvinceIdSchema } from "./campaign-id-schemas";
 
 export const CampaignConstructionProjectSchema = z
   .object({
@@ -26,7 +20,7 @@ const orderedUniqueNationIds = z
 
 const RegionOwnershipOverrideSchema = z
   .object({
-    regionId: ProvinceIdSchema,
+    regionId: z.string().min(1),
     toNationId: NationIdSchema,
     fromNationId: NationIdSchema.optional(),
     note: z.string().max(500).optional(),
@@ -66,10 +60,10 @@ const EventImpactSchema = z
         z
           .object({
             op: z.enum(["spawn", "move", "remove", "strength"]),
-            unitId: UnitIdSchema.optional(),
+            unitId: z.string().optional(),
             ownerNationId: NationIdSchema.optional(),
-            provinceId: ProvinceIdSchema.optional(),
-            manpower: z.number().int().optional(),
+            provinceId: z.string().optional(),
+            manpower: z.number().safe().int().optional(),
           })
           .strict(),
       )
@@ -80,7 +74,7 @@ const EventImpactSchema = z
           .object({
             op: z.enum(["build", "remove", "rename"]),
             markerId: z.string().optional(),
-            provinceId: ProvinceIdSchema.optional(),
+            provinceId: z.string().optional(),
             name: z.string().max(200).optional(),
             kind: z.string().max(50).optional(),
           })
@@ -95,20 +89,28 @@ export const CampaignWorldEventSchema = z
     id: EventIdSchema,
     kind: z.enum(["economic", "diplomatic", "military", "political"]),
     importance: z.enum(["minor", "major"]),
-    occurredAtElapsedDays: z.number().int().nonnegative(),
-    turn: z.number().int().nonnegative(),
-    date: z.object({ year: z.number().int(), quarter: z.number().int().min(1).max(4) }).strict(),
+    occurredAtElapsedDays: z.number().safe().int().nonnegative(),
+    turn: z.number().safe().int().nonnegative(),
+    date: z
+      .object({
+        year: z.number().safe().int(),
+        quarter: z.number().safe().int().min(1).max(4),
+      })
+      .strict(),
     actorNationIds: orderedUniqueNationIds,
     affectedNationIds: orderedUniqueNationIds,
     headlineKo: z.string().min(1).max(160),
     summaryKo: z.string().min(1).max(1_200),
-    sourceResolutionId: z.string().optional(),
+    sourceResolutionId: z
+      .string()
+      .regex(/^res_[a-z0-9_]+$/)
+      .optional(),
     impacts: EventImpactSchema.optional(),
     provenance: z
       .enum(["historical_baseline", "player_divergence", "simulated_consequence", "unknown"])
       .optional(),
-    regionIds: z.array(ProvinceIdSchema).optional(),
-    sourceInputIds: z.array(RequestIdSchema).optional(),
+    regionIds: z.array(z.string()).optional(),
+    sourceInputIds: z.array(z.string()).optional(),
   })
   .strict();
 

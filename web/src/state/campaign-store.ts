@@ -374,11 +374,25 @@ const CampaignExportSchema = z
   })
   .strict();
 
-const StateHashResponseSchema = z.object({ stateHash: z.string().length(64) }).strict();
-
 const TurnResponseSchema = CampaignResponseSchema.extend({
   plan: StrategicPlanSchema,
 }).strict();
+
+const CampaignSlotSummarySchema = z
+  .object({
+    slot: z.string().regex(/^[a-z0-9_-]{1,32}$/),
+    savedAtTurn: z.number().safe().int().nonnegative(),
+    elapsedDays: z.number().safe().int().nonnegative(),
+    scenarioId: z.string().regex(/^scn_[a-z0-9_]+$/),
+    playerNationId: NationIdSchema,
+    stateHash: z.string().regex(/^[a-f0-9]{64}$/),
+  })
+  .strict()
+  .readonly();
+
+const CampaignSlotListResponseSchema = z
+  .object({ slots: z.array(CampaignSlotSummarySchema) })
+  .strict();
 
 const ApiErrorSchema = z
   .object({
@@ -391,6 +405,7 @@ export type StrategicPlan = z.infer<typeof StrategicPlanSchema>;
 export type { CampaignResolution };
 export type CampaignChatMessage = z.infer<typeof CampaignChatMessageSchema>;
 export type CampaignExport = z.infer<typeof CampaignExportSchema>;
+export type CampaignSlotSummary = z.infer<typeof CampaignSlotSummarySchema>;
 export type TreatyClause = "alliance" | "non_aggression" | "trade" | "military_access";
 export type PlannerProvider = "deterministic" | "codex" | "claude";
 export type CampaignDifficulty = "story" | "standard" | "hard";
@@ -442,6 +457,8 @@ export interface CampaignStoreState {
   readonly busy: boolean;
   readonly error: string | null;
   readonly saveStatus: string | null;
+  readonly slots: readonly CampaignSlotSummary[];
+  readonly slotsBusy: boolean;
   readonly provider: PlannerProvider;
   readonly loadCampaign: () => Promise<void>;
   readonly beginNewCampaign: () => void;
@@ -459,6 +476,9 @@ export interface CampaignStoreState {
   readonly jumpTimeline: (cadence: TimelineCadence) => Promise<boolean>;
   readonly progressTimeline: (progression: TimelineProgressionRequest) => Promise<boolean>;
   readonly saveCampaign: () => Promise<boolean>;
+  readonly loadSlots: () => Promise<boolean>;
+  readonly saveSlot: (slot: string) => Promise<boolean>;
+  readonly loadSlot: (slot: string) => Promise<boolean>;
   readonly exportCampaign: () => Promise<string | null>;
   readonly importCampaign: (json: string) => Promise<boolean>;
   readonly proposeTreaty: (targetNationId: string, clause: TreatyClause) => Promise<boolean>;
@@ -489,6 +509,16 @@ const postCampaignAction = async (
     CampaignResponseSchema,
   );
 
+const horizonForCadence = (
+  cadence: TimelineCadence,
+): { readonly mode: "days"; readonly days: number } | { readonly mode: "until_major_event" } => {
+  if (cadence === "major") return { mode: "until_major_event" };
+  return {
+    mode: "days",
+    days: { week: 7, month: 30, quarter: 91, year: 365 }[cadence],
+  };
+};
+
 export const useCampaignStore = create<CampaignStoreState>((set, get) => ({
   campaign: null,
   bootstrapReady: false,
@@ -498,6 +528,8 @@ export const useCampaignStore = create<CampaignStoreState>((set, get) => ({
   busy: false,
   error: null,
   saveStatus: null,
+  slots: [],
+  slotsBusy: false,
   provider: "codex",
   loadCampaign: async () => {
     const epoch = ++campaignLoadEpoch;
@@ -579,20 +611,26 @@ export const useCampaignStore = create<CampaignStoreState>((set, get) => ({
   },
   advanceTurn: async (orderText, cadence = "quarter") => {
     const campaign = get().campaign;
-    if (campaign === null) {
+    const expectedStateHash = get().stateHash;
+    if (campaign === null || get().busy) {
+      return false;
+    }
+    if (expectedStateHash === null) {
+      set({ error: "현재 캠페인 상태를 확인할 수 없습니다." });
       return false;
     }
     set({ busy: true, error: null, saveStatus: null });
     try {
       const result = await parseResponse(
-        await fetch("/api/turns/preview", {
+        await fetch("/api/turns/advance", {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({
+            ...(orderText.trim().length === 0 ? {} : { orderText }),
+            horizon: horizonForCadence(cadence),
             provider: get().provider,
+            expectedStateHash,
             requestId: requestId(),
-            orderText,
-            cadence,
           }),
         }),
         TurnResponseSchema,
@@ -667,16 +705,68 @@ export const useCampaignStore = create<CampaignStoreState>((set, get) => ({
     }
   },
   saveCampaign: async () => {
-    set({ error: null });
+    return get().saveSlot("quick-save");
+  },
+  loadSlots: async () => {
+    if (get().slotsBusy) return false;
+    set({ slotsBusy: true, error: null, saveStatus: null });
     try {
       const result = await parseResponse(
-        await fetch("/api/campaign/state-hash"),
-        StateHashResponseSchema,
+        await fetch("/api/campaigns"),
+        CampaignSlotListResponseSchema,
       );
-      set({ saveStatus: `저장됨 · ${result.stateHash.slice(0, 8)}` });
+      set({ slots: result.slots, slotsBusy: false });
       return true;
     } catch (error: unknown) {
-      set({ error: messageForError(error), saveStatus: null });
+      set({ slotsBusy: false, error: messageForError(error), saveStatus: null });
+      return false;
+    }
+  },
+  saveSlot: async (slot) => {
+    if (get().slotsBusy) return false;
+    set({ slotsBusy: true, error: null, saveStatus: null });
+    try {
+      const saved = await parseResponse(
+        await fetch(`/api/campaigns/${encodeURIComponent(slot)}/save`, { method: "POST" }),
+        CampaignSlotSummarySchema,
+      );
+      set((state) => ({
+        slots: [...state.slots.filter((candidate) => candidate.slot !== saved.slot), saved].sort(
+          (left, right) => left.slot.localeCompare(right.slot),
+        ),
+        slotsBusy: false,
+        saveStatus: `${saved.slot} 슬롯 저장됨`,
+      }));
+      return true;
+    } catch (error: unknown) {
+      set({ slotsBusy: false, error: messageForError(error), saveStatus: null });
+      return false;
+    }
+  },
+  loadSlot: async (slot) => {
+    if (get().slotsBusy) return false;
+    set({ slotsBusy: true, error: null, saveStatus: null });
+    try {
+      const result = await parseResponse(
+        await fetch(`/api/campaigns/${encodeURIComponent(slot)}/load`, { method: "POST" }),
+        CampaignResponseSchema,
+      );
+      newCampaignRequested = false;
+      campaignLoadEpoch += 1;
+      set({
+        campaign: result.campaign,
+        bootstrapReady: true,
+        startScreenRequested: false,
+        stateHash: result.stateHash,
+        plan: null,
+        slotsBusy: false,
+        error: null,
+        saveStatus: `${slot} 슬롯 불러옴`,
+        provider: result.campaign.plannerProvider,
+      });
+      return true;
+    } catch (error: unknown) {
+      set({ slotsBusy: false, error: messageForError(error), saveStatus: null });
       return false;
     }
   },

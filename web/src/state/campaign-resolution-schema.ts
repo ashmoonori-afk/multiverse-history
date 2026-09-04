@@ -9,8 +9,8 @@ import {
 
 const NumericDeltaSchema = z
   .object({
-    before: z.number().int(),
-    after: z.number().int(),
+    before: z.number().safe().int(),
+    after: z.number().safe().int(),
     source: z.enum(["policy", "tick"]).default("policy"),
   })
   .strict();
@@ -32,11 +32,11 @@ const CampaignNewsArticleSchema = z
 
 export const CampaignResolutionSchema = z
   .object({
-    id: z.string(),
-    turn: z.number().int().nonnegative(),
+    id: z.string().regex(/^res_[a-z0-9_]+$/),
+    turn: z.number().safe().int().nonnegative(),
     timestampKo: z.string().min(1),
     cadence: z.enum(["week", "month", "quarter", "year", "major"]),
-    advanceDays: z.number().int().positive(),
+    advanceDays: z.number().safe().int().positive(),
     orderText: z.string().min(1),
     narrativeKo: z.string().min(1),
     articleKo: z.string().min(1),
@@ -60,8 +60,8 @@ export const CampaignResolutionSchema = z
         .object({
           fromNationId: NationIdSchema,
           toNationId: NationIdSchema,
-          before: z.number().int(),
-          after: z.number().int(),
+          before: z.number().safe().int(),
+          after: z.number().safe().int(),
           source: z.enum(["policy", "tick"]).default("policy"),
         })
         .strict(),
@@ -74,9 +74,9 @@ export const CampaignResolutionSchema = z
           recipientNationId: NationIdSchema,
           clauses: z.array(z.string()),
           status: z.enum(["proposed", "active", "rejected", "terminated"]),
-          proposedTurn: z.number().int().nonnegative(),
-          resolvedTurn: z.number().int().nonnegative().optional(),
-          terminatedTurn: z.number().int().nonnegative().optional(),
+          proposedTurn: z.number().safe().int().nonnegative(),
+          resolvedTurn: z.number().safe().int().nonnegative().optional(),
+          terminatedTurn: z.number().safe().int().nonnegative().optional(),
           source: z.enum(["policy", "tick"]).default("policy"),
         })
         .strict(),
@@ -91,7 +91,7 @@ export const CampaignResolutionSchema = z
               .object({
                 ownerNationId: NationIdSchema,
                 provinceId: ProvinceIdSchema,
-                manpower: z.number().int().nonnegative(),
+                manpower: z.number().safe().int().nonnegative(),
               })
               .strict()
               .nullable(),
@@ -99,7 +99,7 @@ export const CampaignResolutionSchema = z
               .object({
                 ownerNationId: NationIdSchema,
                 provinceId: ProvinceIdSchema,
-                manpower: z.number().int().nonnegative(),
+                manpower: z.number().safe().int().nonnegative(),
               })
               .strict()
               .nullable(),
@@ -108,21 +108,21 @@ export const CampaignResolutionSchema = z
           .strict(),
       )
       .default([]),
-    worldEventIds: z.array(z.string()).default([]),
-    reactionIds: z.array(z.string()).default([]),
+    worldEventIds: z.array(z.string().regex(/^evt_[a-z0-9_]+$/)).default([]),
+    reactionIds: z.array(z.string().regex(/^rct_[a-z0-9_]+$/)).default([]),
     worldImpact: z
       .object({
-        changedNationIds: z.array(z.string()),
-        changedProvinceIds: z.array(z.string()),
+        changedNationIds: z.array(NationIdSchema),
+        changedProvinceIds: z.array(z.string().min(1)),
         summaryKo: z.string().min(1),
         regionOwnershipOverrides: z
           .array(
             z
               .object({
-                regionId: z.string(),
-                toNationId: z.string(),
-                fromNationId: z.string(),
-                reasonKo: z.string().min(1),
+                regionId: z.string().min(1),
+                toNationId: NationIdSchema,
+                fromNationId: NationIdSchema,
+                reasonKo: z.string().min(1).max(300),
                 cause: z.enum(["player", "npc", "combat"]),
                 source: z.enum(["policy", "tick"]).default("policy"),
               })

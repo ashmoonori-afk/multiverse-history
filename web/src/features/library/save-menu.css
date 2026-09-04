@@ -1,0 +1,122 @@
+.oh_settings_panel {
+  block-size: min(40rem, calc(100dvb - 5.25rem));
+}
+
+.oh_settings_panel .oh_panel_body {
+  display: grid;
+  overflow: hidden;
+}
+
+.save_menu {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto auto;
+  min-block-size: 0;
+  gap: var(--space-3);
+}
+
+.save_menu_header,
+.save_slot_list li {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+  min-inline-size: 0;
+}
+
+.save_menu_header h2,
+.save_menu_confirmation p,
+.save_menu_footer p,
+.save_menu_slot_body p,
+.save_menu_help,
+.save_menu_validation {
+  margin: 0;
+}
+
+.save_menu_header h2 {
+  color: var(--oh-text);
+  font-size: var(--text-md);
+}
+
+.save_menu_form,
+.save_menu_confirmation,
+.save_menu_footer,
+.save_slot_list li > div {
+  display: grid;
+  gap: var(--space-2);
+  min-inline-size: 0;
+}
+
+.save_menu_form input {
+  inline-size: 100%;
+  min-block-size: 2.75rem;
+  border: 1px solid var(--oh-stroke);
+  border-radius: var(--oh-radius-sm);
+  background: var(--color-surface-1);
+  color: var(--oh-text);
+  font-size: var(--text-base);
+}
+
+.save_menu_help,
+.save_menu_validation,
+.save_menu_status,
+.save_menu_slot_body,
+.save_slot_list span,
+.save_menu_confirmation p {
+  color: var(--oh-text-3);
+  font-size: var(--text-xs);
+  line-height: 1.5;
+  word-break: keep-all;
+}
+
+.save_menu_validation,
+.save_menu_status {
+  color: var(--oh-text-2);
+}
+
+.save_menu_slot_body {
+  min-block-size: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.save_slot_list {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.save_slot_list li,
+.save_menu_confirmation {
+  padding: var(--space-2);
+  border: 1px solid var(--oh-stroke-soft);
+  border-radius: var(--oh-radius-sm);
+  background: var(--color-surface-2);
+}
+
+.save_slot_list strong,
+.save_slot_list span {
+  overflow-wrap: anywhere;
+}
+
+.save_slot_list strong,
+.save_menu_confirmation strong {
+  color: var(--oh-text);
+}
+
+.save_menu_footer {
+  padding-block-start: var(--space-2);
+  border-block-start: 1px solid var(--oh-stroke-soft);
+}
+
+@media (max-width: 700px) {
+  .oh_settings_panel {
+    inline-size: min(17.5rem, calc(100vw - 1rem));
+  }
+
+  .save_menu_form input {
+    font-size: 1rem;
+  }
+}

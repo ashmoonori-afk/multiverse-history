@@ -3,12 +3,14 @@ import { useMemo, useState } from "react";
 import { SearchableSelect } from "../features/controls/SearchableSelect";
 import { CampaignChatDrawer } from "../features/diplomacy/CampaignChatDrawer";
 import { OpenHistoriaHud } from "../features/hud/OpenHistoriaHud";
+import { SaveMenu } from "../features/library/SaveMenu";
 import { WorldMap } from "../features/map/WorldMap";
 import { OrderComposer } from "../features/orders/OrderComposer";
 import { ResolutionSummary } from "../features/resolution/ResolutionSummary";
 import { TurnResultPanel } from "../features/resolution/TurnResultPanel";
 import type {
   Campaign,
+  CampaignSlotSummary,
   StrategicPlan,
   TimelineCadence,
   TimelineProgressionRequest,
@@ -24,6 +26,8 @@ interface CampaignShellProps {
   readonly busy: boolean;
   readonly error: string | null;
   readonly saveStatus: string | null;
+  readonly slots: readonly CampaignSlotSummary[];
+  readonly slotsBusy: boolean;
   readonly onNewCampaign: () => void;
   readonly onAdvance: (orderText: string, cadence?: TimelineCadence) => Promise<boolean>;
   readonly onSendChat: (
@@ -33,6 +37,9 @@ interface CampaignShellProps {
   readonly onJumpTimeline: (cadence: TimelineCadence) => Promise<boolean>;
   readonly onProgressTimeline: (progression: TimelineProgressionRequest) => Promise<boolean>;
   readonly onSave: () => Promise<boolean>;
+  readonly onLoadSlots: () => Promise<boolean>;
+  readonly onSaveSlot: (slot: string) => Promise<boolean>;
+  readonly onLoadSlot: (slot: string) => Promise<boolean>;
   readonly onExport: () => Promise<string | null>;
   readonly onProposeTreaty: (targetNationId: string, clause: TreatyClause) => Promise<boolean>;
   readonly onTransferTerritory: (targetNationId: string, provinceId: string) => Promise<boolean>;
@@ -58,16 +65,22 @@ const downloadCampaign = async (
 
 export const CampaignShell = ({
   campaign,
+  plan,
   stateHash,
   busy,
   error,
   saveStatus,
+  slots,
+  slotsBusy,
   onNewCampaign,
   onAdvance,
   onSendChat,
   onJumpTimeline,
   onProgressTimeline,
   onSave,
+  onLoadSlots,
+  onSaveSlot,
+  onLoadSlot,
   onExport,
   onProposeTreaty,
   onTransferTerritory,
@@ -149,22 +162,19 @@ export const CampaignShell = ({
         incomingChatCount={incomingChatCount}
         onExit={onNewCampaign}
         settingsContent={
-          <div className="oh_settings_content">
-            <strong>Open Historia</strong>
-            <span>{saveStatus ?? "로컬 캠페인"}</span>
-            <span className="oh_state_hash" title={stateHash ?? undefined}>
-              상태 검증됨
-            </span>
-            <button type="button" disabled={busy} onClick={() => void onSave()}>
-              저장
-            </button>
-            <button type="button" onClick={() => void downloadCampaign(onExport, campaign.turn)}>
-              내보내기
-            </button>
-            <button type="button" onClick={onNewCampaign}>
-              새 캠페인
-            </button>
-          </div>
+          <SaveMenu
+            campaign={campaign}
+            stateHash={stateHash}
+            slots={slots}
+            busy={slotsBusy}
+            error={error}
+            status={saveStatus}
+            onRefresh={onLoadSlots}
+            onSave={onSaveSlot}
+            onLoad={onLoadSlot}
+            onExport={() => downloadCampaign(onExport, campaign.turn)}
+            onNewCampaign={onNewCampaign}
+          />
         }
         chatContent={(closeChat) => (
           <CampaignChatDrawer
@@ -183,6 +193,7 @@ export const CampaignShell = ({
             <TurnResultPanel
               state="committed"
               resolution={latestResolution}
+              plan={plan}
               playerNationId={campaign.playerNationId}
               nationNameById={nationNameById}
               onContinue={() => setActionPanelState("compose")}
