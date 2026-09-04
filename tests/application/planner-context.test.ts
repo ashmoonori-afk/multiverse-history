@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { createCampaignState } from "../../src/application/campaign-state";
+import { type CampaignState, createCampaignState } from "../../src/application/campaign-state";
 import { buildPlannerStateJson } from "../../src/application/planner-context";
 import { canonicalStringify } from "../../src/shared/canonical-json";
 
@@ -31,5 +31,90 @@ describe("planner context slimming", () => {
 
     // And the payload is an order of magnitude smaller than the full state.
     expect(json.length).toBeLessThan(canonicalStringify(state).length / 5);
+  });
+
+  test("attaches each major's profile and active diplomatic context", () => {
+    // Given
+    const base = createCampaignState("scn_ea1900", "nat_kor");
+    const state: CampaignState = Object.freeze({
+      ...base,
+      wars: Object.freeze([
+        {
+          id: "war_0_0",
+          attackerNationId: "nat_jpn",
+          targetNationId: "nat_rus",
+          status: "active" as const,
+          declaredTurn: 0,
+        },
+      ]),
+      treaties: Object.freeze([
+        {
+          id: "try_jpn_gbr_active",
+          proposerNationId: "nat_jpn",
+          recipientNationId: "nat_gbr",
+          clauses: Object.freeze(["trade"]),
+          status: "active" as const,
+          proposedTurn: 0,
+        },
+        {
+          id: "try_jpn_qing_proposed",
+          proposerNationId: "nat_jpn",
+          recipientNationId: "nat_qing",
+          clauses: Object.freeze(["trade"]),
+          status: "proposed" as const,
+          proposedTurn: 0,
+        },
+      ]),
+      worldEvents: Object.freeze(
+        [1, 2, 3, 4].map((index) => ({
+          id: `evt_jpn_${index}`,
+          kind: "diplomatic" as const,
+          importance: "minor" as const,
+          occurredAtElapsedDays: index,
+          turn: index,
+          date: Object.freeze({ year: 1900, quarter: 1 }),
+          actorNationIds: Object.freeze(index % 2 === 0 ? ["nat_jpn"] : ["nat_gbr"]),
+          affectedNationIds: Object.freeze(index % 2 === 0 ? ["nat_gbr"] : ["nat_jpn"]),
+          headlineKo: `일본 관련 사건 ${index}`,
+          summaryKo: `일본과 영국이 관련된 사건 ${index}`,
+        })),
+      ),
+    });
+
+    // When
+    const parsed = JSON.parse(buildPlannerStateJson(state)) as {
+      majorNations: {
+        id: string;
+        profile?: { goalsKo: string[] };
+        activeWars: {
+          id: string;
+          attackerNationId: string;
+          targetNationId: string;
+          status: "active" | "ended";
+          declaredTurn: number;
+        }[];
+        activeTreaties: { id: string }[];
+        recentWorldEvents: { id: string }[];
+      }[];
+    };
+    const japan = parsed.majorNations.find((nation) => nation.id === "nat_jpn");
+
+    // Then
+    expect(japan?.profile?.goalsKo.length).toBeGreaterThan(0);
+    expect(japan?.activeWars).toEqual([
+      {
+        id: "war_0_0",
+        attackerNationId: "nat_jpn",
+        targetNationId: "nat_rus",
+        status: "active",
+        declaredTurn: 0,
+      },
+    ]);
+    expect(japan?.activeTreaties.map((treaty) => treaty.id)).toEqual(["try_jpn_gbr_active"]);
+    expect(japan?.recentWorldEvents.map((event) => event.id)).toEqual([
+      "evt_jpn_2",
+      "evt_jpn_3",
+      "evt_jpn_4",
+    ]);
   });
 });
