@@ -77,6 +77,11 @@ Started: 2026-08-28T10:59:42.6814923+09:00
 - Cleanup fix `882404c`: Bun preload removes the process-scoped test slot root.
   A clean full-suite before/after probe left zero
   `%TEMP%\pax-api-test-slots-*` roots.
+- Cleanup correction `b8f931c`: Bun 1.3.13 on Windows can run preload
+  `afterAll` before later workers allocate slot roots. Cleanup registration now
+  occurs when each root is created, with a synchronous process-exit fallback.
+  Direct clean-before/full-suite/clean-after proof: `BEFORE=0`, 303/0,
+  `AFTER=0`.
 - QA cleanup receipts: SC3 server source removed; SC3/SC5 servers stopped;
   ports 3100/5273/31047/31048/59729 verified free; temporary Pax slot roots
   removed; isolated Playwright and document/browser contexts closed.

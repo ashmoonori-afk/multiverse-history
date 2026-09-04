@@ -80,7 +80,7 @@ Status values: `RED`, `GREEN`, `PASS`, `FAIL`, `PENDING`.
 - Forbidden clock/random/web-to-src audits pass.
 - Final gates: typecheck 0; check 0; test 303/0; build 0.
 - Commits: `c4d7803`, `170a478`, `cf97d46`, `f9d579e`,
-  `4e4eb1b`, `882404c`.
+  `4e4eb1b`, `882404c`, `b8f931c`.
 
 ## Completion gate
 

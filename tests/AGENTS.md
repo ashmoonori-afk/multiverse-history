@@ -1,6 +1,6 @@
 # tests
 
-Score 11, distinct domain (98 TS/TSX files, 10 subdirs, two different runners).
+Score 11, distinct domain (97 TS/TSX files, 10 subdirs, two different runners).
 
 ## OVERVIEW
 Two independent suites: `bun test` for everything in-process, Playwright for `tests/e2e` against real servers.
