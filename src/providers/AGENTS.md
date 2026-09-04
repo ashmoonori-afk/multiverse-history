@@ -1,6 +1,6 @@
 # src/providers
 
-Score 9, distinct domain (20 TS files, 2329 LOC) — the only layer allowed to leave the process.
+Score 9, distinct domain (20 TS files, 2350 LOC) — the only layer allowed to leave the process.
 
 ## OVERVIEW
 Adapters that turn Codex/Claude CLI subprocesses into schema-validated game output, plus the deterministic planner used by tests and rules-mode verification.

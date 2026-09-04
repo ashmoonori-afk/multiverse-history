@@ -1,6 +1,6 @@
 # src/domain
 
-Score 9, distinct domain (17 TS files, 2131 LOC) — game rules, no providers, no persistence.
+Score 9, distinct domain (17 TS files, 3139 LOC) — game rules, no providers, no persistence.
 
 ## OVERVIEW
 Game rules plus the scenario system: one hand-authored 1900 East Asia dataset and nine historical scenarios generated from a fetched world basemap.

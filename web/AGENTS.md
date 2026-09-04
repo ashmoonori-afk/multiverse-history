@@ -1,6 +1,6 @@
 # web
 
-Score 13 (44 TS/TSX files, 6741 LOC, 12 feature folders) — the Vite root, and a hard schema boundary with `src/`.
+Score 13 (45 TS/TSX files, 6849 LOC, 12 feature folders) — the Vite root, and a hard schema boundary with `src/`.
 
 ## OVERVIEW
 React 18 + zustand + MapLibre client for the campaign: start screen, map, order composer, turn resolution feed, timeline, diplomacy chat.

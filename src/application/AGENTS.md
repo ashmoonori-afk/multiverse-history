@@ -1,6 +1,6 @@
 # src/application
 
-Score 12 (32 TS files, 4978 LOC) — the heaviest and most-referenced subtree.
+Score 12 (32 TS files, 5164 LOC) — the heaviest and most-referenced subtree.
 
 ## OVERVIEW
 Orchestration layer between `src/api` and `src/domain`: owns the campaign aggregate, the turn transaction, and the assembly of a turn's resolution, narrative, news and reactions.
@@ -12,7 +12,7 @@ Orchestration layer between `src/api` and `src/domain`: owns the campaign aggreg
 | Turn commit, optimistic concurrency, error codes | `turn-transaction.ts` |
 | Clamp an LLM plan to legal ids before applying | `ground-strategic-plan.ts` |
 | Turn reduction: apply plan intents to state | `apply-strategic-plan.ts`, `policy-intent-reducers.ts` |
-| Deterministic quarterly progression | `simulation-tick.ts`, `simulation-tick-*.ts` |
+| Deterministic quarterly progression | `simulation-tick.ts`, `simulation-quarter.ts`, `simulation-supply.ts` |
 | Post-reduction news + reactions | `campaign-turn-finalization.ts`, `campaign-news-finalization.ts`, `campaign-world-feedback.ts` |
 | Delta computation + Korean turn summary | `campaign-resolution.ts` (314L), `campaign-resolution-entities.ts` |
 | Reduced state sent to the LLM planner | `planner-context.ts` |
