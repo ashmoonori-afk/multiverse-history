@@ -10,6 +10,7 @@ import MapLibreMap, {
 } from "react-map-gl/maplibre";
 
 import type { Campaign } from "../../state/campaign-store";
+import { ensureDisputedHatchImage } from "./disputed-hatch";
 import { capitalProvinceByNationId } from "./east-asia-map";
 import {
   buildOpenHistoriaMapData,
@@ -34,6 +35,7 @@ import {
   unitCounterLayer,
   unitStrengthLabelLayer,
 } from "./open-historia-map-style";
+import { useHistoricalScenarioMap } from "./use-historical-scenario-map";
 
 interface WorldMapProps {
   readonly campaign: Campaign;
@@ -55,46 +57,10 @@ const initialCamera: CameraSnapshot = {
   latitude: 40,
   zoom: 3.45,
 };
+const globalCamera: CameraSnapshot = { longitude: 15, latitude: 22, zoom: 1.45 };
 
 const cameraAttribute = (camera: CameraSnapshot): string =>
   `longitude=${camera.longitude.toFixed(4)};latitude=${camera.latitude.toFixed(4)};zoom=${camera.zoom.toFixed(3)}`;
-
-/** Procedural diagonal hatch tile for disputed regions (no sprite assets). */
-const createDisputedHatchImage = (): ImageData | null => {
-  const size = 12;
-  const canvas = document.createElement("canvas");
-  canvas.width = size;
-  canvas.height = size;
-  const context = canvas.getContext("2d");
-  if (context === null) {
-    return null;
-  }
-  context.clearRect(0, 0, size, size);
-  context.strokeStyle = "rgba(255,255,255,0.85)";
-  context.lineWidth = 2;
-  context.beginPath();
-  context.moveTo(-3, size + 3);
-  context.lineTo(size + 3, -3);
-  context.moveTo(-3, 3);
-  context.lineTo(3, -3);
-  context.moveTo(size - 3, size + 3);
-  context.lineTo(size + 3, size - 3);
-  context.stroke();
-  return context.getImageData(0, 0, size, size);
-};
-
-const ensureDisputedHatchImage = (map: {
-  hasImage: (id: string) => boolean;
-  addImage: (id: string, image: ImageData) => void;
-}): void => {
-  if (map.hasImage(DISPUTED_HATCH_IMAGE)) {
-    return;
-  }
-  const image = createDisputedHatchImage();
-  if (image !== null) {
-    map.addImage(DISPUTED_HATCH_IMAGE, image);
-  }
-};
 
 export const WorldMap = ({
   campaign,
@@ -106,12 +72,19 @@ export const WorldMap = ({
 }: WorldMapProps): JSX.Element => {
   const mapRef = useRef<MapRef | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const {
+    collection: historicalCollection,
+    ready: scenarioMapReady,
+    error: scenarioMapError,
+  } = useHistoricalScenarioMap(campaign.scenarioId);
   const [cursor, setCursor] = useState<"default" | "pointer" | "grab" | "grabbing">("grab");
   const [camera, setCamera] = useState<CameraSnapshot>(initialCamera);
-  const mapData = useMemo(
-    () => buildOpenHistoriaMapData(campaign, nationNameById),
-    [campaign, nationNameById],
-  );
+  const mapData = useMemo(() => {
+    if (campaign.scenarioId === "scn_ea1900") {
+      return buildOpenHistoriaMapData(campaign, nationNameById);
+    }
+    return buildOpenHistoriaMapData(campaign, nationNameById, historicalCollection);
+  }, [campaign, historicalCollection, nationNameById]);
   const selectedRegion = useMemo(
     () =>
       mapData.regions.features.find(
@@ -123,7 +96,9 @@ export const WorldMap = ({
   useEffect(() => {
     const capitalProvinceId = capitalProvinceByNationId[selectedNationId];
     const capital = mapData.regions.features.find(
-      (feature) => feature.properties.provinceId === capitalProvinceId,
+      (feature) =>
+        feature.properties.provinceId === capitalProvinceId ||
+        (capitalProvinceId === undefined && feature.properties.ownerNationId === selectedNationId),
     );
     if (capital === undefined || mapRef.current === null) {
       return;
@@ -164,7 +139,9 @@ export const WorldMap = ({
       className="oh_world"
       data-testid="open-historia-world"
       data-map-engine="maplibre"
-      data-map-data-state={loaded ? "ready" : "loading"}
+      data-map-data-state={
+        scenarioMapError ? "error" : loaded && scenarioMapReady ? "ready" : "loading"
+      }
       data-region-count={mapData.regions.features.length}
       data-disputed-count={
         mapData.regions.features.filter((feature) => feature.properties.disputed).length
@@ -173,13 +150,13 @@ export const WorldMap = ({
       data-unit-count={mapData.units.features.length}
       data-unit-provinces={mapData.unitProvinceIds.join(" ")}
       data-camera={cameraAttribute(camera)}
-      aria-label="Open Historia MapLibre 동아시아 전략 지도"
+      aria-label="Open Historia MapLibre 세계 전략 지도"
     >
       <MapLibreMap
         ref={mapRef}
-        initialViewState={initialCamera}
+        initialViewState={campaign.scenarioId === "scn_ea1900" ? initialCamera : globalCamera}
         mapStyle={openHistoriaMapStyle}
-        minZoom={2}
+        minZoom={1}
         maxZoom={10}
         attributionControl={false}
         dragPan

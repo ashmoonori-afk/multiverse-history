@@ -2,7 +2,10 @@ import { validateScenarioPackageMetadata } from "./metadata";
 import type { ScenarioPackageMetadata } from "./types";
 
 const originalSource = ["Public-domain historical facts; independently authored scenario"];
-const originalAssets = ["Original generated geometry and deterministic neutral fallbacks"];
+const originalAssets = [
+  "Original generated geometry and deterministic neutral fallbacks",
+  "Historical boundaries fetched from aourednik/historical-basemaps (GPL-3.0)",
+];
 
 const builtIn = (
   id: string,

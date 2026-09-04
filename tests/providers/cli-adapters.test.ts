@@ -16,6 +16,25 @@ const validPlan = {
     },
   ],
   narrative: { ko: "일본제국은 병력을 증강했다." },
+  presentation: {
+    article: {
+      headlineKo: "일본제국, 병력 증강 착수",
+      ledeKo: "일본 정부가 역내 군사 태세 강화에 나섰다.",
+      paragraphsKo: [
+        "관계 당국은 규슈 지역의 병력 충원을 우선 시행한다고 밝혔다.",
+        "주변국들은 이번 조치가 동아시아 정세에 미칠 영향을 주시하고 있다.",
+      ],
+      quote: null,
+    },
+    reactions: [
+      {
+        nationId: "nat_jpn",
+        stance: "supportive",
+        sentimentBps: 500,
+        statementKo: "국방 태세를 강화하겠다.",
+      },
+    ],
+  },
   warnings: [],
 };
 
@@ -25,7 +44,7 @@ describe("Codex CLI adapter", () => {
     const input = {
       schemaPath: "C:\\tmp\\strategic-plan.schema.json",
       resultPath: "C:\\tmp\\result.json",
-    };
+    } as const;
 
     // When
     const args = buildCodexArguments(input);
@@ -33,6 +52,12 @@ describe("Codex CLI adapter", () => {
     // Then
     expect(args).toEqual([
       "exec",
+      "--ephemeral",
+      "--ignore-rules",
+      "--model",
+      "gpt-5.4-mini",
+      "-c",
+      'model_reasoning_effort="low"',
       "--json",
       "--output-schema",
       input.schemaPath,
@@ -56,6 +81,8 @@ describe("Codex CLI adapter", () => {
 
     // Then
     expect(parsed.requestId).toBe(validPlan.requestId);
+    expect(parsed.presentation?.article.headlineKo).toBe(validPlan.presentation.article.headlineKo);
+    expect(parsed.presentation?.reactions).toHaveLength(1);
     expect(parseMalformed).toThrow("PROVIDER_MALFORMED_OUTPUT");
   });
 });

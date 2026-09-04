@@ -62,7 +62,7 @@ export const regionFillLayer = {
   source: OPEN_HISTORIA_REGION_SOURCE,
   paint: {
     "fill-color": ["get", "fillColor"],
-    "fill-opacity": ["case", ["boolean", ["get", "changed"], false], 0.7, 0.5],
+    "fill-opacity": ["case", ["boolean", ["get", "changed"], false], 0.78, 0.66],
     "fill-antialias": true,
   },
 } satisfies FillLayerSpecification;

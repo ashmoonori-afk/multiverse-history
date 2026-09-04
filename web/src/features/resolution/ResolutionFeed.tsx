@@ -19,6 +19,12 @@ const formatClause = (clause: string): string => {
       return "불가침";
     case "military_access":
       return "군사 통행";
+    case "port_access":
+      return "특구 입항";
+    case "weapons_support":
+      return "무기 지원";
+    case "officer_training":
+      return "교육장교 파견";
     default:
       return clause;
   }

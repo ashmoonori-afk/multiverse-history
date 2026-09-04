@@ -47,7 +47,14 @@ const newsContext = (input: FinalizeCampaignNewsInput, resolutionIndex: number):
       advanceDays: resolution.advanceDays,
       nationDeltas: resolution.nationDeltas,
       relationDeltas: resolution.relationDeltas,
-      treatyDeltas: resolution.treatyDeltas,
+      treatyDeltas: resolution.treatyDeltas.map((treaty) => ({
+        id: treaty.id,
+        proposerNationId: treaty.proposerNationId,
+        recipientNationId: treaty.recipientNationId,
+        clauses: treaty.clauses,
+        status: treaty.status,
+        proposedTurn: treaty.proposedTurn,
+      })),
       worldImpact: resolution.worldImpact,
       constructionProjects: input.reduced.constructionProjects.filter(
         (project) => project.startedTurn === resolution.turn,

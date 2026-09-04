@@ -9,6 +9,10 @@ interface TestNewsAuthorInput {
   readonly deterministicArticle: unknown;
 }
 
+interface TestReactionAuthorInput {
+  readonly nations: readonly { readonly id: string; readonly nameKo: string }[];
+}
+
 const campaignInput = {
   scenarioId: "scn_ea1900",
   playerNationId: "nat_kor",
@@ -41,8 +45,141 @@ const turnRequest = (orderText: string): RequestInit => ({
 });
 
 describe("provider-authored campaign news", () => {
+  test("uses planner-authored presentation without secondary provider calls", async () => {
+    // Given
+    let secondaryCalls = 0;
+    const article = {
+      headlineKo: "대한제국, 한성 철도 사업 착수",
+      ledeKo: "정부가 수도권 철도 기반 확충 계획을 발표했다.",
+      paragraphsKo: [
+        "한성의 주요 물류 구간이 우선 투자 대상으로 지정됐다.",
+        "일본 정부는 역내 통상과 안보에 미칠 영향을 검토하고 있다.",
+      ],
+    };
+    const app = createGameApp({
+      planners: {
+        deterministic: async (input) => ({
+          schemaVersion: 1,
+          requestId: input.requestId,
+          playerIntents: [
+            {
+              type: "economy.invest",
+              actorNationId: "nat_kor",
+              provinceId: "prv_kor_hanseong",
+              sector: "rail",
+              budgetCredits: 25,
+            },
+          ],
+          npcIntents: [
+            {
+              type: "military.recruit",
+              actorNationId: "nat_jpn",
+              provinceId: "prv_jpn_kanto",
+              manpower: 2_000,
+            },
+          ],
+          narrative: { ko: "대한제국은 철도를 놓고 일본은 군비를 증강했다." },
+          presentation: {
+            article,
+            reactions: [
+              {
+                nationId: "nat_kor",
+                stance: "supportive" as const,
+                sentimentBps: 600,
+                statementKo: "철도 사업을 차질 없이 집행하겠다.",
+              },
+              {
+                nationId: "nat_jpn",
+                stance: "cautious" as const,
+                sentimentBps: -100,
+                statementKo: "한반도 정세에 미칠 영향을 주시하겠다.",
+              },
+            ],
+          },
+          warnings: [],
+        }),
+      },
+      reactionAuthors: {
+        deterministic: async () => {
+          secondaryCalls += 1;
+          throw new Error("secondary reaction call must be bypassed");
+        },
+      },
+      newsAuthors: {
+        deterministic: async () => {
+          secondaryCalls += 1;
+          throw new Error("secondary news call must be bypassed");
+        },
+      },
+    });
+    await createCampaign(app);
+
+    // When
+    const response = await app.request(
+      "/api/turns/preview",
+      turnRequest("한성의 철도망을 확장한다"),
+    );
+    const responseBody: unknown = await response.json();
+    expect(response.status, JSON.stringify({ responseBody, secondaryCalls })).toBe(200);
+    const body = z
+      .object({
+        campaign: z.object({
+          resolutions: z.array(z.object({ article: z.object({ headlineKo: z.string() }) })),
+          nationReactions: z.array(z.object({ nationId: z.string() })),
+        }),
+        plan: z.record(z.string(), z.unknown()),
+      })
+      .parse(responseBody);
+
+    // Then
+    expect(secondaryCalls).toBe(0);
+    expect(body.campaign.resolutions[0]?.article.headlineKo).toBe(article.headlineKo);
+    expect(body.campaign.nationReactions.map((reaction) => reaction.nationId)).toEqual([
+      "nat_kor",
+      "nat_jpn",
+    ]);
+    expect("presentation" in body.plan).toBe(false);
+  });
+
+  test("authors reactions and news concurrently after reducing the turn", async () => {
+    // Given
+    let newsStarted = false;
+    let reactionObservedNews = false;
+    const app = createGameApp({
+      reactionAuthors: {
+        deterministic: async (input: TestReactionAuthorInput) => {
+          await Promise.resolve();
+          reactionObservedNews = newsStarted;
+          return input.nations.map((nation) => ({
+            nationId: nation.id,
+            stance: "neutral" as const,
+            sentimentBps: 0,
+            statementKo: `${nation.nameKo} 정부가 결과를 검토한다.`,
+          }));
+        },
+      },
+      newsAuthors: {
+        deterministic: async (input: TestNewsAuthorInput) => {
+          newsStarted = true;
+          return input.deterministicArticle;
+        },
+      },
+    });
+    await createCampaign(app);
+
+    // When
+    const response = await app.request(
+      "/api/turns/preview",
+      turnRequest("한성의 철도망을 확장한다"),
+    );
+
+    // Then
+    expect(response.status).toBe(200);
+    expect(reactionObservedNews).toBe(true);
+  });
+
   test("turns player action into provider-authored editorial news", async () => {
-    const orderText = "평양에 제철소를 건설하고 러시아와 기술협정을 체결한다";
+    const orderText = "평양 철도망을 확장하고 러시아와 통상 협정을 체결한다";
     let authorInput: TestNewsAuthorInput | undefined;
     const article = {
       headlineKo: "평양 중공업 계획, 북방 기술 외교와 맞물리다",

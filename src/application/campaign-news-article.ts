@@ -42,7 +42,11 @@ const headline = (
 ): string => {
   const playerDelta = draft.nationDeltas[0];
   const treatyDelta = draft.treatyDeltas[0];
-  const playerName = playerDelta?.nationNameKo ?? "정부";
+  const playerName =
+    playerDelta?.nationNameKo ??
+    (treatyDelta === undefined
+      ? "정부"
+      : (nationNameById.get(treatyDelta.proposerNationId) ?? treatyDelta.proposerNationId));
   const treatyTarget =
     treatyDelta === undefined
       ? undefined
@@ -50,7 +54,11 @@ const headline = (
   const infrastructureRaised =
     playerDelta !== undefined &&
     playerDelta.infrastructureBps.after > playerDelta.infrastructureBps.before;
+  const portAccessProposed = treatyDelta?.clauses.includes("port_access") === true;
 
+  if (portAccessProposed && treatyTarget !== undefined) {
+    return `${playerName}, ${treatyTarget}에 무역특구 조건부 입항 제안`;
+  }
   if (infrastructureRaised && treatyTarget !== undefined) {
     return `${playerName}, 철도망 확장과 ${treatyTarget} 통상 협상 착수`;
   }
@@ -76,12 +84,20 @@ export const createCampaignNewsArticle = (
   const diplomacyParagraph =
     relationDelta === undefined
       ? "직접 확인된 양자 관계 변화는 없었으며 추가 외교 대응은 다음 보고로 넘어갔다."
-      : `관련국과의 관계 지수는 ${formatInteger(relationDelta.before)}에서 ${formatInteger(relationDelta.after)}${directionParticle(relationDelta.after)} 변했다. ${draft.treatyDeltas.length > 0 ? "통상 협정 제안은 상대국 외교 채널에 공식 접수됐다." : "후속 협의 필요성이 커졌다."}`;
-  const playerName = playerDelta?.nationNameKo ?? "정부";
+      : `관련국과의 관계 지수는 ${formatInteger(relationDelta.before)}에서 ${formatInteger(relationDelta.after)}${directionParticle(relationDelta.after)} 변했다. ${draft.treatyDeltas.length > 0 ? "조건부 협정 제안은 상대국 외교 채널에 공식 접수됐다." : "후속 협의 필요성이 커졌다."}`;
+  const playerName =
+    playerDelta?.nationNameKo ??
+    (draft.treatyDeltas[0] === undefined
+      ? "정부"
+      : (nationNameById.get(draft.treatyDeltas[0].proposerNationId) ??
+        draft.treatyDeltas[0].proposerNationId));
+  const treatyClauses = new Set(draft.treatyDeltas[0]?.clauses ?? []);
   const quoteTextKo =
-    draft.treatyDeltas.length > 0
-      ? "철도 기반과 대외 교역을 함께 강화해 장기적인 성장 여건을 마련하겠다"
-      : "이번 정책의 성과를 지표로 확인하고 다음 조치를 결정하겠다";
+    treatyClauses.has("weapons_support") && treatyClauses.has("officer_training")
+      ? "특구 입항 협의에서 무기 지원과 교육장교 파견 조건을 분명히 하겠다"
+      : draft.treatyDeltas.length > 0
+        ? "제안한 조건을 바탕으로 대외 협의를 추진하겠다"
+        : "이번 정책의 성과를 지표로 확인하고 다음 조치를 결정하겠다";
   return Object.freeze({
     headlineKo: headline(draft, nationNameById),
     ledeKo: `확정된 정책 조치가 ${formatInteger(draft.advanceDays)}일간의 집행 검토를 거쳐 공식 발표됐다.`,

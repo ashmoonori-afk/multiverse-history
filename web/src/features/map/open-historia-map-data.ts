@@ -51,7 +51,7 @@ export interface OpenHistoriaUnitProperties {
   readonly accentColor: string;
 }
 
-interface RawRegionProperties {
+export interface RawRegionProperties {
   readonly provinceId: string;
   readonly ownerNationId?: string;
   readonly sourceNames: readonly string[];
@@ -60,7 +60,7 @@ interface RawRegionProperties {
   readonly bounds: readonly [number, number, number, number];
 }
 
-type RawCollection = FeatureCollection<Geometry, RawRegionProperties>;
+export type RawCollection = FeatureCollection<Geometry, RawRegionProperties>;
 export type RegionCollection = FeatureCollection<Geometry, OpenHistoriaRegionProperties>;
 export type LabelCollection = FeatureCollection<Point, OpenHistoriaLabelProperties>;
 export type ConstructionCollection = FeatureCollection<Point, OpenHistoriaConstructionProperties>;
@@ -80,7 +80,11 @@ export interface OpenHistoriaMapData {
   readonly unitProvinceIds: readonly string[];
 }
 
-const rawCollection = eastAsiaProvinceCollection as unknown as RawCollection;
+const defaultRawCollection = eastAsiaProvinceCollection as unknown as RawCollection;
+export const emptyRawCollection: RawCollection = {
+  type: "FeatureCollection",
+  features: [],
+};
 
 const knownNationColors: Readonly<Record<string, string>> = {
   nat_kor: "#22c7a9",
@@ -104,22 +108,24 @@ const nationColor = (nationId: string): string => {
   for (const character of nationId) {
     hash = (hash * 31 + character.charCodeAt(0)) >>> 0;
   }
-  return `hsl(${hash % 360} 54% 55%)`;
+  const hueIndex = hash % 280;
+  const politicalHue = hueIndex < 170 ? hueIndex : hueIndex + 80;
+  return `hsl(${politicalHue} 72% 48%)`;
 };
-
-const anchorByProvinceId: ReadonlyMap<string, readonly [number, number]> = new Map(
-  rawCollection.features.map((feature) => [
-    feature.properties.provinceId,
-    feature.properties.labelAnchor,
-  ]),
-);
 
 const strengthLabel = (manpower: number): string => `${Math.round(manpower / 1000)}k`;
 
 export const buildOpenHistoriaMapData = (
   campaign: MapCampaign,
   nationNameById: ReadonlyMap<string, string>,
+  rawCollection: RawCollection = defaultRawCollection,
 ): OpenHistoriaMapData => {
+  const anchorByProvinceId: ReadonlyMap<string, readonly [number, number]> = new Map(
+    rawCollection.features.map((feature) => [
+      feature.properties.provinceId,
+      feature.properties.labelAnchor,
+    ]),
+  );
   const provinceById = new Map(campaign.provinces.map((province) => [province.id, province]));
   const provinceByOwnerId = new Map<string, MapCampaign["provinces"][number]>();
   for (const province of campaign.provinces) {

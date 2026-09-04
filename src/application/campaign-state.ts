@@ -49,6 +49,7 @@ export interface CampaignWarState {
 export interface CampaignState extends CampaignTurnState {
   readonly id: "cmp_local";
   readonly scenarioId: string;
+  readonly scenarioTitleKo: string;
   readonly playerNationId: string;
   readonly plannerProvider: "deterministic" | "codex" | "claude";
   readonly difficulty: "story" | "standard" | "hard";
@@ -74,6 +75,7 @@ const CampaignStateSchema = z
   .object({
     id: z.literal("cmp_local"),
     scenarioId: z.string().regex(/^scn_[a-z0-9_]+$/),
+    scenarioTitleKo: z.string().trim().min(1).optional(),
     playerNationId: z.string().regex(/^nat_[a-z0-9_]+$/),
     plannerProvider: z.enum(["deterministic", "codex", "claude"]).default("deterministic"),
     difficulty: z.enum(["story", "standard", "hard"]),
@@ -172,8 +174,14 @@ export const createCampaignState = (
   scenarioId: string,
   playerNationId: string,
   options: CampaignCreationOptions = {},
+): CampaignState =>
+  createCampaignStateFromScenario(getScenarioById(scenarioId), playerNationId, options);
+
+export const createCampaignStateFromScenario = (
+  scenario: ScenarioDefinition,
+  playerNationId: string,
+  options: CampaignCreationOptions = {},
 ): CampaignState => {
-  const scenario = getScenarioById(scenarioId);
   if (!scenario.playerNationIds.includes(parseNationId(playerNationId))) {
     throw new RangeError("PLAYER_NATION_NOT_PLAYABLE");
   }
@@ -184,6 +192,7 @@ export const createCampaignState = (
   return Object.freeze({
     id: "cmp_local",
     scenarioId: scenario.id,
+    scenarioTitleKo: scenario.titleKo,
     playerNationId,
     plannerProvider: options.plannerProvider ?? "deterministic",
     difficulty: options.difficulty ?? "standard",
@@ -223,6 +232,7 @@ export const parseCampaignState = (value: unknown): CampaignState => {
   return Object.freeze({
     ...parsed,
     scenarioId: parseScenarioId(parsed.scenarioId),
+    scenarioTitleKo: parsed.scenarioTitleKo ?? getScenarioById(parsed.scenarioId).titleKo,
     playerNationId: parseNationId(parsed.playerNationId),
     nations: Object.freeze(
       parsed.nations.map((nation) => Object.freeze({ ...nation, id: parseNationId(nation.id) })),

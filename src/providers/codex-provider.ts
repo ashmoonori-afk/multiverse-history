@@ -9,6 +9,12 @@ export interface CodexCommandInput {
 export const buildCodexArguments = (input: CodexCommandInput): readonly string[] =>
   Object.freeze([
     "exec",
+    "--ephemeral",
+    "--ignore-rules",
+    "--model",
+    "gpt-5.4-mini",
+    "-c",
+    'model_reasoning_effort="low"',
     "--json",
     "--output-schema",
     input.schemaPath,

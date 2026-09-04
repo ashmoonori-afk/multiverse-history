@@ -80,6 +80,8 @@ export const CampaignResolutionSchema = z
                 regionId: z.string(),
                 toNationId: z.string(),
                 fromNationId: z.string(),
+                reasonKo: z.string().min(1),
+                cause: z.enum(["player", "npc", "combat"]),
               })
               .strict(),
           )

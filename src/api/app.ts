@@ -9,24 +9,24 @@ import {
   type CampaignGroupChatResponderInput,
   executeCampaignGroupChat,
 } from "../application/campaign-group-chat";
-import {
-  type CampaignNewsAuthor,
-  type CampaignNewsAuthorInput,
-  finalizeCampaignNews,
+import type {
+  CampaignNewsAuthor,
+  CampaignNewsAuthorInput,
 } from "../application/campaign-news-finalization";
 import {
   type CampaignState,
-  createCampaignState,
+  createCampaignStateFromScenario,
   jumpCampaignTimeline,
   LocalCampaignStore,
   parseCampaignState,
 } from "../application/campaign-state";
 import { advanceCampaignTimelineProgression } from "../application/campaign-timeline-progression";
-import {
-  type CampaignReactionAuthor,
-  type CampaignReactionAuthorInput,
-  finalizeCampaignWorldFeedback,
+import { finalizeCampaignTurn } from "../application/campaign-turn-finalization";
+import type {
+  CampaignReactionAuthor,
+  CampaignReactionAuthorInput,
 } from "../application/campaign-world-feedback";
+import { groundStrategicPlan } from "../application/ground-strategic-plan";
 import { buildPlannerStateJson } from "../application/planner-context";
 import { executeProviderTurn, ProviderTurnError } from "../application/turn-transaction";
 import {
@@ -43,14 +43,14 @@ import {
 } from "../application/world-event-engine";
 import { listBuiltInScenarioMetadata, listCanonicalCountries } from "../domain/scenario/catalog";
 import { validateScenarioPackage } from "../domain/scenario/package";
-import { getScenarioById, listScenarios } from "../domain/scenario/registry";
+import { getScenarioById, listScenarios, loadScenarioById } from "../domain/scenario/registry";
 import { importCampaignExport, serializeCampaignExport } from "../persistence/export-import";
 import { planDeterministically } from "../providers/deterministic-provider";
 import { respondWithLiveDiplomacy } from "../providers/live-diplomacy";
 import { authorLiveNews } from "../providers/live-news";
 import { planWithLiveProvider } from "../providers/live-planner";
 import { authorLiveReactionsBatch } from "../providers/live-reaction";
-import type { StrategicPlan } from "../providers/schemas";
+import { type StrategicPlan, strategicPlanCore } from "../providers/schemas";
 import { canonicalStringify, hashCanonical } from "../shared/canonical-json";
 import {
   AdvanceTurnRequestSchema,
@@ -308,7 +308,8 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
 
   app.post("/api/campaigns", async (context) => {
     const request = CreateCampaignRequestSchema.parse(await jsonBody(context.req.raw));
-    const campaign = createCampaignState(request.scenarioId, request.playerNationId, {
+    const scenario = await loadScenarioById(request.scenarioId);
+    const campaign = createCampaignStateFromScenario(scenario, request.playerNationId, {
       ...(request.customPolityName === undefined
         ? {}
         : { customPolityName: request.customPolityName }),
@@ -487,15 +488,25 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
     const result = await executeProviderTurn({
       store,
       requestId: request.requestId,
-      plan: async () =>
-        planner({
+      plan: async () => {
+        const campaign = parseCampaignState(store.read());
+        const plan = await planner({
           requestId: request.requestId,
           orderText: request.orderText,
-          turn: store.read().turn,
+          turn: campaign.turn,
           // Decision-relevant slice only: the full 251-nation state multiplies
           // planner latency without adding usable signal.
-          stateJson: buildPlannerStateJson(parseCampaignState(store.read())),
-        }),
+          stateJson: buildPlannerStateJson(campaign),
+        });
+        return groundStrategicPlan({
+          plan,
+          orderText: request.orderText,
+          playerNationId: campaign.playerNationId,
+          playerProvinceIds: campaign.provinces
+            .filter((province) => province.ownerNationId === campaign.playerNationId)
+            .map((province) => province.id),
+        });
+      },
       prepare: async (snapshot, plan) => {
         const campaign = parseCampaignState(snapshot);
         const reduced = applyStrategicPlan({
@@ -504,22 +515,22 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
           orderText: request.orderText,
           cadence: request.cadence,
         });
-        const withFeedback = await finalizeCampaignWorldFeedback({
+        return finalizeCampaignTurn({
           before: campaign,
           reduced,
-          eventFactory: worldEventFactory,
-          reactionAuthor,
-        });
-        return finalizeCampaignNews({
-          before: campaign,
-          reduced: withFeedback,
           plan,
           orderText: request.orderText,
-          author: newsAuthor,
+          eventFactory: worldEventFactory,
+          reactionAuthor,
+          newsAuthor,
         });
       },
     });
-    return context.json({ campaign: result.state, plan: result.plan, stateHash: result.stateHash });
+    return context.json({
+      campaign: result.state,
+      plan: strategicPlanCore(result.plan),
+      stateHash: result.stateHash,
+    });
   });
 
   app.get("/api/campaign/export", (context) => {

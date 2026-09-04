@@ -8,6 +8,7 @@ import {
 } from "./catalog";
 import { eastAsiaNations, eastAsiaRelations } from "./east-asia-1900/nations";
 import { eastAsiaProvinces } from "./east-asia-1900/provinces";
+import { historicalScenarioSeed, loadHistoricalScenario } from "./historical-scenario";
 
 export interface NationDefinition {
   readonly id: NationId;
@@ -147,17 +148,38 @@ const globallyPlayableEastAsia = Object.freeze({
   ]),
 });
 
-const scenarios = Object.freeze([
+const initialScenarios = Object.freeze([
   globallyPlayableEastAsia,
-  ...builtInMetadata.filter((metadata) => metadata.id !== eastAsia1900.id).map(neutralScenario),
+  ...builtInMetadata
+    .filter((metadata) => metadata.id !== eastAsia1900.id)
+    .map(historicalScenarioSeed),
 ]);
+const scenarioById = new Map(initialScenarios.map((scenario) => [scenario.id, scenario]));
+const loadingById = new Map<string, Promise<ScenarioDefinition>>();
 
 export const getScenarioById = (scenarioId: string): ScenarioDefinition => {
-  const scenario = scenarios.find((candidate) => candidate.id === scenarioId);
+  const scenario = scenarioById.get(parseScenarioId(scenarioId));
   if (scenario === undefined) {
     throw new RangeError(`Unknown scenario: ${scenarioId}`);
   }
   return scenario;
 };
 
-export const listScenarios = (): readonly ScenarioDefinition[] => scenarios;
+export const loadScenarioById = (scenarioId: string): Promise<ScenarioDefinition> => {
+  const parsedId = parseScenarioId(scenarioId);
+  if (parsedId === eastAsia1900.id) return Promise.resolve(globallyPlayableEastAsia);
+  const loaded = loadingById.get(parsedId);
+  if (loaded !== undefined) return loaded;
+  const metadata = builtInMetadata.find((candidate) => candidate.id === parsedId);
+  if (metadata === undefined) {
+    return Promise.reject(new RangeError(`Unknown scenario: ${scenarioId}`));
+  }
+  const loading = loadHistoricalScenario(metadata).then((scenario) => {
+    scenarioById.set(scenario.id, scenario);
+    return scenario;
+  });
+  loadingById.set(parsedId, loading);
+  return loading;
+};
+
+export const listScenarios = (): readonly ScenarioDefinition[] => initialScenarios;

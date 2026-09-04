@@ -15,6 +15,7 @@ import type {
   TreatyClause,
 } from "../state/campaign-store";
 import { CampaignAdvisor, type InspectorPanel } from "./CampaignAdvisor";
+import { formatCampaignYear } from "./campaign-date";
 
 interface CampaignShellProps {
   readonly campaign: Campaign;
@@ -107,8 +108,8 @@ export const CampaignShell = ({
     if (ownerNationId !== undefined) setSelectedNationId(ownerNationId);
   };
   const playerName = player?.nameKo ?? campaign.playerNationId;
-  const dateLabel = `${campaign.date.year}년 ${campaign.date.quarter}분기`;
-  const sessionLabel = `1900 동아시아 / ${playerName} / ${dateLabel}`;
+  const dateLabel = `${formatCampaignYear(campaign.date.year)} ${campaign.date.quarter}분기`;
+  const sessionLabel = `${campaign.scenarioTitleKo} / ${playerName} / ${dateLabel}`;
   const flagLabel =
     {
       nat_kor: "☯",

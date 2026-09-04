@@ -23,23 +23,27 @@ const schemaJson = JSON.stringify(strategicPlanJsonSchema());
 const failureExcerpt = (stderr: string, stdout: string): string =>
   (stderr || stdout).trim().replaceAll(homedir(), "~").slice(0, 2_000);
 
-const runCodex = async (
-  workspace: string,
-  prompt: string,
-  timeoutMs: number,
-): Promise<StrategicPlan> => {
-  const schemaPath = join(workspace, "strategic-plan.schema.json");
-  const resultPath = join(workspace, "result.json");
+interface RunLiveProviderInput {
+  readonly workspace: string;
+  readonly prompt: string;
+  readonly timeoutMs: number;
+  readonly requestId: string;
+}
+
+const runCodex = async (input: RunLiveProviderInput): Promise<StrategicPlan> => {
+  const schemaPath = join(input.workspace, "strategic-plan.schema.json");
+  const resultPath = join(input.workspace, "result.json");
   await writeFile(schemaPath, schemaJson, "utf8");
   const result = await runProviderProcess(
     {
       provider: "codex",
       args: buildCodexArguments({ schemaPath, resultPath }),
-      stdin: prompt,
-      timeoutMs,
-      cwd: workspace,
+      stdin: input.prompt,
+      timeoutMs: input.timeoutMs,
+      cwd: input.workspace,
+      requestId: input.requestId,
     },
-    AbortSignal.timeout(timeoutMs + 5_000),
+    AbortSignal.timeout(input.timeoutMs + 5_000),
   );
   if (result.exitCode !== 0) {
     throw new Error(`PROVIDER_FAILED:${failureExcerpt(result.stderr, result.stdout)}`);
@@ -47,20 +51,17 @@ const runCodex = async (
   return parseCodexLastMessage(await readFile(resultPath, "utf8"));
 };
 
-const runClaude = async (
-  workspace: string,
-  prompt: string,
-  timeoutMs: number,
-): Promise<StrategicPlan> => {
+const runClaude = async (input: RunLiveProviderInput): Promise<StrategicPlan> => {
   const result = await runProviderProcess(
     {
       provider: "claude",
       args: buildClaudeArguments(schemaJson),
-      stdin: prompt,
-      timeoutMs,
-      cwd: workspace,
+      stdin: input.prompt,
+      timeoutMs: input.timeoutMs,
+      cwd: input.workspace,
+      requestId: input.requestId,
     },
-    AbortSignal.timeout(timeoutMs + 5_000),
+    AbortSignal.timeout(input.timeoutMs + 5_000),
   );
   if (result.exitCode !== 0) {
     throw new Error(`PROVIDER_FAILED:${failureExcerpt(result.stderr, result.stdout)}`);
@@ -81,9 +82,8 @@ export const planWithLiveProvider = async (input: LivePlannerInput): Promise<Str
     ...(input.nationCount === undefined ? {} : { nationCount: input.nationCount }),
   });
   try {
-    return input.provider === "codex"
-      ? await runCodex(workspace, prompt, timeoutMs)
-      : await runClaude(workspace, prompt, timeoutMs);
+    const runInput = { workspace, prompt, timeoutMs, requestId: input.requestId };
+    return input.provider === "codex" ? await runCodex(runInput) : await runClaude(runInput);
   } finally {
     await rm(workspace, { recursive: true, force: true });
   }
