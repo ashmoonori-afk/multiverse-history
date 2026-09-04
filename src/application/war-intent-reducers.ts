@@ -102,6 +102,9 @@ const makePeace = (
   if (war?.status !== "active") throw new RangeError("ACTIVE_WAR_NOT_FOUND");
   const parties = [war.attackerNationId, war.targetNationId];
   if (!parties.includes(intent.actorNationId)) throw new RangeError("WAR_ACTOR_NOT_PARTY");
+  if (intent.terms.some((term) => term.actorNationId !== intent.actorNationId)) {
+    throw new RangeError("INTENT_ACTOR_INVALID");
+  }
   if (
     intent.actorNationId === state.playerNationId &&
     intent.terms.some((term) => term.fromNationId === state.playerNationId)

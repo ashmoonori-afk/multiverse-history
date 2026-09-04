@@ -1,4 +1,4 @@
-import { mkdtempSync } from "node:fs";
+import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { type Context, Hono } from "hono";
@@ -126,9 +126,15 @@ const setTurnAutosaveHeader = (context: Context, autosave: TurnAutosaveStatus): 
   context.header("x-pax-autosave", JSON.stringify(autosave));
 };
 
-// ponytail: one temp root per test process; add a Bun preload cleanup hook if buildup matters.
 let testSlotRoot: string | undefined;
 let testSlotSequence = 0;
+
+export const cleanupTestSlotRoot = (): void => {
+  if (testSlotRoot === undefined) return;
+  rmSync(testSlotRoot, { recursive: true, force: true });
+  testSlotRoot = undefined;
+  testSlotSequence = 0;
+};
 
 const defaultSlotDirectory = (): string => {
   if (process.env.NODE_ENV !== "test") return "data/campaigns";
