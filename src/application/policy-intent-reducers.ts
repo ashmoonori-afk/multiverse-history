@@ -40,8 +40,10 @@ export const applyActionFailure = (
 const adjustNation = (
   state: CampaignState,
   intent: Extract<PolicyIntent, { readonly type: "nation.adjust" }>,
+  playerIntent: boolean,
 ): CampaignState => {
   if (
+    playerIntent &&
     intent.nationId === state.playerNationId &&
     ((intent.treasuryDelta ?? 0) < 0 || (intent.stabilityDelta ?? 0) < 0)
   ) {
@@ -174,10 +176,11 @@ export const applyPolicyIntent = (
   state: CampaignState,
   intent: PolicyIntent,
   turn: number,
+  playerIntent: boolean,
 ): CampaignState => {
   switch (intent.type) {
     case "nation.adjust":
-      return adjustNation(state, intent);
+      return adjustNation(state, intent, playerIntent);
     case "relation.adjust":
       return appendEvent(
         adjustRelation(state, intent.fromNationId, intent.toNationId, intent.delta),

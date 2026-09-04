@@ -139,6 +139,45 @@ describe("v2 strategic intent reducers", () => {
     expect(debit).toThrow("PLAYER_SOVEREIGNTY_VIOLATION");
   });
 
+  test("allows an NPC intent to debit the player within normal clamps", () => {
+    // Given
+    const snapshot = createCampaignState("scn_ea1900", "nat_kor");
+
+    // When
+    const after = applyNpc(snapshot, {
+      type: "nation.adjust",
+      nationId: "nat_kor",
+      treasuryDelta: -10_000,
+      stabilityDelta: -10_000,
+      reasonKo: "NPC가 부과한 손실",
+    });
+
+    // Then
+    expect(after.nations.find((nation) => nation.id === "nat_kor")).toEqual(
+      expect.objectContaining({ treasuryCredits: 192, stabilityBps: 4_640 }),
+    );
+  });
+
+  test("rejects an NPC economy intent acting as the player", () => {
+    // Given
+    const snapshot = createCampaignState("scn_ea1900", "nat_kor");
+    const beforeBytes = canonicalStringify(snapshot);
+
+    // When
+    const spoof = () =>
+      applyNpc(snapshot, {
+        type: "economy.invest",
+        actorNationId: "nat_kor",
+        provinceId: "prv_kor_hanseong",
+        sector: "rail",
+        budgetCredits: 20,
+      });
+
+    // Then
+    expect(spoof).toThrow("INTENT_ACTOR_INVALID");
+    expect(canonicalStringify(snapshot)).toBe(beforeBytes);
+  });
+
   test("relation.adjust changes only the directed relation", () => {
     // Given
     const snapshot = createCampaignState("scn_ea1900", "nat_kor");
@@ -171,18 +210,55 @@ describe("v2 strategic intent reducers", () => {
     ).toBe(reverseBefore);
   });
 
+  test("rejects an NPC relation intent spoofing the player as its initiator", () => {
+    // Given
+    const snapshot = createCampaignState("scn_ea1900", "nat_kor");
+
+    // When
+    const spoof = () =>
+      applyNpc(snapshot, {
+        type: "relation.adjust",
+        fromNationId: "nat_kor",
+        toNationId: "nat_jpn",
+        delta: -1_000,
+        reasonKo: "플레이어 명의의 관계 악화",
+      });
+
+    // Then
+    expect(spoof).toThrow("INTENT_ACTOR_INVALID");
+  });
+
+  test("rejects an NPC territory intent spoofing the previous owner", () => {
+    // Given
+    const snapshot = createCampaignState("scn_ea1900", "nat_kor");
+
+    // When
+    const spoof = () =>
+      applyNpc(snapshot, {
+        type: "territory.transfer",
+        actorNationId: "nat_jpn",
+        provinceId: "prv_kor_hanseong",
+        fromNationId: "nat_kor",
+        toNationId: "nat_jpn",
+        reasonKo: "위조된 영토 양도",
+      });
+
+    // Then
+    expect(spoof).toThrow("INTENT_ACTOR_INVALID");
+  });
+
   test("treaty.respond lets only the recipient accept or reject a proposal", () => {
     // Given
     const proposed = withTreaty();
 
     // When
-    const accepted = apply(proposed, {
+    const accepted = applyNpc(proposed, {
       type: "treaty.respond",
       treatyId: "try_0_0",
       decision: "accept",
       actorNationId: "nat_jpn",
     });
-    const rejected = apply(proposed, {
+    const rejected = applyNpc(proposed, {
       type: "treaty.respond",
       treatyId: "try_0_0",
       decision: "reject",
@@ -463,7 +539,7 @@ describe("v2 strategic intent reducers", () => {
     ).toThrow();
   });
 
-  test("rejects NPC move, attack, and disband against player or third-party units", () => {
+  test("rejects NPC move and attack against player units", () => {
     // Given
     const snapshot = createCampaignState("scn_ea1900", "nat_kor");
     const attempts = [
@@ -481,16 +557,26 @@ describe("v2 strategic intent reducers", () => {
           unitId: "unt_ea1900_kor_2",
           targetProvinceId: "prv_qing_manchuria",
         }),
-      () =>
-        applyNpc(snapshot, {
-          type: "unit.disband",
-          actorNationId: "nat_jpn",
-          unitId: "unt_ea1900_qing_1",
-        }),
     ];
 
     // When / Then
     for (const attempt of attempts) expect(attempt).toThrow("UNIT_NOT_OWNED");
+  });
+
+  test("rejects an NPC actor spoofing authority over an unrelated nation's unit", () => {
+    // Given
+    const snapshot = createCampaignState("scn_ea1900", "nat_kor");
+
+    // When
+    const disband = () =>
+      applyNpc(snapshot, {
+        type: "unit.disband",
+        actorNationId: "nat_jpn",
+        unitId: "unt_ea1900_qing_1",
+      });
+
+    // Then
+    expect(disband).toThrow("UNIT_NOT_OWNED");
   });
 
   test("polity.change updates identity only when the new capital is owned", () => {

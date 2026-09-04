@@ -196,11 +196,7 @@ export const applyWarIntent = (
   state: CampaignState,
   intent: WarIntent,
   turn: number,
-  playerIntent: boolean,
 ): CampaignState => {
-  if ((intent.actorNationId === state.playerNationId) !== playerIntent) {
-    throw new RangeError("INTENT_ACTOR_INVALID");
-  }
   switch (intent.type) {
     case "war.declare":
       return declareWar(state, intent, turn);

@@ -45,6 +45,61 @@ afterEach(async () => {
 });
 
 describe("turn advance API", () => {
+  test("rejects an NPC actor spoof without committing earlier intent effects", async () => {
+    // Given
+    const app = createGameApp({
+      slotDirectory: await temporaryDirectory(),
+      planners: {
+        deterministic: async (input) => ({
+          schemaVersion: 2,
+          requestId: input.requestId,
+          playerIntents: [],
+          npcIntents: [
+            {
+              type: "nation.adjust" as const,
+              nationId: "nat_kor",
+              treasuryDelta: -10,
+              reasonKo: "선행 NPC 손실",
+            },
+            {
+              type: "economy.invest" as const,
+              actorNationId: "nat_kor",
+              provinceId: "prv_kor_hanseong",
+              sector: "rail",
+              budgetCredits: 20,
+            },
+          ],
+          narrative: { ko: "위조된 NPC 계획이다." },
+          warnings: [],
+        }),
+      },
+      worldEventFactory: () => undefined,
+    });
+    const created = await createCampaign(app);
+
+    // When
+    const response = await app.request("/api/turns/advance", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        orderText: "정세를 관망한다",
+        horizon: { mode: "days", days: 7 },
+        expectedStateHash: created.stateHash,
+        requestId: "req_npc_actor_spoof",
+      }),
+    });
+    const after = z
+      .object({ stateHash: z.string().length(64) })
+      .parse(await (await app.request("/api/campaign/state-hash")).json());
+
+    // Then
+    expect(response.status).toBe(422);
+    expect(await response.json()).toMatchObject({
+      error: { code: "provider_plan_invalid", recoverable: false },
+    });
+    expect(after.stateHash).toBe(created.stateHash);
+  });
+
   test("advances a time-only 90-day turn once and records deterministic tick deltas", async () => {
     // Given
     const plannerOrders: string[] = [];

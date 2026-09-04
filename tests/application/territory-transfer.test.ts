@@ -14,7 +14,7 @@ const planWithTransfer = (
   playerIntents: [
     {
       type: "territory.transfer",
-      actorNationId: toNationId,
+      actorNationId: fromNationId,
       provinceId,
       fromNationId,
       toNationId,
@@ -71,27 +71,29 @@ describe("territory transfer intent", () => {
     // Given
     const snapshot = createCampaignState("scn_ea1900", "nat_kor");
     const target = snapshot.provinces.find(
-      (province) => province.ownerNationId !== snapshot.playerNationId,
+      (province) => province.ownerNationId === snapshot.playerNationId,
     );
-    if (target === undefined) throw new Error("scenario has no non-player province");
-    const plan = planWithTransfer(target.id, target.ownerNationId, snapshot.playerNationId);
+    const recipient = snapshot.nations.find((nation) => nation.id !== snapshot.playerNationId);
+    if (target === undefined || recipient === undefined) throw new Error("scenario is incomplete");
+    const plan = planWithTransfer(target.id, snapshot.playerNationId, recipient.id);
 
     // When
     const after = applyStrategicPlan({ snapshot, plan, orderText: "즈리를 할양받는다" });
     const moved = after.provinces.find((province) => province.id === target.id);
 
     // Then
-    expect(String(moved?.ownerNationId)).toBe(String(snapshot.playerNationId));
+    expect(String(moved?.ownerNationId)).toBe(String(recipient.id));
   });
 
   test("surfaces the transfer as a map-change record carrying reason and cause", () => {
     // Given
     const snapshot = createCampaignState("scn_ea1900", "nat_kor");
     const target = snapshot.provinces.find(
-      (province) => province.ownerNationId !== snapshot.playerNationId,
+      (province) => province.ownerNationId === snapshot.playerNationId,
     );
-    if (target === undefined) throw new Error("scenario has no non-player province");
-    const plan = planWithTransfer(target.id, target.ownerNationId, snapshot.playerNationId);
+    const recipient = snapshot.nations.find((nation) => nation.id !== snapshot.playerNationId);
+    if (target === undefined || recipient === undefined) throw new Error("scenario is incomplete");
+    const plan = planWithTransfer(target.id, snapshot.playerNationId, recipient.id);
 
     // When
     const after = applyStrategicPlan({ snapshot, plan, orderText: "즈리를 할양받는다" });
@@ -103,8 +105,8 @@ describe("territory transfer intent", () => {
     // Then
     expect(change).toEqual({
       regionId: target.id,
-      fromNationId: target.ownerNationId,
-      toNationId: snapshot.playerNationId,
+      fromNationId: snapshot.playerNationId,
+      toNationId: recipient.id,
       reasonKo: "강화 조약에 따른 할양",
       cause: "player",
       source: "policy",
@@ -129,7 +131,7 @@ describe("territory transfer intent", () => {
       npcIntents: [
         {
           type: "territory.transfer",
-          actorNationId: receiver.id,
+          actorNationId: donor.ownerNationId,
           provinceId: donor.id,
           fromNationId: donor.ownerNationId,
           toNationId: receiver.id,
@@ -159,7 +161,7 @@ describe("territory transfer intent", () => {
       (province) => province.ownerNationId !== snapshot.playerNationId,
     );
     if (target === undefined) throw new Error("scenario has no non-player province");
-    const plan = planWithTransfer(target.id, snapshot.playerNationId, snapshot.playerNationId);
+    const plan = planWithTransfer(target.id, snapshot.playerNationId, target.ownerNationId);
 
     // When
     const applyMismatched = () =>

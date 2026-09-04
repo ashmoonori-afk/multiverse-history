@@ -224,6 +224,16 @@ const CampaignStateSchema = z
   .superRefine((state, context) => {
     const provinceIds = new Set(state.provinces.map((province) => province.id));
     const references = [
+      ...state.nations.flatMap((nation, index) =>
+        nation.capitalProvinceId === undefined
+          ? []
+          : [
+              {
+                provinceId: nation.capitalProvinceId,
+                path: ["nations", index, "capitalProvinceId"],
+              },
+            ],
+      ),
       ...state.provinces.flatMap((province, provinceIndex) =>
         (province.adjacentProvinceIds ?? []).map((provinceId, referenceIndex) => ({
           provinceId,
@@ -238,6 +248,40 @@ const CampaignStateSchema = z
         provinceId: project.provinceId,
         path: ["constructionProjects", index, "provinceId"],
       })),
+      ...state.worldEvents.flatMap((event, eventIndex) => [
+        ...event.regionIds.map((provinceId, referenceIndex) => ({
+          provinceId,
+          path: ["worldEvents", eventIndex, "regionIds", referenceIndex],
+        })),
+        ...event.impacts.regionTransfers.map((transfer, referenceIndex) => ({
+          provinceId: transfer.regionId,
+          path: [
+            "worldEvents",
+            eventIndex,
+            "impacts",
+            "regionTransfers",
+            referenceIndex,
+            "regionId",
+          ],
+        })),
+        ...event.impacts.unitOps.flatMap((operation, referenceIndex) =>
+          "provinceId" in operation
+            ? [
+                {
+                  provinceId: operation.provinceId,
+                  path: [
+                    "worldEvents",
+                    eventIndex,
+                    "impacts",
+                    "unitOps",
+                    referenceIndex,
+                    "provinceId",
+                  ],
+                },
+              ]
+            : [],
+        ),
+      ]),
     ];
     for (const reference of references) {
       if (!provinceIds.has(reference.provinceId)) {

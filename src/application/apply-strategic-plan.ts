@@ -18,6 +18,37 @@ const updateNation = (
     ),
   );
 
+const voluntaryActorNationIds = (intent: StrategicIntent): readonly string[] => {
+  switch (intent.type) {
+    case "nation.adjust":
+      return [];
+    case "relation.adjust":
+      return [intent.fromNationId];
+    case "territory.transfer":
+      return [intent.actorNationId, intent.fromNationId];
+    case "polity.change":
+      return [intent.nationId];
+    default:
+      return [intent.actorNationId];
+  }
+};
+
+const assertIntentActor = (
+  intent: StrategicIntent,
+  playerNationId: string,
+  playerIntent: boolean,
+): void => {
+  const actorNationIds = voluntaryActorNationIds(intent);
+  const laneActorNationId = actorNationIds[0];
+  if (
+    laneActorNationId !== undefined &&
+    ((laneActorNationId === playerNationId) !== playerIntent ||
+      actorNationIds.some((actorNationId) => actorNationId !== laneActorNationId))
+  ) {
+    throw new RangeError("INTENT_ACTOR_INVALID");
+  }
+};
+
 const invest = (
   state: CampaignState,
   intent: Extract<StrategicIntent, { readonly type: "economy.invest" }>,
@@ -208,13 +239,13 @@ const applyIntent = (
     case "treaty.terminate":
     case "polity.change":
     case "action.fail":
-      return applyPolicyIntent(state, intent, turn);
+      return applyPolicyIntent(state, intent, turn, playerIntent);
     case "war.declare":
     case "war.peace":
     case "unit.move":
     case "unit.attack":
     case "unit.disband":
-      return applyWarIntent(state, intent, turn, playerIntent);
+      return applyWarIntent(state, intent, turn);
   }
 };
 
@@ -270,6 +301,12 @@ export interface ApplyStrategicPlanInput {
 export const applyStrategicPlan = (input: ApplyStrategicPlanInput): CampaignState => {
   const snapshot = input.snapshot;
   const plan = input.plan;
+  for (const intent of plan.playerIntents) {
+    assertIntentActor(intent, snapshot.playerNationId, true);
+  }
+  for (const intent of plan.npcIntents) {
+    assertIntentActor(intent, snapshot.playerNationId, false);
+  }
   const orderText = input.orderText ?? "플레이어 계획";
   const cadence = input.cadence ?? "quarter";
   const playerResolved = plan.playerIntents.reduce(

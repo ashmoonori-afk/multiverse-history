@@ -146,6 +146,89 @@ describe("campaign state compatibility", () => {
     }
   });
 
+  test("rejects a dangling nation capital province reference", () => {
+    // Given
+    const base = createCampaignState("scn_ea1900", "nat_kor");
+    const firstNation = base.nations[0];
+    if (firstNation === undefined) throw new RangeError("TEST_SCENARIO_INCOMPLETE");
+
+    // When
+    const parse = () =>
+      parseCampaignState({
+        ...base,
+        nations: [{ ...firstNation, capitalProvinceId: "prv_missing" }, ...base.nations.slice(1)],
+      });
+
+    // Then
+    expect(parse).toThrow("CAMPAIGN_PROVINCE_REFERENCE_NOT_FOUND");
+  });
+
+  test("rejects every dangling world-event province reference", () => {
+    // Given
+    const base = createCampaignState("scn_ea1900", "nat_kor");
+    const unit = base.units[0];
+    if (unit === undefined) throw new RangeError("TEST_SCENARIO_INCOMPLETE");
+    const event = {
+      id: "evt_1_1",
+      kind: "military" as const,
+      importance: "major" as const,
+      occurredAtElapsedDays: 30,
+      turn: 1,
+      date: { year: 1900, quarter: 1 },
+      actorNationIds: ["nat_kor"],
+      affectedNationIds: ["nat_kor"],
+      headlineKo: "테스트 사건",
+      summaryKo: "참조 무결성 테스트 사건이다.",
+      impacts: {
+        regionTransfers: [],
+        nationChanges: [],
+        relationChanges: [],
+        unitOps: [],
+      },
+      provenance: "simulated_consequence" as const,
+      regionIds: [],
+      sourceInputIds: ["req_1"],
+    };
+    const danglingEvents = [
+      { ...event, regionIds: ["prv_missing"] },
+      {
+        ...event,
+        impacts: {
+          ...event.impacts,
+          regionTransfers: [{ regionId: "prv_missing", toNationId: "nat_kor" }],
+        },
+      },
+      {
+        ...event,
+        impacts: {
+          ...event.impacts,
+          unitOps: [
+            {
+              op: "spawn" as const,
+              ownerNationId: "nat_kor",
+              provinceId: "prv_missing",
+              manpower: 500,
+            },
+          ],
+        },
+      },
+      {
+        ...event,
+        impacts: {
+          ...event.impacts,
+          unitOps: [{ op: "move" as const, unitId: unit.id, provinceId: "prv_missing" }],
+        },
+      },
+    ];
+
+    // When / Then
+    for (const worldEvent of danglingEvents) {
+      expect(() => parseCampaignState({ ...base, worldEvents: [worldEvent] })).toThrow(
+        "CAMPAIGN_PROVINCE_REFERENCE_NOT_FOUND",
+      );
+    }
+  });
+
   test("imports a v1 state with its raw hash and reports the migration", () => {
     // Given
     const v1State = { ...createCampaignState("scn_ea1900", "nat_kor") };
@@ -197,6 +280,8 @@ describe("campaign state compatibility", () => {
 
   test("round-trips normalized world records with an exact state hash", () => {
     const legacy = legacyCampaign();
+    const firstUnit = legacy.units[0];
+    if (firstUnit === undefined) throw new RangeError("TEST_SCENARIO_INCOMPLETE");
     const reactionIds = ["rct_evt_1_1_nat_kor", "rct_evt_1_1_nat_jpn"];
     const enriched = {
       ...legacy,
@@ -254,10 +339,29 @@ describe("campaign state compatibility", () => {
           summaryKo: "조선의 철도 투자가 동아시아 경제에 영향을 주었다.",
           sourceResolutionId: "res_1_1",
           impacts: {
-            regionTransfers: [],
+            regionTransfers: [
+              {
+                regionId: "prv_kor_hanseong",
+                fromNationId: "nat_jpn",
+                toNationId: "nat_kor",
+                sourceEventId: "evt_1_1",
+              },
+            ],
             nationChanges: [],
             relationChanges: [],
-            unitOps: [],
+            unitOps: [
+              {
+                op: "spawn",
+                ownerNationId: "nat_kor",
+                provinceId: "prv_kor_hanseong",
+                manpower: 500,
+              },
+              {
+                op: "move",
+                unitId: firstUnit.id,
+                provinceId: "prv_kor_jeolla",
+              },
+            ],
           },
           provenance: "player_divergence",
           regionIds: ["prv_kor_hanseong"],
