@@ -36,36 +36,6 @@ export const RegionOwnershipOverrideSchema = z
  * Structured event impact: what changed in the world.
  * Inspired by Open Historia's applyEventImpactsToWorld.
  */
-export interface EventImpact {
-  readonly regionTransfers: readonly RegionOwnershipOverride[];
-  readonly nationChanges: readonly {
-    readonly nationId: string;
-    readonly name?: string;
-    readonly color?: string;
-    readonly stabilityChange?: number;
-    readonly treasuryChange?: number;
-  }[];
-  readonly relationChanges: readonly {
-    readonly fromNationId: string;
-    readonly toNationId: string;
-    readonly delta: number;
-  }[];
-  readonly unitOps: readonly {
-    readonly op: "spawn" | "move" | "remove" | "strength";
-    readonly unitId?: string;
-    readonly ownerNationId?: string;
-    readonly provinceId?: string;
-    readonly manpower?: number;
-  }[];
-  readonly markerOps: readonly {
-    readonly op: "build" | "remove" | "rename";
-    readonly markerId?: string;
-    readonly provinceId?: string;
-    readonly name?: string;
-    readonly kind?: string;
-  }[];
-}
-
 export const EventImpactSchema = z
   .object({
     regionTransfers: z.array(RegionOwnershipOverrideSchema).default([]),
@@ -125,6 +95,11 @@ export const EventImpactSchema = z
   })
   .strict()
   .readonly();
+
+type ParsedEventImpact = z.infer<typeof EventImpactSchema>;
+export type EventImpact = Readonly<{
+  [Key in keyof ParsedEventImpact]: Readonly<ParsedEventImpact[Key]>;
+}>;
 
 export const EMPTY_EVENT_IMPACT: EventImpact = Object.freeze({
   regionTransfers: Object.freeze([]),
@@ -352,18 +327,23 @@ export const resolveOwnershipAtEvent = (
   state: CampaignState,
   eventIndex: number,
 ): ReadonlyMap<string, string> => {
-  const overrides = new Map<string, string>();
-  // Base ownership from current state
+  const ownership = new Map<string, string>();
   for (const province of state.provinces) {
-    overrides.set(province.id, province.ownerNationId);
+    ownership.set(province.id, province.ownerNationId);
   }
-  // Apply overrides from events up to eventIndex (exclusive)
-  // This is a simplified version - in Open Historia, it tracks the full history
-  for (let i = 0; i < eventIndex && i < state.worldEvents.length; i++) {
-    const event = state.worldEvents[i];
-    // Extract transfers from the event's resolution
-    // This is a simplified version - the full system tracks structured impacts
-    void event;
+
+  for (const event of state.worldEvents.toReversed()) {
+    for (const transfer of event.impacts?.regionTransfers.toReversed() ?? []) {
+      if (transfer.fromNationId !== undefined) {
+        ownership.set(transfer.regionId, transfer.fromNationId);
+      }
+    }
   }
-  return overrides;
+  const clampedIndex = Math.max(0, Math.min(eventIndex, state.worldEvents.length));
+  for (const event of state.worldEvents.slice(0, clampedIndex)) {
+    for (const transfer of event.impacts?.regionTransfers ?? []) {
+      ownership.set(transfer.regionId, transfer.toNationId);
+    }
+  }
+  return ownership;
 };

@@ -1,8 +1,7 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { ZodError } from "zod";
+import { ZodError, z } from "zod";
 
-import { applyStrategicPlan } from "../application/apply-strategic-plan";
 import { deterministicCounterpartReply } from "../application/campaign-chat";
 import {
   type CampaignGroupChatResponder,
@@ -16,11 +15,13 @@ import type {
 import {
   type CampaignState,
   createCampaignStateFromScenario,
-  jumpCampaignTimeline,
   LocalCampaignStore,
   parseCampaignState,
 } from "../application/campaign-state";
-import { advanceCampaignTimelineProgression } from "../application/campaign-timeline-progression";
+import {
+  type AdvanceHorizon,
+  advanceCampaignTimelineProgression,
+} from "../application/campaign-timeline-progression";
 import { finalizeCampaignTurn } from "../application/campaign-turn-finalization";
 import type {
   CampaignReactionAuthor,
@@ -45,6 +46,7 @@ import { listBuiltInScenarioMetadata, listCanonicalCountries } from "../domain/s
 import { validateScenarioPackage } from "../domain/scenario/package";
 import { getScenarioById, listScenarios, loadScenarioById } from "../domain/scenario/registry";
 import {
+  autosaveAfterTurn,
   createCampaignSlotStore,
   replaceCampaignFromExport,
 } from "../persistence/campaign-slot-store";
@@ -105,6 +107,91 @@ const jsonBody = async (request: Request): Promise<unknown> => {
   } catch {
     throw new TypeError("INVALID_JSON_BODY");
   }
+};
+
+const TurnAdvanceRequestSchema = z
+  .object({
+    orderText: z.string().trim().max(4_000).optional(),
+    horizon: z.discriminatedUnion("mode", [
+      z
+        .object({
+          mode: z.literal("days"),
+          days: z.number().safe().int().min(7).max(365),
+        })
+        .strict(),
+      z.object({ mode: z.literal("until_major_event") }).strict(),
+    ]),
+    provider: z.enum(["deterministic", "codex", "claude"]).optional(),
+    expectedStateHash: z.string().regex(/^[a-f0-9]{64}$/),
+    requestId: z.string().regex(/^req_[a-z0-9_]+$/),
+  })
+  .strict()
+  .readonly();
+
+const cadenceDays = Object.freeze({ week: 7, month: 30, quarter: 91, year: 365 });
+
+const cadenceForHorizon = (
+  horizon: AdvanceHorizon,
+): "week" | "month" | "quarter" | "year" | "major" => {
+  if (horizon.mode === "until_major_event") return "major";
+  if (horizon.days === cadenceDays.week) return "week";
+  if (horizon.days === cadenceDays.month) return "month";
+  if (horizon.days === cadenceDays.year) return "year";
+  return "quarter";
+};
+
+interface AdvanceInput {
+  readonly orderText: string;
+  readonly horizon: AdvanceHorizon;
+  readonly cadence: "week" | "month" | "quarter" | "year" | "major";
+  readonly provider?: ProviderSelection;
+  readonly expectedStateHash: string;
+  readonly requestId: string;
+  readonly progression?:
+    | { readonly mode: "months"; readonly months: number }
+    | { readonly mode: "until_major_event" };
+  readonly dateQuarterSteps?: number;
+  readonly preserveTurn?: boolean;
+  readonly promoteGeneratedEvent?: boolean;
+}
+
+const timelineAdvanceInput = (
+  request: z.infer<typeof JumpTimelineRequestSchema>,
+  campaign: CampaignState,
+  expectedStateHash: string,
+): AdvanceInput => {
+  const base = {
+    orderText: "",
+    provider: campaign.plannerProvider,
+    expectedStateHash,
+    requestId: `req_timeline_${campaign.turn}_${expectedStateHash.slice(0, 16)}`,
+    preserveTurn: true,
+    promoteGeneratedEvent: true,
+  } as const;
+  if ("cadence" in request) {
+    return request.cadence === "major"
+      ? { ...base, horizon: { mode: "until_major_event" }, cadence: request.cadence }
+      : {
+          ...base,
+          horizon: { mode: "days", days: cadenceDays[request.cadence] },
+          cadence: request.cadence,
+        };
+  }
+  if (request.progression.mode === "until_major_event") {
+    return {
+      ...base,
+      horizon: { mode: "until_major_event" },
+      cadence: "major",
+      progression: request.progression,
+    };
+  }
+  return {
+    ...base,
+    horizon: { mode: "days", days: request.progression.months * 30 },
+    cadence: "month",
+    progression: request.progression,
+    dateQuarterSteps: Math.floor(request.progression.months / 3),
+  };
 };
 
 const scenarioPackageBody = async (request: Request): Promise<unknown> => {
@@ -299,6 +386,82 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
   };
   const worldEventFactory = options.worldEventFactory ?? createCampaignWorldEvent;
 
+  const advance = async (request: AdvanceInput) => {
+    const campaign = parseCampaignState(store.read());
+    if (store.stateHash() !== request.expectedStateHash) {
+      throw new ProviderTurnError(409, "campaign_conflict");
+    }
+    const provider = request.provider ?? campaign.plannerProvider;
+    const planner = planners[provider];
+    const newsAuthor = newsAuthors[provider];
+    const reactionAuthor = reactionAuthors[provider];
+    if (planner === undefined || newsAuthor === undefined || reactionAuthor === undefined) {
+      throw new ProviderTurnError(503, "provider_unavailable");
+    }
+    const timeOnly = request.orderText.trim().length === 0;
+    const transactionStore = request.preserveTurn
+      ? {
+          read: () => {
+            const state = store.read();
+            return Object.freeze({ ...state, turn: state.turn - 1 });
+          },
+          replace: (state: Parameters<typeof store.replace>[0]) => store.replace(state),
+        }
+      : store;
+    const result = await executeProviderTurn({
+      store: transactionStore,
+      requestId: request.requestId,
+      plan: async () => {
+        const plan = await planner({
+          requestId: request.requestId,
+          orderText: request.orderText,
+          turn: campaign.turn,
+          stateJson: buildPlannerStateJson(campaign),
+        });
+        const grounded = groundStrategicPlan({
+          plan,
+          orderText: request.orderText,
+          playerNationId: campaign.playerNationId,
+          playerProvinceIds: campaign.provinces
+            .filter((province) => province.ownerNationId === campaign.playerNationId)
+            .map((province) => province.id),
+        });
+        return timeOnly
+          ? Object.freeze({ ...grounded, playerIntents: Object.freeze([]) })
+          : grounded;
+      },
+      prepare: async (snapshot, plan) => {
+        const before = request.preserveTurn ? campaign : parseCampaignState(snapshot);
+        const progressed = advanceCampaignTimelineProgression({
+          state: before,
+          plan,
+          orderText: request.orderText,
+          horizon: request.horizon,
+          cadence: request.cadence,
+          eventFactory: worldEventFactory,
+          ...(request.progression === undefined ? {} : { progression: request.progression }),
+          ...(request.dateQuarterSteps === undefined
+            ? {}
+            : { dateQuarterSteps: request.dateQuarterSteps }),
+          ...(request.promoteGeneratedEvent === undefined
+            ? {}
+            : { promoteGeneratedEvent: request.promoteGeneratedEvent }),
+        });
+        return finalizeCampaignTurn({
+          before,
+          reduced: progressed.state,
+          plan,
+          orderText: request.orderText,
+          events: progressed.events,
+          reactionAuthor,
+          newsAuthor,
+        });
+      },
+    });
+    await autosaveAfterTurn(slotStore);
+    return result;
+  };
+
   app.use(
     "/api/*",
     cors({
@@ -352,34 +515,9 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
   app.post("/api/timeline/jump", async (context) => {
     const request = JumpTimelineRequestSchema.parse(await jsonBody(context.req.raw));
     const campaign = parseCampaignState(store.read());
-    if ("cadence" in request && request.cadence !== "major") {
-      const state = jumpCampaignTimeline(campaign, request.cadence);
-      store.replace(state);
-      return context.json({ campaign: store.read(), stateHash: store.stateHash() });
-    }
-    const reactionAuthor = reactionAuthors[campaign.plannerProvider];
-    if (reactionAuthor === undefined) {
-      throw new ProviderTurnError(503, "provider_unavailable");
-    }
-    const snapshotHash = store.stateHash();
-    let state: CampaignState;
-    try {
-      state = await advanceCampaignTimelineProgression({
-        state: campaign,
-        progression: "progression" in request ? request.progression : { mode: "until_major_event" },
-        reactionAuthor,
-      });
-    } catch (error: unknown) {
-      if (error instanceof RangeError) {
-        throw error;
-      }
-      throw new ProviderTurnError(503, "provider_unavailable");
-    }
-    if (store.stateHash() !== snapshotHash) {
-      throw new ProviderTurnError(409, "campaign_conflict");
-    }
-    store.replace(state);
-    return context.json({ campaign: store.read(), stateHash: store.stateHash() });
+    const expectedStateHash = store.stateHash();
+    const result = await advance(timelineAdvanceInput(request, campaign, expectedStateHash));
+    return context.json({ campaign: result.state, stateHash: result.stateHash });
   });
 
   app.post("/api/diplomacy/chat", async (context) => {
@@ -494,60 +632,40 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
     return context.json({ campaign: store.read(), stateHash: store.stateHash() });
   });
 
+  app.post("/api/turns/advance", async (context) => {
+    const request = TurnAdvanceRequestSchema.parse(await jsonBody(context.req.raw));
+    const orderText = request.orderText ?? "";
+    const result = await advance({
+      orderText,
+      horizon: request.horizon,
+      cadence: cadenceForHorizon(request.horizon),
+      ...(request.provider === undefined ? {} : { provider: request.provider }),
+      expectedStateHash: request.expectedStateHash,
+      requestId: request.requestId,
+    });
+    return context.json({
+      campaign: result.state,
+      plan: strategicPlanCore(result.plan),
+      stateHash: result.stateHash,
+    });
+  });
+
   app.post("/api/turns/preview", async (context) => {
     const request = AdvanceTurnRequestSchema.parse(await jsonBody(context.req.raw));
-    const planner = planners[request.provider];
-    if (planner === undefined) {
-      throw new ProviderTurnError(503, "provider_unavailable");
-    }
-    const newsAuthor = newsAuthors[request.provider];
-    if (newsAuthor === undefined) {
-      throw new ProviderTurnError(503, "provider_unavailable");
-    }
-    const reactionAuthor = reactionAuthors[request.provider];
-    if (reactionAuthor === undefined) {
-      throw new ProviderTurnError(503, "provider_unavailable");
-    }
-    const result = await executeProviderTurn({
-      store,
+    const horizon: AdvanceHorizon =
+      request.cadence === "major"
+        ? { mode: "until_major_event" }
+        : { mode: "days", days: cadenceDays[request.cadence] };
+    const result = await advance({
+      orderText: request.orderText,
+      horizon,
+      cadence: request.cadence,
+      provider: request.provider,
+      expectedStateHash: store.stateHash(),
       requestId: request.requestId,
-      plan: async () => {
-        const campaign = parseCampaignState(store.read());
-        const plan = await planner({
-          requestId: request.requestId,
-          orderText: request.orderText,
-          turn: campaign.turn,
-          // Decision-relevant slice only: the full 251-nation state multiplies
-          // planner latency without adding usable signal.
-          stateJson: buildPlannerStateJson(campaign),
-        });
-        return groundStrategicPlan({
-          plan,
-          orderText: request.orderText,
-          playerNationId: campaign.playerNationId,
-          playerProvinceIds: campaign.provinces
-            .filter((province) => province.ownerNationId === campaign.playerNationId)
-            .map((province) => province.id),
-        });
-      },
-      prepare: async (snapshot, plan) => {
-        const campaign = parseCampaignState(snapshot);
-        const reduced = applyStrategicPlan({
-          snapshot: campaign,
-          plan,
-          orderText: request.orderText,
-          cadence: request.cadence,
-        });
-        return finalizeCampaignTurn({
-          before: campaign,
-          reduced,
-          plan,
-          orderText: request.orderText,
-          eventFactory: worldEventFactory,
-          reactionAuthor,
-          newsAuthor,
-        });
-      },
+      ...(request.cadence === "major"
+        ? { progression: { mode: "until_major_event" as const } }
+        : {}),
     });
     return context.json({
       campaign: result.state,

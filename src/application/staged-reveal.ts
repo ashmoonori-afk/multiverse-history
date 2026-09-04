@@ -1,4 +1,6 @@
+import { parseNationId } from "../shared/ids";
 import type { CampaignState } from "./campaign-state";
+import { resolveOwnershipAtEvent } from "./event-impact";
 
 /**
  * Staged event reveal: shows world events one by one on the map.
@@ -27,9 +29,6 @@ export interface StagedRevealState {
  * Compute the staged reveal state for a given campaign.
  * The worldState field shows the campaign state as of the current reveal index.
  *
- * For the initial implementation, we use the full campaign state but track
- * which events have been "revealed". A more advanced implementation would
- * track per-event world states.
  */
 export const computeStagedReveal = (
   state: CampaignState,
@@ -42,12 +41,24 @@ export const computeStagedReveal = (
     clampedIndex < totalEvents ? (state.worldEvents[clampedIndex]?.id ?? null) : null;
   const nextEventId =
     clampedIndex + 1 < totalEvents ? (state.worldEvents[clampedIndex + 1]?.id ?? null) : null;
+  const ownership = resolveOwnershipAtEvent(state, clampedIndex);
+  const worldState = Object.freeze({
+    ...state,
+    provinces: Object.freeze(
+      state.provinces.map((province) =>
+        Object.freeze({
+          ...province,
+          ownerNationId: parseNationId(ownership.get(province.id) ?? province.ownerNationId),
+        }),
+      ),
+    ),
+  });
 
   return Object.freeze({
     currentIndex: clampedIndex,
     totalEvents,
     complete,
-    worldState: state,
+    worldState,
     currentEventId,
     nextEventId,
   });
@@ -57,15 +68,7 @@ export const computeStagedReveal = (
  * Advance the reveal by one event.
  */
 export const advanceReveal = (state: StagedRevealState): StagedRevealState =>
-  Object.freeze({
-    ...state,
-    currentIndex: state.currentIndex + 1,
-    complete: state.currentIndex + 1 >= state.totalEvents,
-    currentEventId:
-      state.currentIndex + 1 < state.totalEvents
-        ? state.currentEventId // would be state.worldEvents[state.currentIndex + 1]?.id
-        : null,
-  });
+  computeStagedReveal(state.worldState, state.currentIndex + 1);
 
 /**
  * Get the events visible at the current reveal index.
