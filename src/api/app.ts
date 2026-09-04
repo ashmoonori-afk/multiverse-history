@@ -44,7 +44,11 @@ import {
 import { listBuiltInScenarioMetadata, listCanonicalCountries } from "../domain/scenario/catalog";
 import { validateScenarioPackage } from "../domain/scenario/package";
 import { getScenarioById, listScenarios, loadScenarioById } from "../domain/scenario/registry";
-import { importCampaignExport, serializeCampaignExport } from "../persistence/export-import";
+import {
+  createCampaignSlotStore,
+  replaceCampaignFromExport,
+} from "../persistence/campaign-slot-store";
+import { serializeCampaignExport } from "../persistence/export-import";
 import { planDeterministically } from "../providers/deterministic-provider";
 import { respondWithLiveDiplomacy } from "../providers/live-diplomacy";
 import { authorLiveNews } from "../providers/live-news";
@@ -92,6 +96,7 @@ export interface GameAppOptions {
   readonly newsAuthors?: Partial<Readonly<Record<ProviderSelection, CampaignNewsAuthor>>>;
   readonly reactionAuthors?: Partial<Readonly<Record<ProviderSelection, CampaignReactionAuthor>>>;
   readonly worldEventFactory?: CampaignWorldEventFactory;
+  readonly slotDirectory?: string;
 }
 
 const jsonBody = async (request: Request): Promise<unknown> => {
@@ -157,6 +162,9 @@ const rangeErrorResponse = (error: RangeError): ApiError => {
   if (error.message === "CAMPAIGN_NOT_STARTED") {
     return { code: "campaign_not_started", status: 409 };
   }
+  if (error.message === "SLOT_NOT_FOUND") {
+    return { code: "slot_not_found", status: 404 };
+  }
   if (error.message === "ALLY_WAR_BLOCKED") {
     return { code: "ally_war_blocked", status: 409 };
   }
@@ -179,6 +187,10 @@ const classifyApiError = (error: Error): ApiError => {
 export const createGameApp = (options: GameAppOptions = {}): Hono => {
   const app = new Hono();
   const store = new LocalCampaignStore();
+  const slotStore = createCampaignSlotStore({
+    directory: options.slotDirectory ?? "data/campaigns",
+    store,
+  });
   const planners: Partial<Record<ProviderSelection, ProviderPlanner>> = {
     deterministic: async (input) => {
       const state = store.read();
@@ -318,6 +330,17 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
     });
     store.replace(campaign);
     return context.json({ campaign: store.read(), stateHash: store.stateHash() }, 201);
+  });
+
+  app.get("/api/campaigns", async (context) => context.json({ slots: await slotStore.list() }));
+
+  app.post("/api/campaigns/:slot/save", async (context) =>
+    context.json(await slotStore.save(context.req.param("slot")), 201),
+  );
+
+  app.post("/api/campaigns/:slot/load", async (context) => {
+    await slotStore.load(context.req.param("slot"));
+    return context.json({ campaign: store.read(), stateHash: store.stateHash() });
   });
 
   app.get("/api/campaign", (context) =>
@@ -544,33 +567,9 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
 
   app.post("/api/campaign/import", async (context) => {
     const body = await jsonBody(context.req.raw);
-    const scenarioId = zodScenarioId(body);
-    const imported = importCampaignExport({
-      json: JSON.stringify(body),
-      expectedScenario: scenarioReference(scenarioId),
-    });
-    const campaign = parseCampaignState(imported.state);
-    if (campaign.scenarioId !== imported.scenario.id) {
-      throw new RangeError("SCENARIO_STATE_MISMATCH");
-    }
-    store.replace(campaign);
+    replaceCampaignFromExport(body, store);
     return context.json({ campaign: store.read(), stateHash: store.stateHash() });
   });
 
   return app;
-};
-
-const zodScenarioId = (value: unknown): string => {
-  if (
-    typeof value !== "object" ||
-    value === null ||
-    !("scenario" in value) ||
-    typeof value.scenario !== "object" ||
-    value.scenario === null ||
-    !("id" in value.scenario) ||
-    typeof value.scenario.id !== "string"
-  ) {
-    throw new TypeError("INVALID_CAMPAIGN_EXPORT");
-  }
-  return value.scenario.id;
 };
