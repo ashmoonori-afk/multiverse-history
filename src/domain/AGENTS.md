@@ -9,8 +9,8 @@ Game rules plus the scenario system: one hand-authored 1900 East Asia dataset an
 | Task | File |
 |------|------|
 | Scenario shape, lookup, playable-nation merge, async load | `scenario/registry.ts` (186L) |
-| Hand-authored nation + province data | `scenario/east-asia-1900/nations.ts`, `scenario/east-asia-1900/provinces.ts`, `initial-units.ts` |
-| Generated province graphs | `scenario/adjacency/*.json`, `scenario/adjacency.ts` |
+| Hand-authored nation + province data | `scenario/east-asia-1900/nations.ts`, `scenario/east-asia-1900/provinces.ts`, `scenario/east-asia-1900/units.ts` |
+| Generated province graphs | `scenario/adjacency/*.json`, `scenario/adjacency/index.ts` |
 | Historical scenarios built from basemap features | `scenario/historical-scenario.ts` (250L) |
 | Korean names/capitals/blocs for historical polities | `scenario/historical-scenario-overlays.ts` |
 | Neutral world countries used as fallback nations | `scenario/countries.ts` |

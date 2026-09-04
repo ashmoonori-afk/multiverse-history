@@ -1,7 +1,7 @@
 # PROJECT KNOWLEDGE BASE
 
 **Generated:** 2026-09-04
-**Commit:** fdb92a0
+**Commit:** cf97d46
 **Branch:** main
 
 ## OVERVIEW
@@ -27,7 +27,7 @@ Pax-Historia-AI/
 ## WHERE TO LOOK
 | Task | Location | Notes |
 |------|----------|-------|
-| Add/change an HTTP route | `src/api/app.ts` | 577L; one `createGameApp` builds all routes + planner/news/reaction maps |
+| Add/change an HTTP route | `src/api/app.ts` | one `createGameApp` builds routes + provider maps |
 | Change what a turn does | `src/application/turn-transaction.ts`, `campaign-timeline-progression.ts`, `simulation-tick.ts` | `/api/turns/advance` is canonical; preview/jump are adapters |
 | Change persisted campaign shape | `src/application/campaign-state.ts`, `campaign-state-migration.ts` | schema v2; v1 imports migrate after legacy-hash verification |
 | Change save-slot behavior | `src/persistence/campaign-slot-store.ts` | atomic temp-write + rename under `data/campaigns/` |
@@ -35,7 +35,7 @@ Pax-Historia-AI/
 | Add a nation/province | `src/domain/scenario/east-asia-1900/`, `scenario/adjacency/` | profiles, units and graph are domain data; geometry stays under `web/` |
 | Add/adjust a historical scenario | `src/domain/scenario/historical-scenario.ts`, `src/shared/historical-map-contract.ts` | 9 of 10 built-ins are generated from a fetched world basemap |
 | Map rendering / layers | `web/src/features/map/` | style constants hand-mirror CSS tokens |
-| Client state or any API call | `web/src/state/campaign-store.ts` | 628L zustand store owns nearly every `fetch` |
+| Client state or any API call | `web/src/state/campaign-store.ts` | zustand store owns nearly every `fetch` |
 | E2E flows | `tests/e2e/helpers/open-historia.ts` | 25 inbound refs; widest blast radius in tests |
 
 ## CODE MAP
@@ -96,6 +96,9 @@ bun run build          # build:api (bun) + build:web (vite -> dist/web)
 - Player gameplay defaults to Codex; deterministic planning remains available for tests and rules-mode verification.
 - `test:e2e` sets `reuseExistingServer: false` on both servers: an already-running `bun run dev` makes the e2e suite fail on port conflict.
 - Playwright writes its JSON report to `.omo/evidence/C001/playwright.json`, inside the gitignored `.omo/`.
-- Gitignored and therefore invisible to fresh checkouts: `DESIGN.md`, `docs/`, `data/campaigns/`, `dist/`, `test-results/`.
+- Gitignored runtime artifacts include `DESIGN.md`, `data/campaigns/`, `dist/`
+  and `test-results/`; required scenario contract documents are force-tracked.
 - Scenarios come in two flavours: `scn_ea1900` is hand-authored, the other nine built-ins are generated at load time from `aourednik/historical-basemaps` (GPL-3.0) via `loadHistoricalScenario`. That is the only network call in `src/domain`.
-- **The working tree carries a large uncommitted feature** (historical scenarios, disputed-territory overlays, turn presentation): ~25 modified and ~14 untracked source files as of `dbb11e7`. Inventories built from `git ls-files` alone will miss them.
+- Campaign slot hashes are corruption checksums for local saves, not hostile
+  authentication. Slot writes use unique exclusive temp files and atomic
+  replacement.

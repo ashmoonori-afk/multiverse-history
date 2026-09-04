@@ -1,0 +1,113 @@
+{
+  "schema": "multiverse-history-feature-matrix/1",
+  "multiplayer": {
+    "status": "excluded",
+    "reason": "The product scope is local single-player simulation."
+  },
+  "features": [
+    {
+      "id": "global-scenarios",
+      "domain": "src/domain/scenario/catalog.ts and src/domain/scenario/registry.ts",
+      "api": "GET /api/catalog and POST /api/campaigns",
+      "ui": "web/src/app/App.tsx",
+      "test": "tests/domain/global-scenarios.test.ts",
+      "evidence": ".omo/evidence/C001/desktop-global-catalog.png"
+    },
+    {
+      "id": "campaign-turns",
+      "domain": "src/application/apply-strategic-plan.ts",
+      "api": "POST /api/turns/advance (canonical transaction); preview/jump compatibility adapters",
+      "ui": "web/src/features/orders/OrderComposer.tsx",
+      "test": "tests/api/campaign-turns.integration.test.ts",
+      "evidence": ".omo/evidence/pax-parity/sc3-advance-90.http.txt"
+    },
+    {
+      "id": "nation-panels",
+      "domain": "src/application/campaign-state.ts",
+      "api": "GET /api/campaign",
+      "ui": "web/src/features/inspector/NationPanel.tsx",
+      "test": "tests/e2e/nation-panels.e2e.ts",
+      "evidence": ".omo/evidence/C001/desktop-nation-panel.png"
+    },
+    {
+      "id": "preset-editor",
+      "domain": "web/src/features/presets/PresetEditor.tsx",
+      "api": "browser-local preset JSON",
+      "ui": "web/src/features/presets/PresetEditor.tsx",
+      "test": "tests/e2e/preset-editor.e2e.ts",
+      "evidence": ".omo/evidence/C001/desktop-preset-editor.png"
+    },
+    {
+      "id": "diplomacy-chat-advisor",
+      "domain": "web/src/features/diplomacy/DiplomacyPanel.tsx",
+      "api": "browser-local conversation and advisor state",
+      "ui": "web/src/features/diplomacy/DiplomacyPanel.tsx",
+      "test": "tests/e2e/diplomacy-chat.e2e.ts",
+      "evidence": ".omo/evidence/C001/desktop-diplomacy-chat.png"
+    },
+    {
+      "id": "timeline-intervention",
+      "domain": "web/src/features/timeline/TimelinePanel.tsx",
+      "api": "campaign-local intervention queue",
+      "ui": "web/src/features/timeline/TimelinePanel.tsx",
+      "test": "tests/e2e/timeline-intervention.e2e.ts",
+      "evidence": ".omo/evidence/C001/desktop-timeline-intervention.png"
+    },
+    {
+      "id": "warfare-persistence",
+      "domain": "src/application/warfare-actions.ts",
+      "api": "POST /api/diplomacy/wars and /api/military/*",
+      "ui": "web/src/features/military/MilitaryPanel.tsx",
+      "test": "tests/e2e/warfare-persistence.e2e.ts",
+      "evidence": ".omo/evidence/C003/green.txt"
+    },
+    {
+      "id": "provider-boundary",
+      "domain": "src/providers/live-planner.ts",
+      "api": "POST /api/turns/advance",
+      "ui": "web/src/features/setup/CampaignSetupOptions.tsx",
+      "test": "tests/integration/provider-errors.integration.test.ts",
+      "evidence": ".omo/evidence/pax-parity/sc3-advance-90.http.txt"
+    },
+    {
+      "id": "campaign-save-slots",
+      "domain": "src/persistence/campaign-slot-store.ts",
+      "api": "GET /api/campaigns and POST /api/campaigns/:slot/save|load",
+      "ui": "web/src/features/library/SaveMenu.tsx",
+      "test": "tests/persistence/campaign-slot-store.test.ts and tests/api/campaign-slots.integration.test.ts",
+      "evidence": ".omo/evidence/pax-parity/wp6-save-1280.png"
+    },
+    {
+      "id": "policy-tick-attribution",
+      "domain": "src/application/campaign-resolution.ts and src/application/simulation-tick.ts",
+      "api": "POST /api/turns/advance",
+      "ui": "web/src/features/resolution/ResolutionDeltaGroups.tsx",
+      "test": "tests/web/resolution-attribution.test.tsx",
+      "evidence": ".omo/evidence/pax-parity/wp6-result-1280.png"
+    },
+    {
+      "id": "non-multiplayer-parity-workbench",
+      "domain": "src/application/campaign-state.ts and web/src/features",
+      "api": "POST /api/timeline/jump and POST /api/diplomacy/transfers",
+      "ui": "web/src/features/orders, diplomacy, timeline, map, library, and presets",
+      "test": "tests/e2e/pax-feature-parity.e2e.ts",
+      "evidence": ".omo/evidence/G002-C002/green.txt"
+    },
+    {
+      "id": "scenario-import-boundary",
+      "domain": "src/domain/scenario/package.ts",
+      "api": "POST /api/catalog/scenarios/import",
+      "ui": "browser-local preset publishing; no remote multiplayer surface",
+      "test": "tests/api/scenario-import-errors.integration.test.ts",
+      "evidence": ".omo/evidence/G002-C003/green.txt"
+    },
+    {
+      "id": "interactive-faction-overlay",
+      "domain": "web/src/features/map/WorldMap.tsx",
+      "api": "campaign nation and province state",
+      "ui": "colored clickable geography paths and faction legend",
+      "test": "tests/e2e/pax-feature-parity.e2e.ts",
+      "evidence": ".omo/evidence/G002-C002/desktop-map-faction-overlay.png"
+    }
+  ]
+}
