@@ -37,7 +37,7 @@ describe("provider process runner", () => {
     expect(invocation).rejects.toThrow("PROVIDER_CANCELLED");
   });
 
-  test("logs a correlated completion event for planner requests", async () => {
+  test("logs a correlated completion event without runtime elapsed time", async () => {
     // Given
     const info = spyOn(console, "info").mockImplementation(() => undefined);
 
@@ -55,13 +55,12 @@ describe("provider process runner", () => {
       expect(info).toHaveBeenCalledTimes(1);
       const event = z
         .object({
-          event: z.string(),
-          provider: z.string(),
-          requestId: z.string(),
-          durationMs: z.number(),
+          event: z.literal("provider.process.completed"),
+          provider: z.literal("codex"),
+          requestId: z.literal("req_log_success"),
           exitCode: z.number(),
         })
-        .passthrough()
+        .strict()
         .parse(JSON.parse(String(info.mock.calls[0]?.[0])));
       expect(event).toEqual(
         expect.objectContaining({
@@ -71,13 +70,12 @@ describe("provider process runner", () => {
           exitCode: 0,
         }),
       );
-      expect(event.durationMs).toBeNumber();
     } finally {
       info.mockRestore();
     }
   });
 
-  test("logs a bounded correlated failure event for planner requests", async () => {
+  test("logs a bounded correlated failure event without runtime elapsed time", async () => {
     // Given
     const error = spyOn(console, "error").mockImplementation(() => undefined);
 
@@ -96,13 +94,14 @@ describe("provider process runner", () => {
       expect(error).toHaveBeenCalledTimes(1);
       const event = z
         .object({
-          event: z.string(),
-          provider: z.string(),
-          requestId: z.string(),
+          event: z.literal("provider.process.failed"),
+          provider: z.literal("codex"),
+          requestId: z.literal("req_log_failure"),
           exitCode: z.number(),
+          failureCode: z.literal("PROVIDER_FAILED"),
           detail: z.string(),
         })
-        .passthrough()
+        .strict()
         .parse(JSON.parse(String(error.mock.calls[0]?.[0])));
       expect(event).toEqual(
         expect.objectContaining({

@@ -58,13 +58,11 @@ type ProviderLogInput =
   | {
       readonly status: "completed";
       readonly process: ProviderProcessInput;
-      readonly durationMs: number;
       readonly exitCode: number;
     }
   | {
       readonly status: "failed";
       readonly process: ProviderProcessInput;
-      readonly durationMs: number;
       readonly exitCode: number | null;
       readonly failureCode: string;
       readonly detail: string;
@@ -82,7 +80,6 @@ const logProviderEvent = (input: ProviderLogInput): void => {
           event: "provider.process.completed",
           provider: input.process.provider,
           requestId,
-          durationMs: input.durationMs,
           exitCode: input.exitCode,
         }),
       );
@@ -93,7 +90,6 @@ const logProviderEvent = (input: ProviderLogInput): void => {
           event: "provider.process.failed",
           provider: input.process.provider,
           requestId,
-          durationMs: input.durationMs,
           exitCode: input.exitCode,
           failureCode: input.failureCode,
           detail: input.detail,
@@ -131,7 +127,6 @@ export const runProviderProcess = (
     return Promise.reject(new RangeError("Provider timeout must be a positive safe integer"));
   }
   return new Promise((resolve, reject) => {
-    const startedAt = performance.now();
     const child = spawn(input.provider, [...input.args], {
       cwd: input.cwd,
       detached: process.platform !== "win32",
@@ -160,7 +155,6 @@ export const runProviderProcess = (
     const abort = (): void => failAndTerminate("PROVIDER_CANCELLED");
     const timer = setTimeout(() => failAndTerminate("PROVIDER_TIMEOUT"), input.timeoutMs);
     signal?.addEventListener("abort", abort, { once: true });
-    const durationMs = (): number => Math.round(performance.now() - startedAt);
 
     child.stdout.on("data", (chunk: Buffer) => appendOutput(stdout, chunk));
     child.stderr.on("data", (chunk: Buffer) => appendOutput(stderr, chunk));
@@ -170,7 +164,6 @@ export const runProviderProcess = (
       logProviderEvent({
         status: "failed",
         process: input,
-        durationMs: durationMs(),
         exitCode: null,
         failureCode: "PROVIDER_UNAVAILABLE",
         detail: logDetail(error.message, ""),
@@ -184,7 +177,6 @@ export const runProviderProcess = (
         logProviderEvent({
           status: "failed",
           process: input,
-          durationMs: durationMs(),
           exitCode,
           failureCode,
           detail: logDetail(
@@ -204,14 +196,12 @@ export const runProviderProcess = (
         logProviderEvent({
           status: "completed",
           process: input,
-          durationMs: durationMs(),
           exitCode: result.exitCode,
         });
       } else {
         logProviderEvent({
           status: "failed",
           process: input,
-          durationMs: durationMs(),
           exitCode: result.exitCode,
           failureCode: "PROVIDER_FAILED",
           detail: logDetail(result.stderr, result.stdout),
