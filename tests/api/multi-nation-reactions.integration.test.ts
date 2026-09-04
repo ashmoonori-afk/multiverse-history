@@ -12,7 +12,7 @@ test("generates one distinct reaction per affected nation", async () => {
   const app = createGameApp({
     planners: {
       deterministic: async (input) => ({
-        schemaVersion: 1,
+        schemaVersion: 2,
         requestId: input.requestId,
         playerIntents: [
           {

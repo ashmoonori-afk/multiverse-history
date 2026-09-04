@@ -33,6 +33,8 @@ const intentMatchesOrder = (intent: StrategicIntent, orderText: string): boolean
       return recruitmentKeywords.test(orderText);
     case "territory.transfer":
       return territoryKeywords.test(orderText);
+    default:
+      return false;
   }
 };
 
@@ -84,13 +86,36 @@ const groundedTreatyIntent = (
   });
 };
 
+const belongsToPlayer = (intent: StrategicIntent, playerNationId: string): boolean => {
+  switch (intent.type) {
+    case "economy.invest":
+    case "diplomacy.propose_treaty":
+    case "military.recruit":
+    case "territory.transfer":
+    case "treaty.respond":
+    case "treaty.terminate":
+    case "war.declare":
+    case "action.fail":
+      return intent.actorNationId === playerNationId;
+    case "nation.adjust":
+    case "polity.change":
+      return intent.nationId === playerNationId;
+    case "relation.adjust":
+      return intent.fromNationId === playerNationId;
+    case "war.peace":
+    case "unit.move":
+    case "unit.attack":
+    case "unit.disband":
+      return true;
+  }
+};
+
 const groundedPlayerIntent = (
   intent: StrategicIntent,
   input: GroundStrategicPlanInput,
 ): StrategicIntent | undefined => {
   if (
-    intent.actorNationId !== input.playerNationId ||
-    !intentMatchesOrder(intent, input.orderText)
+    !(belongsToPlayer(intent, input.playerNationId) && intentMatchesOrder(intent, input.orderText))
   ) {
     return undefined;
   }
@@ -106,6 +131,18 @@ const groundedPlayerIntent = (
         (intent.toNationId === input.playerNationId || intent.fromNationId === input.playerNationId)
         ? intent
         : undefined;
+    case "nation.adjust":
+    case "relation.adjust":
+    case "treaty.respond":
+    case "treaty.terminate":
+    case "war.declare":
+    case "war.peace":
+    case "unit.move":
+    case "unit.attack":
+    case "unit.disband":
+    case "polity.change":
+    case "action.fail":
+      return intent;
   }
 };
 

@@ -46,6 +46,39 @@ const legacyCampaign = () => {
 };
 
 describe("campaign state compatibility", () => {
+  test("imports a v1 state with its raw hash and reports the migration", () => {
+    // Given
+    const v1State = { ...createCampaignState("scn_ea1900", "nat_kor") };
+    Reflect.deleteProperty(v1State, "schemaVersion");
+    const serialized = serializeCampaignExport({ scenario, state: v1State });
+
+    // When
+    const imported = importCampaignExport({ json: serialized, expectedScenario: scenario });
+    const parsed = parseCampaignState(imported.state);
+
+    // Then
+    expect(parsed.schemaVersion).toBe(2);
+    expect(imported.migratedFrom).toBe(1);
+  });
+
+  test("rejects a tampered v1 state before migration", () => {
+    // Given
+    const v1State = { ...createCampaignState("scn_ea1900", "nat_kor") };
+    Reflect.deleteProperty(v1State, "schemaVersion");
+    const exported = JSON.parse(serializeCampaignExport({ scenario, state: v1State })) as {
+      readonly state: Record<string, unknown>;
+    };
+    const tamperedState = { ...exported.state, turn: 99 };
+    const tampered = JSON.stringify({ ...exported, state: tamperedState });
+
+    // When
+    const importTampered = () =>
+      importCampaignExport({ json: tampered, expectedScenario: scenario });
+
+    // Then
+    expect(importTampered).toThrow("STATE_HASH_MISMATCH");
+  });
+
   test("normalizes every new collection and legacy chat field", () => {
     const parsed = parseCampaignState(legacyCampaign());
     const resolution = parsed.resolutions[0];
@@ -67,6 +100,35 @@ describe("campaign state compatibility", () => {
     const reactionIds = ["rct_evt_1_1_nat_kor", "rct_evt_1_1_nat_jpn"];
     const enriched = {
       ...legacy,
+      nations: legacy.nations.map((nation, index) =>
+        index === 0
+          ? {
+              ...nation,
+              governmentKo: "입헌군주제",
+              tags: ["reformist"],
+              manpowerPool: 10_000,
+              profile: {
+                goalsKo: ["자주독립"],
+                personalityKo: "신중한 개혁가",
+                rivalNationIds: ["nat_jpn"],
+                allyNationIds: ["nat_gbr"],
+              },
+            }
+          : nation,
+      ),
+      provinces: legacy.provinces.map((province, index) =>
+        index === 0
+          ? {
+              ...province,
+              nameKo: "한성",
+              adjacentProvinceIds: ["prv_kor_jeolla"],
+              isCapital: true,
+              isPort: false,
+              terrain: "plains",
+              developmentBps: 5_000,
+            }
+          : province,
+      ),
       constructionProjects: [
         {
           id: "cst_1_1",
@@ -91,6 +153,16 @@ describe("campaign state compatibility", () => {
           headlineKo: "한성 철도 계획 발표",
           summaryKo: "조선의 철도 투자가 동아시아 경제에 영향을 주었다.",
           sourceResolutionId: "res_1_1",
+          impacts: {
+            regionTransfers: [],
+            nationChanges: [],
+            relationChanges: [],
+            unitOps: [],
+            markerOps: [],
+          },
+          provenance: "player_divergence",
+          regionIds: ["prv_kor_hanseong"],
+          sourceInputIds: ["req_1"],
         },
       ],
       nationReactions: [

@@ -9,7 +9,7 @@ const planWithTransfer = (
   fromNationId: string,
   toNationId: string,
 ): StrategicPlan => ({
-  schemaVersion: 1,
+  schemaVersion: 2,
   requestId: "req_territory_transfer_apply",
   playerIntents: [
     {
@@ -34,6 +34,39 @@ const planWithTransfer = (
 });
 
 describe("territory transfer intent", () => {
+  test("rejects v2 intents until their reducer is implemented", () => {
+    // Given
+    const snapshot = createCampaignState("scn_ea1900", "nat_kor");
+    const plan: StrategicPlan = {
+      schemaVersion: 2,
+      requestId: "req_unsupported_war",
+      playerIntents: [
+        {
+          type: "war.declare",
+          actorNationId: "nat_kor",
+          targetNationId: "nat_jpn",
+          casusBelliKo: "국경 침범",
+        },
+      ],
+      npcIntents: [
+        {
+          type: "military.recruit",
+          actorNationId: "nat_jpn",
+          provinceId: "prv_jpn_kanto",
+          manpower: 2_000,
+        },
+      ],
+      narrative: { ko: "전쟁 계획이 제출됐다." },
+      warnings: [],
+    };
+
+    // When
+    const applyUnsupported = () => applyStrategicPlan({ snapshot, plan });
+
+    // Then
+    expect(applyUnsupported).toThrow("INTENT_NOT_SUPPORTED_YET");
+  });
+
   test("moves province ownership and records why it moved", () => {
     // Given
     const snapshot = createCampaignState("scn_ea1900", "nat_kor");
@@ -89,7 +122,7 @@ describe("territory transfer intent", () => {
     );
     if (receiver === undefined) throw new Error("scenario has no third nation");
     const plan: StrategicPlan = {
-      schemaVersion: 1,
+      schemaVersion: 2,
       requestId: "req_territory_transfer_npc",
       playerIntents: [],
       npcIntents: [

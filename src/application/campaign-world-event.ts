@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { EventImpactSchema } from "./event-impact";
+
 const orderedUniqueNationIds = z
   .array(z.string().regex(/^nat_[a-z0-9_]+$/))
   .refine((nationIds) => new Set(nationIds).size === nationIds.length, {
@@ -29,6 +31,12 @@ export const CampaignWorldEventSchema = z
       .string()
       .regex(/^res_[a-z0-9_]+$/)
       .optional(),
+    impacts: EventImpactSchema.optional(),
+    provenance: z
+      .enum(["historical_baseline", "player_divergence", "simulated_consequence", "unknown"])
+      .optional(),
+    regionIds: z.array(z.string()).optional(),
+    sourceInputIds: z.array(z.string()).optional(),
   })
   .strict()
   .readonly();

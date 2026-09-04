@@ -1,5 +1,7 @@
 import { describe, expect, test } from "bun:test";
 
+import { applyStrategicPlan } from "../../src/application/apply-strategic-plan";
+import { createCampaignState } from "../../src/application/campaign-state";
 import { groundStrategicPlan } from "../../src/application/ground-strategic-plan";
 import type { StrategicIntent, StrategicPlan } from "../../src/providers/schemas";
 
@@ -8,7 +10,7 @@ const OWNED = "prv_kor_hanseong";
 const FOREIGN = "prv_jpn_kanto";
 
 const planWith = (playerIntents: readonly StrategicIntent[]): StrategicPlan => ({
-  schemaVersion: 1,
+  schemaVersion: 2,
   requestId: "req_grounding",
   playerIntents,
   npcIntents: [
@@ -147,5 +149,134 @@ describe("strategic plan grounding", () => {
 
     // Then
     expect(grounded.playerIntents).toHaveLength(1);
+  });
+
+  test("keeps all quoted v2 intents under the player's authority", () => {
+    // Given
+    const sourceQuoteKo = "명령을 실행하라";
+    const intents = [
+      {
+        type: "nation.adjust",
+        nationId: PLAYER,
+        treasuryDelta: 10,
+        reasonKo: "재정 조정",
+        sourceQuoteKo,
+      },
+      {
+        type: "relation.adjust",
+        fromNationId: PLAYER,
+        toNationId: "nat_jpn",
+        delta: -100,
+        reasonKo: "외교 마찰",
+        sourceQuoteKo,
+      },
+      {
+        type: "treaty.respond",
+        treatyId: "try_1_0",
+        decision: "accept",
+        actorNationId: PLAYER,
+        sourceQuoteKo,
+      },
+      {
+        type: "treaty.terminate",
+        treatyId: "try_1_0",
+        actorNationId: PLAYER,
+        reasonKo: "의무 불이행",
+        sourceQuoteKo,
+      },
+      {
+        type: "war.declare",
+        actorNationId: PLAYER,
+        targetNationId: "nat_jpn",
+        casusBelliKo: "국경 침범",
+        sourceQuoteKo,
+      },
+      { type: "war.peace", warId: "war_1_0", terms: [], sourceQuoteKo },
+      { type: "unit.move", unitId: "unt_1_0", toProvinceId: OWNED, sourceQuoteKo },
+      { type: "unit.attack", unitId: "unt_1_0", targetProvinceId: FOREIGN, sourceQuoteKo },
+      { type: "unit.disband", unitId: "unt_1_0", sourceQuoteKo },
+      { type: "polity.change", nationId: PLAYER, governmentKo: "입헌군주제", sourceQuoteKo },
+      {
+        type: "action.fail",
+        actorNationId: PLAYER,
+        attemptKo: "해군 증강",
+        stabilityDelta: -100,
+        sourceQuoteKo,
+      },
+    ] satisfies readonly StrategicIntent[];
+
+    // When
+    const grounded = ground(sourceQuoteKo, intents);
+
+    // Then
+    expect(grounded.playerIntents).toEqual(intents);
+    expect(grounded.warnings).not.toContain("PLAYER_INTENT_UNGROUNDED");
+  });
+
+  test("does not treat a target, counterpart, or recipient as the player actor", () => {
+    // Given
+    const sourceQuoteKo = "명령을 실행하라";
+    const impostors = [
+      {
+        type: "relation.adjust",
+        fromNationId: "nat_jpn",
+        toNationId: PLAYER,
+        delta: 100,
+        reasonKo: "외교 선전",
+        sourceQuoteKo,
+      },
+      {
+        type: "war.declare",
+        actorNationId: "nat_jpn",
+        targetNationId: PLAYER,
+        casusBelliKo: "국경 분쟁",
+        sourceQuoteKo,
+      },
+      {
+        type: "diplomacy.propose_treaty",
+        actorNationId: "nat_jpn",
+        recipientNationId: PLAYER,
+        clauses: ["trade"],
+        sourceQuoteKo,
+      },
+      {
+        type: "territory.transfer",
+        actorNationId: "nat_jpn",
+        provinceId: FOREIGN,
+        fromNationId: "nat_jpn",
+        toNationId: PLAYER,
+        reasonKo: "영토 양도",
+        sourceQuoteKo,
+      },
+    ] satisfies readonly StrategicIntent[];
+
+    // When
+    const grounded = ground(sourceQuoteKo, impostors);
+
+    // Then
+    expect(grounded.playerIntents).toEqual([]);
+    expect(grounded.warnings).toContain("PLAYER_INTENT_UNGROUNDED");
+  });
+
+  test("lets an unsupported quoted player intent reach the reducer", () => {
+    // Given
+    const orderText = "일본에 선전포고하라";
+    const snapshot = createCampaignState("scn_ea1900", PLAYER);
+    const grounded = ground(orderText, [
+      {
+        type: "war.declare",
+        actorNationId: PLAYER,
+        targetNationId: "nat_jpn",
+        casusBelliKo: "국경 침범",
+        sourceQuoteKo: orderText,
+      },
+    ]);
+
+    // When
+    const reduceGrounded = () => applyStrategicPlan({ snapshot, plan: grounded, orderText });
+
+    // Then
+    expect(reduceGrounded).toThrow(RangeError);
+    expect(reduceGrounded).toThrow("INTENT_NOT_SUPPORTED_YET");
   });
 });

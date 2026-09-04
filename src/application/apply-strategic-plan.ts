@@ -199,6 +199,8 @@ const applyIntent = (
       return recruit(state, intent, turn, sequence);
     case "territory.transfer":
       return transferTerritory(state, intent, turn);
+    default:
+      throw new RangeError("INTENT_NOT_SUPPORTED_YET");
   }
 };
 

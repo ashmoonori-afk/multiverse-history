@@ -59,7 +59,7 @@ describe("provider-authored campaign news", () => {
     const app = createGameApp({
       planners: {
         deterministic: async (input) => ({
-          schemaVersion: 1,
+          schemaVersion: 2,
           requestId: input.requestId,
           playerIntents: [
             {
@@ -196,7 +196,7 @@ describe("provider-authored campaign news", () => {
     const app = createGameApp({
       planners: {
         deterministic: async (input) => ({
-          schemaVersion: 1,
+          schemaVersion: 2,
           requestId: input.requestId,
           playerIntents: [
             {

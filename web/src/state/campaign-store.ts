@@ -1,6 +1,14 @@
 import { z } from "zod";
 import { create } from "zustand";
 
+import {
+  NationIdSchema,
+  ProvinceIdSchema,
+  RequestIdSchema,
+  TreatyIdSchema,
+  UnitIdSchema,
+  WarIdSchema,
+} from "./campaign-id-schemas";
 import { type CampaignResolution, CampaignResolutionSchema } from "./campaign-resolution-schema";
 import {
   CampaignConstructionProjectSchema,
@@ -13,8 +21,8 @@ const IntentSchema = z.discriminatedUnion("type", [
   z
     .object({
       type: z.literal("economy.invest"),
-      actorNationId: z.string(),
-      provinceId: z.string(),
+      actorNationId: NationIdSchema,
+      provinceId: ProvinceIdSchema,
       sector: z.string().regex(/^[a-z_]{2,24}$/),
       budgetCredits: z.number().int(),
       sourceQuoteKo: z.string().min(2).max(200).optional(),
@@ -23,9 +31,9 @@ const IntentSchema = z.discriminatedUnion("type", [
   z
     .object({
       type: z.literal("diplomacy.propose_treaty"),
-      actorNationId: z.string(),
-      recipientNationId: z.string(),
-      provinceId: z.string().optional(),
+      actorNationId: NationIdSchema,
+      recipientNationId: NationIdSchema,
+      provinceId: ProvinceIdSchema.optional(),
       clauses: z.array(z.enum(["trade", "port_access", "weapons_support", "officer_training"])),
       termsKo: z.string().min(1).optional(),
       sourceQuoteKo: z.string().min(2).max(200).optional(),
@@ -34,8 +42,8 @@ const IntentSchema = z.discriminatedUnion("type", [
   z
     .object({
       type: z.literal("military.recruit"),
-      actorNationId: z.string(),
-      provinceId: z.string(),
+      actorNationId: NationIdSchema,
+      provinceId: ProvinceIdSchema,
       manpower: z.number().int(),
       sourceQuoteKo: z.string().min(2).max(200).optional(),
     })
@@ -43,11 +51,123 @@ const IntentSchema = z.discriminatedUnion("type", [
   z
     .object({
       type: z.literal("territory.transfer"),
-      actorNationId: z.string(),
-      provinceId: z.string(),
-      fromNationId: z.string(),
-      toNationId: z.string(),
+      actorNationId: NationIdSchema,
+      provinceId: ProvinceIdSchema,
+      fromNationId: NationIdSchema,
+      toNationId: NationIdSchema,
       reasonKo: z.string().min(1),
+      sourceQuoteKo: z.string().min(2).max(200).optional(),
+    })
+    .strict(),
+  z
+    .object({
+      type: z.literal("nation.adjust"),
+      nationId: NationIdSchema,
+      treasuryDelta: z.number().int().optional(),
+      stabilityDelta: z.number().int().min(-10_000).max(10_000).optional(),
+      gdpDelta: z.number().int().optional(),
+      taxRateBps: z.number().int().min(0).max(10_000).optional(),
+      reasonKo: z.string().min(1).max(300),
+      sourceQuoteKo: z.string().min(2).max(200).optional(),
+    })
+    .strict(),
+  z
+    .object({
+      type: z.literal("relation.adjust"),
+      fromNationId: NationIdSchema,
+      toNationId: NationIdSchema,
+      delta: z.number().int().min(-3_000).max(3_000),
+      reasonKo: z.string().min(1).max(300),
+      sourceQuoteKo: z.string().min(2).max(200).optional(),
+    })
+    .strict(),
+  z
+    .object({
+      type: z.literal("treaty.respond"),
+      treatyId: TreatyIdSchema,
+      decision: z.enum(["accept", "reject"]),
+      actorNationId: NationIdSchema,
+      sourceQuoteKo: z.string().min(2).max(200).optional(),
+    })
+    .strict(),
+  z
+    .object({
+      type: z.literal("treaty.terminate"),
+      treatyId: TreatyIdSchema,
+      actorNationId: NationIdSchema,
+      reasonKo: z.string().min(1).max(300),
+      sourceQuoteKo: z.string().min(2).max(200).optional(),
+    })
+    .strict(),
+  z
+    .object({
+      type: z.literal("war.declare"),
+      actorNationId: NationIdSchema,
+      targetNationId: NationIdSchema,
+      casusBelliKo: z.string().min(1).max(300),
+      sourceQuoteKo: z.string().min(2).max(200).optional(),
+    })
+    .strict(),
+  z
+    .object({
+      type: z.literal("war.peace"),
+      warId: WarIdSchema,
+      terms: z.array(
+        z
+          .object({
+            type: z.literal("territory.transfer"),
+            actorNationId: NationIdSchema,
+            provinceId: ProvinceIdSchema,
+            fromNationId: NationIdSchema,
+            toNationId: NationIdSchema,
+            reasonKo: z.string().min(1).max(300),
+            sourceQuoteKo: z.string().min(2).max(200).optional(),
+          })
+          .strict(),
+      ),
+      reparationsCredits: z.number().int().nonnegative().optional(),
+      sourceQuoteKo: z.string().min(2).max(200).optional(),
+    })
+    .strict(),
+  z
+    .object({
+      type: z.literal("unit.move"),
+      unitId: UnitIdSchema,
+      toProvinceId: ProvinceIdSchema,
+      sourceQuoteKo: z.string().min(2).max(200).optional(),
+    })
+    .strict(),
+  z
+    .object({
+      type: z.literal("unit.attack"),
+      unitId: UnitIdSchema,
+      targetProvinceId: ProvinceIdSchema,
+      sourceQuoteKo: z.string().min(2).max(200).optional(),
+    })
+    .strict(),
+  z
+    .object({
+      type: z.literal("unit.disband"),
+      unitId: UnitIdSchema,
+      sourceQuoteKo: z.string().min(2).max(200).optional(),
+    })
+    .strict(),
+  z
+    .object({
+      type: z.literal("polity.change"),
+      nationId: NationIdSchema,
+      nameKo: z.string().min(1).max(200).optional(),
+      governmentKo: z.string().min(1).max(200).optional(),
+      capitalProvinceId: ProvinceIdSchema.optional(),
+      sourceQuoteKo: z.string().min(2).max(200).optional(),
+    })
+    .strict(),
+  z
+    .object({
+      type: z.literal("action.fail"),
+      actorNationId: NationIdSchema,
+      attemptKo: z.string().min(1).max(300),
+      stabilityDelta: z.number().int().min(-500).max(0),
       sourceQuoteKo: z.string().min(2).max(200).optional(),
     })
     .strict(),
@@ -55,8 +175,8 @@ const IntentSchema = z.discriminatedUnion("type", [
 
 const StrategicPlanSchema = z
   .object({
-    schemaVersion: z.literal(1),
-    requestId: z.string(),
+    schemaVersion: z.literal(2),
+    requestId: RequestIdSchema,
     playerIntents: z.array(IntentSchema),
     npcIntents: z.array(IntentSchema),
     narrative: z.object({ ko: z.string() }).strict(),
@@ -68,10 +188,10 @@ const CampaignChatMessageSchema = z
   .object({
     id: z.string(),
     role: z.enum(["player", "counterpart"]),
-    speakerNationId: z.string(),
-    targetNationId: z.string(),
+    speakerNationId: NationIdSchema,
+    targetNationId: NationIdSchema,
     roomId: z.string().default(""),
-    participantNationIds: z.array(z.string()).default([]),
+    participantNationIds: z.array(NationIdSchema).default([]),
     sequence: z.number().int().nonnegative().default(0),
     topic: z.enum(["trade", "relations", "military", "general"]),
     intent: z.enum([
@@ -92,10 +212,11 @@ const CampaignChatMessageSchema = z
 
 const CampaignSchema = z
   .object({
+    schemaVersion: z.literal(2),
     id: z.literal("cmp_local"),
     scenarioId: z.string(),
     scenarioTitleKo: z.string().min(1).default("알 수 없는 시나리오"),
-    playerNationId: z.string(),
+    playerNationId: NationIdSchema,
     plannerProvider: z.enum(["deterministic", "codex", "claude"]),
     difficulty: z.enum(["story", "standard", "hard"]),
     elapsedDays: z.number().int().nonnegative(),
@@ -104,7 +225,7 @@ const CampaignSchema = z
     nations: z.array(
       z
         .object({
-          id: z.string(),
+          id: NationIdSchema,
           nameKo: z.string(),
           capitalLabelKo: z.string().min(1),
           legalActions: z.array(z.string().min(1)),
@@ -114,23 +235,41 @@ const CampaignSchema = z
           stabilityBps: z.number().int().nonnegative(),
           population: z.number().int().nonnegative(),
           infrastructureBps: z.number().int().nonnegative(),
+          governmentKo: z.string().min(1).optional(),
+          tags: z.array(z.string().min(1)).optional(),
+          manpowerPool: z.number().int().nonnegative().optional(),
+          profile: z
+            .object({
+              goalsKo: z.array(z.string().min(1)),
+              personalityKo: z.string().min(1),
+              rivalNationIds: z.array(NationIdSchema),
+              allyNationIds: z.array(NationIdSchema),
+            })
+            .strict()
+            .optional(),
         })
         .strict(),
     ),
     provinces: z.array(
       z
         .object({
-          id: z.string(),
-          ownerNationId: z.string(),
+          id: ProvinceIdSchema,
+          ownerNationId: NationIdSchema,
           population: z.number().int().nonnegative(),
+          nameKo: z.string().min(1).optional(),
+          adjacentProvinceIds: z.array(ProvinceIdSchema).optional(),
+          isCapital: z.boolean().optional(),
+          isPort: z.boolean().optional(),
+          terrain: z.string().min(1).optional(),
+          developmentBps: z.number().int().min(0).max(10_000).optional(),
         })
         .strict(),
     ),
     relations: z.array(
       z
         .object({
-          fromNationId: z.string(),
-          toNationId: z.string(),
+          fromNationId: NationIdSchema,
+          toNationId: NationIdSchema,
           value: z.number().int(),
         })
         .strict(),
@@ -138,9 +277,9 @@ const CampaignSchema = z
     treaties: z.array(
       z
         .object({
-          id: z.string(),
-          proposerNationId: z.string(),
-          recipientNationId: z.string(),
+          id: TreatyIdSchema,
+          proposerNationId: NationIdSchema,
+          recipientNationId: NationIdSchema,
           clauses: z.array(z.string()),
           status: z.enum(["proposed", "active"]),
           proposedTurn: z.number().int().nonnegative(),
@@ -150,9 +289,9 @@ const CampaignSchema = z
     units: z.array(
       z
         .object({
-          id: z.string(),
-          ownerNationId: z.string(),
-          provinceId: z.string(),
+          id: UnitIdSchema,
+          ownerNationId: NationIdSchema,
+          provinceId: ProvinceIdSchema,
           manpower: z.number().int().nonnegative(),
         })
         .strict(),
@@ -160,8 +299,8 @@ const CampaignSchema = z
     wars: z.array(
       z
         .object({
-          attackerNationId: z.string(),
-          targetNationId: z.string(),
+          attackerNationId: NationIdSchema,
+          targetNationId: NationIdSchema,
           declaredTurn: z.number().int().nonnegative(),
         })
         .strict(),

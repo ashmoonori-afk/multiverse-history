@@ -21,6 +21,7 @@ import {
 } from "./campaign-progression";
 import { type CampaignNationReaction, CampaignNationReactionSchema } from "./campaign-reaction";
 import { type CampaignResolution, CampaignResolutionSchema } from "./campaign-resolution";
+import { migrateCampaignState } from "./campaign-state-migration";
 import { type CampaignWorldEvent, CampaignWorldEventSchema } from "./campaign-world-event";
 import type { CampaignStore, CampaignTurnState } from "./turn-transaction";
 
@@ -47,6 +48,7 @@ export interface CampaignWarState {
 }
 
 export interface CampaignState extends CampaignTurnState {
+  readonly schemaVersion: 2;
   readonly id: "cmp_local";
   readonly scenarioId: string;
   readonly scenarioTitleKo: string;
@@ -55,8 +57,8 @@ export interface CampaignState extends CampaignTurnState {
   readonly difficulty: "story" | "standard" | "hard";
   readonly elapsedDays: number;
   readonly date: { readonly year: number; readonly quarter: number };
-  readonly nations: ScenarioDefinition["nations"];
-  readonly provinces: ScenarioDefinition["provinces"];
+  readonly nations: readonly CampaignNationState[];
+  readonly provinces: readonly CampaignProvinceState[];
   readonly relations: ScenarioDefinition["relations"];
   readonly treaties: readonly CampaignTreatyState[];
   readonly units: readonly CampaignUnitState[];
@@ -71,8 +73,32 @@ export interface CampaignState extends CampaignTurnState {
   readonly lastProgression: TimelineProgressionResult | null;
 }
 
+export type CampaignNationState = ScenarioDefinition["nations"][number] & {
+  readonly governmentKo?: string | undefined;
+  readonly tags?: readonly string[] | undefined;
+  readonly manpowerPool?: number | undefined;
+  readonly profile?:
+    | {
+        readonly goalsKo: readonly string[];
+        readonly personalityKo: string;
+        readonly rivalNationIds: readonly string[];
+        readonly allyNationIds: readonly string[];
+      }
+    | undefined;
+};
+
+export type CampaignProvinceState = ScenarioDefinition["provinces"][number] & {
+  readonly nameKo?: string | undefined;
+  readonly adjacentProvinceIds?: readonly string[] | undefined;
+  readonly isCapital?: boolean | undefined;
+  readonly isPort?: boolean | undefined;
+  readonly terrain?: string | undefined;
+  readonly developmentBps?: number | undefined;
+};
+
 const CampaignStateSchema = z
   .object({
+    schemaVersion: z.literal(2),
     id: z.literal("cmp_local"),
     scenarioId: z.string().regex(/^scn_[a-z0-9_]+$/),
     scenarioTitleKo: z.string().trim().min(1).optional(),
@@ -100,6 +126,18 @@ const CampaignStateSchema = z
           stabilityBps: z.number().safe().int().min(0).max(10_000),
           population: z.number().safe().int().nonnegative(),
           infrastructureBps: z.number().safe().int().min(0).max(10_000),
+          governmentKo: z.string().trim().min(1).optional(),
+          tags: z.array(z.string().trim().min(1)).optional(),
+          manpowerPool: z.number().safe().int().nonnegative().optional(),
+          profile: z
+            .object({
+              goalsKo: z.array(z.string().trim().min(1)),
+              personalityKo: z.string().trim().min(1),
+              rivalNationIds: z.array(z.string().regex(/^nat_[a-z0-9_]+$/)),
+              allyNationIds: z.array(z.string().regex(/^nat_[a-z0-9_]+$/)),
+            })
+            .strict()
+            .optional(),
         })
         .strict(),
     ),
@@ -109,6 +147,12 @@ const CampaignStateSchema = z
           id: z.string(),
           ownerNationId: z.string(),
           population: z.number().safe().int().nonnegative(),
+          nameKo: z.string().trim().min(1).optional(),
+          adjacentProvinceIds: z.array(z.string()).optional(),
+          isCapital: z.boolean().optional(),
+          isPort: z.boolean().optional(),
+          terrain: z.string().trim().min(1).optional(),
+          developmentBps: z.number().safe().int().min(0).max(10_000).optional(),
         })
         .strict(),
     ),
@@ -190,6 +234,7 @@ export const createCampaignStateFromScenario = (
     throw new RangeError("INVALID_CUSTOM_POLITY_NAME");
   }
   return Object.freeze({
+    schemaVersion: 2,
     id: "cmp_local",
     scenarioId: scenario.id,
     scenarioTitleKo: scenario.titleKo,
@@ -227,7 +272,7 @@ export const createCampaignStateFromScenario = (
 };
 
 export const parseCampaignState = (value: unknown): CampaignState => {
-  const parsed = CampaignStateSchema.parse(value);
+  const parsed = CampaignStateSchema.parse(migrateCampaignState(value));
   const lastPlan = parsed.lastPlan === null ? null : parseStrategicPlan(parsed.lastPlan);
   return Object.freeze({
     ...parsed,

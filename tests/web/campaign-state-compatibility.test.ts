@@ -18,6 +18,107 @@ afterEach(() => {
 });
 
 describe("client campaign compatibility", () => {
+  test("accepts v2 nation profiles and province adjacency metadata", async () => {
+    // Given
+    const base = createCampaignState("scn_ea1900", "nat_kor");
+    const campaign = {
+      ...base,
+      nations: base.nations.map((nation, index) =>
+        index === 0
+          ? {
+              ...nation,
+              governmentKo: "입헌군주제",
+              tags: ["reformist"],
+              manpowerPool: 10_000,
+              profile: {
+                goalsKo: ["자주독립"],
+                personalityKo: "신중한 개혁가",
+                rivalNationIds: ["nat_jpn"],
+                allyNationIds: ["nat_gbr"],
+              },
+            }
+          : nation,
+      ),
+      provinces: base.provinces.map((province, index) =>
+        index === 0
+          ? {
+              ...province,
+              nameKo: "한성",
+              adjacentProvinceIds: ["prv_kor_jeolla"],
+              isCapital: true,
+              isPort: false,
+              terrain: "plains",
+              developmentBps: 5_000,
+            }
+          : province,
+      ),
+      worldEvents: [
+        {
+          id: "evt_1_1",
+          kind: "political",
+          importance: "major",
+          occurredAtElapsedDays: 0,
+          turn: 0,
+          date: base.date,
+          actorNationIds: ["nat_kor"],
+          affectedNationIds: ["nat_kor"],
+          headlineKo: "개혁 발표",
+          summaryKo: "대한제국이 새 개혁안을 발표했다.",
+          impacts: {
+            regionTransfers: [
+              {
+                regionId: "prv_kor_hanseong",
+                fromNationId: "nat_kor",
+                toNationId: "nat_jpn",
+                sourceEventId: "evt_1_0",
+              },
+            ],
+            nationChanges: [{ nationId: "nat_kor", stabilityChange: 100 }],
+            relationChanges: [{ fromNationId: "nat_kor", toNationId: "nat_jpn", delta: -100 }],
+            unitOps: [
+              {
+                op: "move",
+                unitId: "unt_1_0",
+                ownerNationId: "nat_kor",
+                provinceId: "prv_kor_hanseong",
+              },
+            ],
+            markerOps: [{ op: "build", markerId: "marker_1", provinceId: "prv_kor_hanseong" }],
+          },
+          provenance: "player_divergence",
+          regionIds: ["prv_kor_hanseong"],
+          sourceInputIds: ["req_1"],
+        },
+      ],
+    };
+    globalThis.fetch = Object.assign(
+      async () =>
+        new Response(JSON.stringify({ campaign, stateHash: "a".repeat(64) }), {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        }),
+      { preconnect: originalFetch.preconnect },
+    );
+
+    // When
+    await useCampaignStore.getState().loadCampaign();
+
+    // Then
+    expect(useCampaignStore.getState().error).toBeNull();
+    expect(useCampaignStore.getState().campaign?.nations[0]?.profile?.goalsKo).toEqual([
+      "자주독립",
+    ]);
+    expect(useCampaignStore.getState().campaign?.provinces[0]?.adjacentProvinceIds).toEqual([
+      "prv_kor_jeolla",
+    ]);
+    expect(useCampaignStore.getState().campaign?.worldEvents[0]?.provenance).toBe(
+      "player_divergence",
+    );
+    expect(
+      useCampaignStore.getState().campaign?.worldEvents[0]?.impacts?.regionTransfers[0],
+    ).toEqual(expect.objectContaining({ regionId: "prv_kor_hanseong", toNationId: "nat_jpn" }));
+  });
+
   test("applies the same defaults as the server boundary", async () => {
     const base = createCampaignState("scn_ea1900", "nat_kor");
     const resolution = createCampaignResolution({
@@ -118,7 +219,7 @@ describe("client campaign compatibility", () => {
               ],
             },
             plan: {
-              schemaVersion: 1,
+              schemaVersion: 2,
               requestId: "req_web_grounding",
               playerIntents: [
                 {
@@ -194,5 +295,103 @@ describe("client campaign compatibility", () => {
     // Then
     expect(campaign.constructionProjects[0]?.kind).toBe("port");
     expect(useCampaignStore.getState().campaign?.constructionProjects[0]?.kind).toBe("port");
+  });
+
+  test("rejects malformed identifiers mirrored from the server boundary", async () => {
+    // Given
+    const base = createCampaignState("scn_ea1900", "nat_kor");
+    const treatyIntent = {
+      type: "treaty.respond",
+      treatyId: "try_1_0",
+      decision: "accept",
+      actorNationId: "nat_kor",
+    } as const;
+    const warIntent = {
+      type: "war.peace",
+      warId: "war_1_0",
+      terms: [],
+    } as const;
+    const unitIntent = {
+      type: "unit.move",
+      unitId: "unt_1_0",
+      toProvinceId: "prv_kor_hanseong",
+    } as const;
+    const plan = {
+      schemaVersion: 2,
+      requestId: "req_client_ids",
+      playerIntents: [treatyIntent, warIntent, unitIntent],
+      npcIntents: [],
+      narrative: { ko: "식별자를 검증한다." },
+      warnings: [],
+    } as const;
+    const malformedCampaigns: readonly unknown[] = [
+      { ...base, lastPlan: { ...plan, requestId: "bad" } },
+      {
+        ...base,
+        lastPlan: {
+          ...plan,
+          playerIntents: [{ ...treatyIntent, treatyId: "bad" }, warIntent, unitIntent],
+        },
+      },
+      {
+        ...base,
+        lastPlan: {
+          ...plan,
+          playerIntents: [treatyIntent, { ...warIntent, warId: "bad" }, unitIntent],
+        },
+      },
+      {
+        ...base,
+        lastPlan: {
+          ...plan,
+          playerIntents: [treatyIntent, warIntent, { ...unitIntent, unitId: "bad" }],
+        },
+      },
+      {
+        ...base,
+        lastPlan: {
+          ...plan,
+          playerIntents: [treatyIntent, warIntent, { ...unitIntent, toProvinceId: "bad" }],
+        },
+      },
+      {
+        ...base,
+        lastPlan: {
+          ...plan,
+          playerIntents: [{ ...treatyIntent, actorNationId: "bad" }, warIntent, unitIntent],
+        },
+      },
+      {
+        ...base,
+        worldEvents: [
+          {
+            id: "bad",
+            kind: "political",
+            importance: "major",
+            occurredAtElapsedDays: 0,
+            turn: 0,
+            date: base.date,
+            actorNationIds: ["nat_kor"],
+            affectedNationIds: ["nat_kor"],
+            headlineKo: "개혁 발표",
+            summaryKo: "대한제국이 새 개혁안을 발표했다.",
+          },
+        ],
+      },
+    ];
+
+    // When / Then
+    for (const campaign of malformedCampaigns) {
+      globalThis.fetch = Object.assign(
+        async () =>
+          new Response(JSON.stringify({ campaign, stateHash: "a".repeat(64) }), {
+            status: 200,
+            headers: { "content-type": "application/json" },
+          }),
+        { preconnect: originalFetch.preconnect },
+      );
+      await useCampaignStore.getState().loadCampaign();
+      expect(useCampaignStore.getState().error).not.toBeNull();
+    }
   });
 });

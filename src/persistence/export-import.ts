@@ -1,5 +1,5 @@
 import { z } from "zod";
-
+import { migrateCampaignState } from "../application/campaign-state-migration";
 import { canonicalStringify, hashCanonical } from "../shared/canonical-json";
 
 export interface ScenarioReference {
@@ -13,6 +13,7 @@ export interface CampaignExport {
   readonly exportedStateHash: string;
   readonly scenario: ScenarioReference;
   readonly state: unknown;
+  readonly migratedFrom?: 1;
 }
 
 export interface ExportCampaignInput {
@@ -85,5 +86,10 @@ export const importCampaignExport = (input: ImportCampaignInput): CampaignExport
   if (hashCanonical(parsed.state) !== parsed.exportedStateHash) {
     throw new RangeError("STATE_HASH_MISMATCH");
   }
-  return Object.freeze(parsed);
+  const state = migrateCampaignState(parsed.state);
+  return Object.freeze({
+    ...parsed,
+    state,
+    ...(state === parsed.state ? {} : { migratedFrom: 1 as const }),
+  });
 };
