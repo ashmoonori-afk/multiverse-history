@@ -1,11 +1,63 @@
 import { describe, expect, test } from "bun:test";
 
-import { historicalPolityId, historicalProvinceId } from "../../src/shared/historical-map-contract";
+import { listBuiltInScenarioMetadata } from "../../src/domain/scenario/catalog";
+import {
+  historicalBasemapSnapshot,
+  historicalBasemapUrl,
+  historicalPolityId,
+  historicalProvinceId,
+  parseHistoricalBasemap,
+} from "../../src/shared/historical-map-contract";
 import { convertHistoricalBasemap } from "../../web/src/features/map/historical-map";
+import {
+  historicalBasemapSnapshot as clientHistoricalBasemapSnapshot,
+  historicalBasemapUrl as clientHistoricalBasemapUrl,
+  historicalPolityId as clientHistoricalPolityId,
+  historicalProvinceId as clientHistoricalProvinceId,
+  parseHistoricalBasemap as parseClientHistoricalBasemap,
+} from "../../web/src/features/map/historical-map-contract";
 import { buildOpenHistoriaMapData } from "../../web/src/features/map/open-historia-map-data";
 import { regionFillLayer } from "../../web/src/features/map/open-historia-map-style";
 
 describe("historical MapLibre collection", () => {
+  test("keeps the browser mirror aligned with the server contract", () => {
+    // Given
+    const basemap = {
+      type: "FeatureCollection" as const,
+      features: [
+        {
+          type: "Feature" as const,
+          properties: { NAME: "Cote d'Ivoire", SUBJECTO: null, source: "GPL-3.0" },
+          geometry: {
+            type: "Polygon" as const,
+            coordinates: [
+              [
+                [-8, 5],
+                [-2, 5],
+                [-2, 11],
+                [-8, 5],
+              ],
+            ],
+          },
+        },
+      ],
+    };
+    const invalidBasemap = { ...basemap, features: [{ ...basemap.features[0], geometry: null }] };
+
+    // When / Then
+    for (const { id } of listBuiltInScenarioMetadata()) {
+      expect(clientHistoricalBasemapSnapshot(id)).toBe(historicalBasemapSnapshot(id));
+      expect(clientHistoricalBasemapUrl(id)).toBe(historicalBasemapUrl(id));
+    }
+    for (const name of ["Roman Empire", "Cote d'Ivoire", "대한제국", ""] as const) {
+      expect(clientHistoricalPolityId(name)).toBe(historicalPolityId(name));
+      expect(clientHistoricalProvinceId(name)).toBe(historicalProvinceId(name));
+    }
+    expect(parseClientHistoricalBasemap(basemap)).toEqual(parseHistoricalBasemap(basemap));
+    expect(() => parseClientHistoricalBasemap(invalidBasemap)).toThrow();
+    expect(() => parseHistoricalBasemap(invalidBasemap)).toThrow();
+  });
+
   test("converts named territories into campaign-compatible map features", () => {
     const collection = convertHistoricalBasemap({
       type: "FeatureCollection",

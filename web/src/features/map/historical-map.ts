@@ -4,7 +4,7 @@ import {
   historicalPolityId,
   historicalProvinceId,
   parseHistoricalBasemap,
-} from "../../../../src/shared/historical-map-contract";
+} from "./historical-map-contract";
 import type { RawCollection } from "./open-historia-map-data";
 
 type HistoricalGeometry = HistoricalBasemap["features"][number]["geometry"];
