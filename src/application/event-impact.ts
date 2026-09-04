@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { parseNationId } from "../shared/ids";
 import type { CampaignState } from "./campaign-state";
 
 /**
@@ -133,6 +134,172 @@ export const EMPTY_EVENT_IMPACT: EventImpact = Object.freeze({
   markerOps: Object.freeze([]),
 });
 
+const applyRegionTransfers = (
+  state: CampaignState,
+  transfers: EventImpact["regionTransfers"],
+): CampaignState => {
+  let next = state;
+  for (const transfer of transfers) {
+    const province = next.provinces.find((candidate) => candidate.id === transfer.regionId);
+    if (province === undefined) continue;
+    next = {
+      ...next,
+      provinces: Object.freeze(
+        next.provinces.map((candidate) =>
+          candidate.id === transfer.regionId
+            ? Object.freeze({
+                ...candidate,
+                ownerNationId: parseNationId(transfer.toNationId),
+              })
+            : candidate,
+        ),
+      ),
+    };
+  }
+  return next;
+};
+
+const applyNationChange = (
+  nation: CampaignState["nations"][number],
+  change: EventImpact["nationChanges"][number],
+): CampaignState["nations"][number] => {
+  if (nation.id !== change.nationId) return nation;
+  return Object.freeze({
+    ...nation,
+    ...(change.name !== undefined ? { nameKo: change.name } : {}),
+    ...(change.stabilityChange !== undefined
+      ? {
+          stabilityBps: Math.max(0, Math.min(10_000, nation.stabilityBps + change.stabilityChange)),
+        }
+      : {}),
+    ...(change.treasuryChange !== undefined
+      ? { treasuryCredits: Math.max(0, nation.treasuryCredits + change.treasuryChange) }
+      : {}),
+  });
+};
+
+const applyNationChanges = (
+  state: CampaignState,
+  changes: EventImpact["nationChanges"],
+): CampaignState => {
+  let next = state;
+  for (const change of changes) {
+    next = {
+      ...next,
+      nations: Object.freeze(next.nations.map((nation) => applyNationChange(nation, change))),
+    };
+  }
+  return next;
+};
+
+const applyRelationChanges = (
+  state: CampaignState,
+  changes: EventImpact["relationChanges"],
+): CampaignState => {
+  let next = state;
+  for (const change of changes) {
+    const existing = next.relations.find(
+      (relation) =>
+        relation.fromNationId === change.fromNationId && relation.toNationId === change.toNationId,
+    );
+    const value = Math.max(-10_000, Math.min(10_000, (existing?.value ?? 0) + change.delta));
+    next = {
+      ...next,
+      relations: Object.freeze(
+        existing
+          ? next.relations.map((relation) =>
+              relation.fromNationId === change.fromNationId &&
+              relation.toNationId === change.toNationId
+                ? Object.freeze({ ...relation, value })
+                : relation,
+            )
+          : [
+              ...next.relations,
+              Object.freeze({
+                fromNationId: parseNationId(change.fromNationId),
+                toNationId: parseNationId(change.toNationId),
+                value,
+              }),
+            ],
+      ),
+    };
+  }
+  return next;
+};
+
+type UnitOp = EventImpact["unitOps"][number];
+
+const spawnUnit = (state: CampaignState, op: UnitOp): CampaignState => {
+  if (!(op.ownerNationId && op.provinceId) || op.manpower === undefined) {
+    return state;
+  }
+  return {
+    ...state,
+    units: Object.freeze([
+      ...state.units,
+      Object.freeze({
+        id: `unt_${state.turn}_${state.units.length}`,
+        ownerNationId: op.ownerNationId,
+        provinceId: op.provinceId,
+        manpower: op.manpower,
+      }),
+    ]),
+  };
+};
+
+const removeUnit = (state: CampaignState, op: UnitOp): CampaignState => {
+  if (!op.unitId) return state;
+  return {
+    ...state,
+    units: Object.freeze(state.units.filter((unit) => unit.id !== op.unitId)),
+  };
+};
+
+const changeUnitStrength = (state: CampaignState, op: UnitOp): CampaignState => {
+  const { manpower, unitId } = op;
+  if (!unitId || manpower === undefined) return state;
+  return {
+    ...state,
+    units: Object.freeze(
+      state.units.map((unit) => (unit.id === unitId ? Object.freeze({ ...unit, manpower }) : unit)),
+    ),
+  };
+};
+
+const moveUnit = (state: CampaignState, op: UnitOp): CampaignState => {
+  const { provinceId, unitId } = op;
+  if (!(unitId && provinceId)) return state;
+  return {
+    ...state,
+    units: Object.freeze(
+      state.units.map((unit) =>
+        unit.id === unitId ? Object.freeze({ ...unit, provinceId }) : unit,
+      ),
+    ),
+  };
+};
+
+const applyUnitOp = (state: CampaignState, op: UnitOp): CampaignState => {
+  switch (op.op) {
+    case "spawn":
+      return spawnUnit(state, op);
+    case "remove":
+      return removeUnit(state, op);
+    case "strength":
+      return changeUnitStrength(state, op);
+    case "move":
+      return moveUnit(state, op);
+  }
+};
+
+const applyUnitOps = (state: CampaignState, operations: EventImpact["unitOps"]): CampaignState => {
+  let next = state;
+  for (const operation of operations) {
+    next = applyUnitOp(next, operation);
+  }
+  return next;
+};
+
 /**
  * Apply event impacts to campaign state.
  * Inspired by Open Historia's applyEventImpactsToWorld.
@@ -142,121 +309,12 @@ export const applyEventImpacts = (
   impacts: readonly EventImpact[],
 ): CampaignState => {
   let next = state;
-
   for (const impact of impacts) {
-    // Apply region transfers
-    for (const transfer of impact.regionTransfers) {
-      const province = next.provinces.find((p) => p.id === transfer.regionId);
-      if (province) {
-        next = {
-          ...next,
-          provinces: Object.freeze(
-            next.provinces.map((p) =>
-              p.id === transfer.regionId
-                ? Object.freeze({ ...p, ownerNationId: transfer.toNationId })
-                : p,
-            ),
-          ),
-        };
-      }
-    }
-
-    // Apply nation changes
-    for (const change of impact.nationChanges) {
-      next = {
-        ...next,
-        nations: Object.freeze(
-          next.nations.map((nation) => {
-            if (nation.id !== change.nationId) return nation;
-            return Object.freeze({
-              ...nation,
-              ...(change.name !== undefined ? { nameKo: change.name } : {}),
-              ...(change.stabilityChange !== undefined
-                ? {
-                    stabilityBps: Math.max(
-                      0,
-                      Math.min(10_000, nation.stabilityBps + change.stabilityChange),
-                    ),
-                  }
-                : {}),
-              ...(change.treasuryChange !== undefined
-                ? { treasuryCredits: Math.max(0, nation.treasuryCredits + change.treasuryChange) }
-                : {}),
-            });
-          }),
-        ),
-      };
-    }
-
-    // Apply relation changes
-    for (const change of impact.relationChanges) {
-      const existing = next.relations.find(
-        (r) => r.fromNationId === change.fromNationId && r.toNationId === change.toNationId,
-      );
-      const newValue = Math.max(-10_000, Math.min(10_000, (existing?.value ?? 0) + change.delta));
-      next = {
-        ...next,
-        relations: Object.freeze(
-          existing
-            ? next.relations.map((r) =>
-                r.fromNationId === change.fromNationId && r.toNationId === change.toNationId
-                  ? Object.freeze({ ...r, value: newValue })
-                  : r,
-              )
-            : [
-                ...next.relations,
-                Object.freeze({
-                  fromNationId: change.fromNationId,
-                  toNationId: change.toNationId,
-                  value: newValue,
-                }),
-              ],
-        ),
-      };
-    }
-
-    // Apply unit ops
-    for (const op of impact.unitOps) {
-      if (op.op === "spawn" && op.ownerNationId && op.provinceId && op.manpower !== undefined) {
-        next = {
-          ...next,
-          units: Object.freeze([
-            ...next.units,
-            Object.freeze({
-              id: `unt_${next.turn}_${next.units.length}`,
-              ownerNationId: op.ownerNationId,
-              provinceId: op.provinceId,
-              manpower: op.manpower,
-            }),
-          ]),
-        };
-      } else if (op.op === "remove" && op.unitId) {
-        next = {
-          ...next,
-          units: Object.freeze(next.units.filter((u) => u.id !== op.unitId)),
-        };
-      } else if (op.op === "strength" && op.unitId && op.manpower !== undefined) {
-        next = {
-          ...next,
-          units: Object.freeze(
-            next.units.map((u) =>
-              u.id === op.unitId ? Object.freeze({ ...u, manpower: op.manpower! }) : u,
-            ),
-          ),
-        };
-      } else if (op.op === "move" && op.unitId && op.provinceId) {
-        next = {
-          ...next,
-          units: Object.freeze(
-            next.units.map((u) =>
-              u.id === op.unitId ? Object.freeze({ ...u, provinceId: op.provinceId! }) : u,
-            ),
-          ),
-        };
-      }
-    }
+    next = applyRegionTransfers(next, impact.regionTransfers);
+    next = applyNationChanges(next, impact.nationChanges);
+    next = applyRelationChanges(next, impact.relationChanges);
+    next = applyUnitOps(next, impact.unitOps);
   }
-
   return next;
 };
 

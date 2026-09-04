@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import {
   type Campaign,
@@ -101,7 +101,7 @@ const ReactionCard = ({ reaction, order, nationNameById }: ReactionCardProps): J
   </article>
 );
 
-export const ResolutionWorldFeedback = ({
+const ResolutionWorldFeedbackContent = ({
   resolution,
   nationNameById,
 }: ResolutionWorldFeedbackProps): JSX.Element | null => {
@@ -118,9 +118,6 @@ export const ResolutionWorldFeedback = ({
   // multi-event turn reads as history unfolding, not a dump. Reactions wait
   // until the last event is on screen.
   const [revealedCount, setRevealedCount] = useState(1);
-  useEffect(() => {
-    setRevealedCount(1);
-  }, [resolution.id]);
 
   if (events.length === 0) {
     return null;
@@ -170,3 +167,7 @@ export const ResolutionWorldFeedback = ({
     </section>
   );
 };
+
+export const ResolutionWorldFeedback = (props: ResolutionWorldFeedbackProps): JSX.Element => (
+  <ResolutionWorldFeedbackContent key={props.resolution.id} {...props} />
+);

@@ -39,15 +39,32 @@ export interface CampaignTreatyDelta {
   readonly proposedTurn: number;
 }
 
+export type CampaignOwnershipChangeCause = "player" | "npc" | "combat";
+
+/**
+ * One record per province whose owner moved this turn: what changed, from whom,
+ * why it changed, and whose decision caused it. The map renders from these, so a
+ * change the player cannot attribute is a change the map cannot explain.
+ */
+export interface CampaignRegionOwnershipChange {
+  readonly regionId: string;
+  readonly toNationId: string;
+  readonly fromNationId: string;
+  readonly reasonKo: string;
+  readonly cause: CampaignOwnershipChangeCause;
+}
+
+export interface CampaignDeclaredTransfer {
+  readonly provinceId: string;
+  readonly reasonKo: string;
+  readonly cause: CampaignOwnershipChangeCause;
+}
+
 export interface CampaignWorldImpact {
   readonly changedNationIds: readonly string[];
   readonly changedProvinceIds: readonly string[];
   readonly summaryKo: string;
-  readonly regionOwnershipOverrides: readonly {
-    readonly regionId: string;
-    readonly toNationId: string;
-    readonly fromNationId: string;
-  }[];
+  readonly regionOwnershipOverrides: readonly CampaignRegionOwnershipChange[];
 }
 
 export interface CampaignResolution {
@@ -140,6 +157,8 @@ export const CampaignResolutionSchema = z
                 regionId: z.string().min(1),
                 toNationId: z.string().regex(/^nat_[a-z0-9_]+$/),
                 fromNationId: z.string().regex(/^nat_[a-z0-9_]+$/),
+                reasonKo: z.string().min(1).max(300),
+                cause: z.enum(["player", "npc", "combat"]),
               })
               .strict(),
           )
@@ -169,6 +188,7 @@ export interface CreateCampaignResolutionInput {
   readonly orderText: string;
   readonly narrativeKo: string;
   readonly changedProvinceIds: readonly string[];
+  readonly declaredTransfers?: readonly CampaignDeclaredTransfer[];
 }
 
 export const createCampaignResolution = (
@@ -237,19 +257,27 @@ export const createCampaignResolution = (
         : [afterProvince.id];
     }),
   ]);
+  const declaredTransfers = input.declaredTransfers ?? [];
   const regionOwnershipOverrides = input.after.provinces.flatMap((afterProvince) => {
     const beforeProvince = input.before.provinces.find(
       (province) => province.id === afterProvince.id,
     );
-    return beforeProvince && beforeProvince.ownerNationId !== afterProvince.ownerNationId
-      ? [
-          Object.freeze({
-            regionId: afterProvince.id,
-            toNationId: afterProvince.ownerNationId,
-            fromNationId: beforeProvince.ownerNationId,
-          }),
-        ]
-      : [];
+    if (
+      beforeProvince === undefined ||
+      beforeProvince.ownerNationId === afterProvince.ownerNationId
+    ) {
+      return [];
+    }
+    const declared = declaredTransfers.find((transfer) => transfer.provinceId === afterProvince.id);
+    return [
+      Object.freeze({
+        regionId: afterProvince.id,
+        toNationId: afterProvince.ownerNationId,
+        fromNationId: beforeProvince.ownerNationId,
+        reasonKo: declared?.reasonKo ?? "교전 결과로 지배권이 바뀌었다.",
+        cause: declared?.cause ?? ("combat" as const),
+      }),
+    ];
   });
   const changedNationNames = changedNationIds.map((nationId) => nationName(input.after, nationId));
   const changedProvinceNames = changedProvinceIds.map(provinceNameKo);
@@ -283,7 +311,7 @@ export const createCampaignResolution = (
         : `${playerNationName}·${summaryKo}`;
   const finalSummaryWithTreaties =
     treatyRecipientNames.length > 0
-      ? finalSummaryKo + ` 특히 ${treatyRecipientNames.join("·")}과(와)의 외교적 움직임이 주목된다.`
+      ? `${finalSummaryKo} 특히 ${treatyRecipientNames.join("·")}과(와)의 외교적 움직임이 주목된다.`
       : finalSummaryKo;
   const draft: CampaignResolutionDraft = Object.freeze({
     id: `res_${input.turn}_${input.after.resolutions.length + 1}`,

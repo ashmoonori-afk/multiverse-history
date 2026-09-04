@@ -67,10 +67,16 @@ test.describe("Open Historia map consequences", () => {
     await expect(world).toHaveAttribute("data-unit-provinces", HOME_PROVINCE);
     await expect.poll(async () => (await readMapSource(page, UNIT_SOURCE)).length).toBe(1);
     const recruited = await readMapSource(page, UNIT_SOURCE);
-    expect(recruited[0]?.properties["provinceId"]).toBe(HOME_PROVINCE);
-    expect(recruited[0]?.properties["ownerNationId"]).toBe("nat_kor");
-    expect(recruited[0]?.properties["manpower"]).toEqual(expect.any(Number));
-    expect(recruited[0]?.properties["stackIndex"]).toBe(0);
+    const {
+      manpower,
+      ownerNationId,
+      provinceId: recruitedProvinceId,
+      stackIndex,
+    } = recruited[0]?.properties ?? {};
+    expect(recruitedProvinceId).toBe(HOME_PROVINCE);
+    expect(ownerNationId).toBe("nat_kor");
+    expect(manpower).toEqual(expect.any(Number));
+    expect(stackIndex).toBe(0);
     expect(recruited[0]?.coordinates).toHaveLength(2);
 
     // When that unit moves to the Russian front
@@ -81,7 +87,11 @@ test.describe("Open Historia map consequences", () => {
     // Then the projection follows the persisted province, not the recruit province
     await expect(world).toHaveAttribute("data-unit-provinces", FRONT_PROVINCE);
     await expect
-      .poll(async () => (await readMapSource(page, UNIT_SOURCE))[0]?.properties["provinceId"])
+      .poll(async () => {
+        const [feature] = await readMapSource(page, UNIT_SOURCE);
+        const { provinceId } = feature?.properties ?? {};
+        return provinceId;
+      })
       .toBe(FRONT_PROVINCE);
     const moved = await readMapSource(page, UNIT_SOURCE);
     expect(moved).toHaveLength(1);
@@ -136,9 +146,14 @@ test.describe("Open Historia map consequences", () => {
     await expect(world).not.toHaveAttribute("data-construction-count", "0");
     const built = await readMapSource(page, CONSTRUCTION_SOURCE);
     expect(built.length).toBeGreaterThan(0);
-    expect(built[0]?.properties["kind"]).toBe("rail");
-    expect(built[0]?.properties["ownerNationId"]).toBe("nat_kor");
-    expect(built[0]?.properties["investedCredits"]).toEqual(expect.any(Number));
+    const {
+      investedCredits,
+      kind,
+      ownerNationId: constructionOwnerNationId,
+    } = built[0]?.properties ?? {};
+    expect(kind).toBe("rail");
+    expect(constructionOwnerNationId).toBe("nat_kor");
+    expect(investedCredits).toEqual(expect.any(Number));
     expect(built[0]?.coordinates).toHaveLength(2);
     await expect(world).toHaveAttribute("data-construction-count", String(built.length));
     const constructionCenter = built[0]?.coordinates ?? [];

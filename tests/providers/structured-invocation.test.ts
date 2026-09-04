@@ -126,10 +126,11 @@ describe("shared structured provider invocation", () => {
 
   test("maps a nonzero provider exit without exposing the home directory", async () => {
     // Given
+    const { USERPROFILE: userProfile } = process.env;
     const runner: StructuredInvocationRunner = async () => ({
       exitCode: 1,
       stdout: "",
-      stderr: `${process.env["USERPROFILE"] ?? "C:\\Users\\tester"}\\secret token rejected`,
+      stderr: `${userProfile ?? "C:\\Users\\tester"}\\secret token rejected`,
     });
 
     // When
@@ -144,7 +145,7 @@ describe("shared structured provider invocation", () => {
     // Then
     await Promise.all([
       expect(invocation).rejects.toEqual(expect.objectContaining({ code: "PROVIDER_FAILED" })),
-      expect(invocation).rejects.not.toThrow(process.env["USERPROFILE"] ?? "C:\\Users\\tester"),
+      expect(invocation).rejects.not.toThrow(userProfile ?? "C:\\Users\\tester"),
     ]);
   });
 });
