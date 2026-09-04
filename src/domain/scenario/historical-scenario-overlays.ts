@@ -1,10 +1,54 @@
-interface MajorPolity {
+import { historicalPolityId } from "../../shared/historical-map-contract";
+import type { NationProfileDefinition, NationTag } from "./registry";
+
+export interface MajorPolity {
   readonly sourceName: string;
   readonly nameKo: string;
   readonly capitalLabelKo: string;
   readonly bloc: string;
   readonly population?: number;
+  readonly treasuryCredits: number;
+  readonly stabilityBps: number;
+  readonly profile: NationProfileDefinition;
+  readonly governmentKo: string;
+  readonly tags: readonly NationTag[];
 }
+
+const governmentFor = (sourceName: string, nameKo: string, bloc: string): string => {
+  if (/USSR|East Germany|Cuba/.test(sourceName)) return "사회주의 공화제";
+  if (sourceName === "China" && /중화인민/.test(nameKo)) return "사회주의 공화제";
+  if (sourceName === "Germany" && bloc === "axis") return "일당독재제";
+  if (/United Kingdom|Empire of Japan|Italy$|Japan$/.test(sourceName)) return "입헌군주제";
+  if (/United States|Republic|Poland|Chinese warlords|West Germany/.test(sourceName)) {
+    return "공화제";
+  }
+  if (
+    /France|Germany|Brazil|India|Russia|Korea, Republic of|China/.test(sourceName) &&
+    /allies|west|atlantic|nonaligned|pacific|eurasian|continental/.test(bloc)
+  ) {
+    return "공화제";
+  }
+  if (/Dutch Republic|England and Ireland/.test(sourceName)) return "공화제";
+  if (/city-states|chiefdoms/.test(sourceName)) return "도시국가 연맹";
+  if (/Sultanate|Caliphate|Mamluke/.test(sourceName)) return "술탄제";
+  if (/Shogun|Shogunate/.test(sourceName)) return "막부제";
+  if (/Khanate|Mongol/.test(sourceName)) return "칸국제";
+  return "군주제";
+};
+
+const tagsFor = (sourceName: string): readonly NationTag[] => {
+  const tags: NationTag[] = ["great_power"];
+  if (/British|United Kingdom|Dutch|England|Spain|Portugal|France/.test(sourceName)) {
+    tags.push("colonial");
+  }
+  if (/Empire|Khanate|Sultanate|Germany|USSR|United States|China|Russia/.test(sourceName)) {
+    tags.push("expansionist");
+  }
+  if (/Song|Byzantine|Phrygians|Meroe|East Germany/.test(sourceName)) tags.push("declining");
+  if (/Korea|Goryeo|Japan|Germany|India|Brazil/.test(sourceName)) tags.push("reformist");
+  if (/Tokugawa|Fujiwara/.test(sourceName)) tags.push("isolationist");
+  return Object.freeze([...new Set(tags)]);
+};
 
 const polity = (
   sourceName: string,
@@ -13,13 +57,32 @@ const polity = (
   bloc: string,
   population?: number,
 ): MajorPolity =>
-  Object.freeze({
-    sourceName,
-    nameKo,
-    capitalLabelKo,
-    bloc,
-    ...(population === undefined ? {} : { population }),
-  });
+  (() => {
+    const governmentKo = governmentFor(sourceName, nameKo, bloc);
+    const populationScale = Math.round((population ?? 1_000_000) / 100_000);
+    return Object.freeze({
+      sourceName,
+      nameKo,
+      capitalLabelKo,
+      bloc,
+      ...(population === undefined ? {} : { population }),
+      treasuryCredits: Math.max(180, Math.min(6_000, populationScale + 400)),
+      stabilityBps: /declining|Byzantine|Song|Phrygians|East Germany/i.test(sourceName)
+        ? 4_500
+        : 6_500,
+      governmentKo,
+      tags: tagsFor(sourceName),
+      profile: Object.freeze({
+        goalsKo: Object.freeze([
+          `${nameKo}의 핵심 영토와 정통성을 보전한다`,
+          `${bloc} 권역에서 영향력과 전략적 주도권을 확대한다`,
+        ]),
+        personalityKo: `${governmentKo}의 생존과 장기적 국익을 우선하는 현실주의 세력이다.`,
+        rivalNationIds: Object.freeze([]),
+        allyNationIds: Object.freeze([]),
+      }),
+    });
+  })();
 
 const overlays = Object.freeze({
   scn_bronze_1200bc: [
@@ -80,8 +143,6 @@ const overlays = Object.freeze({
     polity("Portugal", "포르투갈 왕국", "리스본", "maritime", 2_000_000),
     polity("Manchu Empire", "청 제국", "베이징", "asian", 120_000_000),
     polity("Tokugawa Shogunate", "에도 막부", "에도", "asian", 18_000_000),
-    polity("Korea", "조선", "한성", "asian", 10_000_000),
-    polity("Ayutthaya", "아유타야 왕국", "아유타야", "asian", 2_000_000),
   ],
   scn_world_1939: [
     polity("Germany", "독일국", "베를린", "axis", 79_000_000),
@@ -135,8 +196,34 @@ const overlays = Object.freeze({
   ],
 } satisfies Readonly<Record<string, readonly MajorPolity[]>>);
 
-export const historicalMajorPolities = (scenarioId: string): readonly MajorPolity[] =>
-  overlays[scenarioId as keyof typeof overlays] ?? Object.freeze([]);
+export const historicalMajorPolities = (scenarioId: string): readonly MajorPolity[] => {
+  const polities = overlays[scenarioId as keyof typeof overlays] ?? Object.freeze([]);
+  return Object.freeze(
+    polities.map((polity) => {
+      const otherPolities = polities.filter((candidate) => candidate !== polity);
+      const nationIdFor = (candidate: MajorPolity) =>
+        historicalPolityId(historicalSovereignName(scenarioId, candidate.sourceName));
+      return Object.freeze({
+        ...polity,
+        profile: Object.freeze({
+          ...polity.profile,
+          allyNationIds: Object.freeze(
+            otherPolities
+              .filter((candidate) => candidate.bloc === polity.bloc)
+              .slice(0, 3)
+              .map(nationIdFor),
+          ),
+          rivalNationIds: Object.freeze(
+            otherPolities
+              .filter((candidate) => candidate.bloc !== polity.bloc)
+              .slice(0, 2)
+              .map(nationIdFor),
+          ),
+        }),
+      });
+    }),
+  );
+};
 
 const sovereignAliases: Readonly<Record<string, Readonly<Record<string, string>>>> = Object.freeze({
   scn_medieval_1200: Object.freeze({ "Kingdom of France": "France" }),

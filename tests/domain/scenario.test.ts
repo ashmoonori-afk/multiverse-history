@@ -29,6 +29,19 @@ describe("1900 East Asia scenario", () => {
       stabilityBps: 5_800,
       population: 17_082_000,
       infrastructureBps: 2_400,
+      governmentKo: "전제군주제",
+      tags: ["declining", "reformist"],
+      manpowerPool: 260_000,
+      profile: {
+        goalsKo: [
+          "주권과 독립을 보전한다",
+          "군제와 재정을 근대화한다",
+          "열강 사이의 균형을 유지한다",
+        ],
+        personalityKo: "신중하지만 개혁 의지가 강하며 외세의 간섭을 경계한다.",
+        rivalNationIds: [parseNationId("nat_jpn")],
+        allyNationIds: [],
+      },
     });
   });
 

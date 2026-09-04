@@ -1,0 +1,4068 @@
+{
+  "prv_abw_adm0": [],
+  "prv_afg_adm0": [],
+  "prv_ago_adm0": [],
+  "prv_aia_adm0": [],
+  "prv_ala_adm0": [],
+  "prv_alb_adm0": [],
+  "prv_and_adm0": [],
+  "prv_are_adm0": [],
+  "prv_arg_adm0": [],
+  "prv_arm_adm0": [],
+  "prv_asm_adm0": [],
+  "prv_ata_adm0": [],
+  "prv_atf_adm0": [],
+  "prv_atg_adm0": [],
+  "prv_aus_adm0": [],
+  "prv_aut_adm0": [],
+  "prv_aze_adm0": [],
+  "prv_bdi_adm0": [],
+  "prv_bel_adm0": [],
+  "prv_ben_adm0": [],
+  "prv_bes_adm0": [],
+  "prv_bfa_adm0": [],
+  "prv_bgd_adm0": [],
+  "prv_bgr_adm0": [],
+  "prv_bhr_adm0": [],
+  "prv_bhs_adm0": [],
+  "prv_bih_adm0": [],
+  "prv_blm_adm0": [],
+  "prv_blr_adm0": [],
+  "prv_blz_adm0": [],
+  "prv_bmu_adm0": [],
+  "prv_bol_adm0": [],
+  "prv_bra_adm0": [],
+  "prv_brb_adm0": [],
+  "prv_brn_adm0": [],
+  "prv_btn_adm0": [],
+  "prv_bvt_adm0": [],
+  "prv_bwa_adm0": [],
+  "prv_caf_adm0": [],
+  "prv_can_adm0": [],
+  "prv_cck_adm0": [],
+  "prv_che_adm0": [],
+  "prv_chl_adm0": [],
+  "prv_chn_adm0": [],
+  "prv_civ_adm0": [],
+  "prv_cmr_adm0": [],
+  "prv_cod_adm0": [],
+  "prv_cog_adm0": [],
+  "prv_cok_adm0": [],
+  "prv_col_adm0": [],
+  "prv_com_adm0": [],
+  "prv_cpv_adm0": [],
+  "prv_cri_adm0": [],
+  "prv_cub_adm0": [],
+  "prv_cuw_adm0": [],
+  "prv_cxr_adm0": [],
+  "prv_cym_adm0": [],
+  "prv_cyp_adm0": [],
+  "prv_cze_adm0": [],
+  "prv_deu_adm0": [],
+  "prv_dji_adm0": [],
+  "prv_dma_adm0": [],
+  "prv_dnk_adm0": [],
+  "prv_dom_adm0": [],
+  "prv_dza_adm0": [],
+  "prv_ecu_adm0": [],
+  "prv_egy_adm0": [],
+  "prv_eri_adm0": [],
+  "prv_esh_adm0": [],
+  "prv_esp_adm0": [],
+  "prv_est_adm0": [],
+  "prv_eth_adm0": [],
+  "prv_fin_adm0": [],
+  "prv_fji_adm0": [],
+  "prv_flk_adm0": [],
+  "prv_fra_adm0": [],
+  "prv_fro_adm0": [],
+  "prv_fsm_adm0": [],
+  "prv_gab_adm0": [],
+  "prv_gbr_adm0": [],
+  "prv_geo_adm0": [],
+  "prv_ggy_adm0": [],
+  "prv_gha_adm0": [],
+  "prv_gib_adm0": [],
+  "prv_gin_adm0": [],
+  "prv_glp_adm0": [],
+  "prv_gmb_adm0": [],
+  "prv_gnb_adm0": [],
+  "prv_gnq_adm0": [],
+  "prv_grc_adm0": [],
+  "prv_grd_adm0": [],
+  "prv_grl_adm0": [],
+  "prv_gtm_adm0": [],
+  "prv_guf_adm0": [],
+  "prv_gum_adm0": [],
+  "prv_guy_adm0": [],
+  "prv_hist_agwarmin_1ttyc3f": [
+    "prv_hist_gugu_badhun_1leaunq",
+    "prv_hist_kokomini_141qd3y",
+    "prv_hist_kuku_yalanji_1730v80",
+    "prv_hist_kunjen_80nv9a",
+    "prv_hist_kurtjar_eclek",
+    "prv_hist_mbabaram_1s3fdwc",
+    "prv_hist_mbara_lkfoj8",
+    "prv_hist_takalak_d6pm1a",
+    "prv_hist_yanga_1n3775z"
+  ],
+  "prv_hist_ahmadnagar_1d991uf": [
+    "prv_hist_bidar_11cahdf",
+    "prv_hist_bijapur_hkk3pc",
+    "prv_hist_golkonda_3jkju4",
+    "prv_hist_islamic_and_hindu_states_8v5a56",
+    "prv_hist_mughal_empire_qll6pn"
+  ],
+  "prv_hist_ai_viet_16rdo5l": [
+    "prv_hist_cambodia_4ffs3f",
+    "prv_hist_laotian_states_1g04kuz",
+    "prv_hist_post_ming_warlords_s2ed3v"
+  ],
+  "prv_hist_ainu_xyg1j6": [],
+  "prv_hist_akan_jzv6yu": [],
+  "prv_hist_alabama_1pjtmts": [],
+  "prv_hist_alawa_1b7no8n": [
+    "prv_hist_binbinga_1nh6z4v",
+    "prv_hist_jingili_5xq18t",
+    "prv_hist_mangarayi_11jx4pw",
+    "prv_hist_mara_fmwg3i",
+    "prv_hist_ngalakan_164cmlk",
+    "prv_hist_ngandji_iea8di",
+    "prv_hist_yangman_usy2vs"
+  ],
+  "prv_hist_algiers_2uxs2o": ["prv_hist_morocco_j5wux", "prv_hist_ottoman_empire_yesr83"],
+  "prv_hist_alyawarre_1128sgl": [
+    "prv_hist_andegerebenha_622r6i",
+    "prv_hist_anmatyerre_1smrid",
+    "prv_hist_arrernte_u6j8ww",
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_bularnu_1m7eo62",
+    "prv_hist_kaytej_1im3rmj",
+    "prv_hist_wakaya_1xj1w23"
+  ],
+  "prv_hist_amangu_s2114o": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_badimaya_t7elq3",
+    "prv_hist_nhanta_1u8zzpj",
+    "prv_hist_watjarri_1cc951d",
+    "prv_hist_yuat_jh4ifa"
+  ],
+  "prv_hist_amarak_1uvnn10": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_gunwinggu_8uecae",
+    "prv_hist_iwaidja_9qd6fo",
+    "prv_hist_kundjey_mi_1pwtaxa"
+  ],
+  "prv_hist_amazon_hunter_gatherers_1e08msl": [
+    "prv_hist_dutch_brazil_h1na4h",
+    "prv_hist_portuguese_brazil_16msotq",
+    "prv_hist_savanna_hunter_gatherers_y6jkmn",
+    "prv_hist_vice_royalty_of_peru_pos64t"
+  ],
+  "prv_hist_andean_hunter_gatherers_1jjihv0": [
+    "prv_hist_pampas_cultures_efg2ze",
+    "prv_hist_savanna_hunter_gatherers_y6jkmn",
+    "prv_hist_vice_royalty_of_peru_pos64t"
+  ],
+  "prv_hist_andegerebenha_622r6i": [
+    "prv_hist_alyawarre_1128sgl",
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_bularnu_1m7eo62",
+    "prv_hist_wangkamana_7rmg15",
+    "prv_hist_warluwarra_4e3gud"
+  ],
+  "prv_hist_andyamathanha_jznrea": [
+    "prv_hist_banggarla_1byfc94",
+    "prv_hist_dieri_bzavlc",
+    "prv_hist_kuyani_1yyxoh2",
+    "prv_hist_malyangaba_pa8qoa",
+    "prv_hist_ngadjuri_pubejz",
+    "prv_hist_pirlatapa_1tn1enn",
+    "prv_hist_wiljali_1kx2sv1"
+  ],
+  "prv_hist_anggamudi_ibqipe": [
+    "prv_hist_mpalitjanh_d4md37",
+    "prv_hist_teppathiggi_1d45tg1",
+    "prv_hist_wuthathi_ouo5df",
+    "prv_hist_yadhaigana_9nzk40"
+  ],
+  "prv_hist_anguthimri_17ieoad": [
+    "prv_hist_awngthim_x7qkv8",
+    "prv_hist_luthigh_jhkfoy",
+    "prv_hist_teppathiggi_1d45tg1",
+    "prv_hist_yupangathi_1t9b7rh"
+  ],
+  "prv_hist_anmatyerre_1smrid": [
+    "prv_hist_alyawarre_1128sgl",
+    "prv_hist_arrernte_u6j8ww",
+    "prv_hist_kaytej_1im3rmj",
+    "prv_hist_luritja_1855uv8",
+    "prv_hist_warlpiri_1vsyl6d"
+  ],
+  "prv_hist_antakarinja_5hledv": [
+    "prv_hist_arabana_16tbqh5",
+    "prv_hist_arrernte_u6j8ww",
+    "prv_hist_kokatha_1d3bc1i",
+    "prv_hist_luritja_1855uv8",
+    "prv_hist_yankuntjatjara_hqbggs"
+  ],
+  "prv_hist_arabana_16tbqh5": [
+    "prv_hist_antakarinja_5hledv",
+    "prv_hist_arrernte_u6j8ww",
+    "prv_hist_dhirari_nr3xgs",
+    "prv_hist_kokatha_1d3bc1i",
+    "prv_hist_kuyani_1yyxoh2",
+    "prv_hist_wangkangurru_1mk6d8r"
+  ],
+  "prv_hist_arakan_1h2oduh": ["prv_hist_ava_11fvm9p", "prv_hist_mughal_empire_qll6pn"],
+  "prv_hist_arapaho_qldwwv": [
+    "prv_hist_cheyenne_lrq6oe",
+    "prv_hist_comanche_1bsnvpx",
+    "prv_hist_crow_644rjy",
+    "prv_hist_jicarilla_1untl9s",
+    "prv_hist_kiowa_pjs4i2",
+    "prv_hist_pawnee_qblm9p",
+    "prv_hist_shoshoni_yx9snc",
+    "prv_hist_teton_6fyhxn",
+    "prv_hist_ute_16riea3"
+  ],
+  "prv_hist_arikara_12qt1ks": [
+    "prv_hist_mandan_159dxbu",
+    "prv_hist_teton_6fyhxn",
+    "prv_hist_yankontai_cz9kjt"
+  ],
+  "prv_hist_arrernte_u6j8ww": [
+    "prv_hist_alyawarre_1128sgl",
+    "prv_hist_anmatyerre_1smrid",
+    "prv_hist_antakarinja_5hledv",
+    "prv_hist_arabana_16tbqh5",
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_luritja_1855uv8",
+    "prv_hist_wangkangurru_1mk6d8r"
+  ],
+  "prv_hist_assiniboin_16pnzrg": [
+    "prv_hist_cree_b2xnu6",
+    "prv_hist_crow_644rjy",
+    "prv_hist_gros_ventre_mkge70",
+    "prv_hist_obiwa_1z0z8o3",
+    "prv_hist_subarctic_forest_hunter_gatherers_14drxm4",
+    "prv_hist_teton_6fyhxn",
+    "prv_hist_yankontai_cz9kjt"
+  ],
+  "prv_hist_atakapa_1ds3cjs": [
+    "prv_hist_caddo_6jqtpu",
+    "prv_hist_chtimacha_h8i9mb",
+    "prv_hist_lipan_14sx41h",
+    "prv_hist_natchez_78wtl8",
+    "prv_hist_tonkawa_77c5qq"
+  ],
+  "prv_hist_athabascan_1yi68v7": ["prv_hist_athabaskan_161fp17", "prv_hist_eyaq_1e5klal"],
+  "prv_hist_athabaskan_161fp17": [
+    "prv_hist_athabascan_1yi68v7",
+    "prv_hist_cree_b2xnu6",
+    "prv_hist_eyaq_1e5klal",
+    "prv_hist_inupiaq_1nus7no",
+    "prv_hist_subarctic_forest_hunter_gatherers_14drxm4",
+    "prv_hist_suspiaq_1ulkswv",
+    "prv_hist_yup_ik_and_cup_ik_bu4kst"
+  ],
+  "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr": [
+    "prv_hist_alyawarre_1128sgl",
+    "prv_hist_amangu_s2114o",
+    "prv_hist_amarak_1uvnn10",
+    "prv_hist_andegerebenha_622r6i",
+    "prv_hist_arrernte_u6j8ww",
+    "prv_hist_awabakal_1o8u4yv",
+    "prv_hist_awngthim_x7qkv8",
+    "prv_hist_badimaya_t7elq3",
+    "prv_hist_bakanh_1g4eqfe",
+    "prv_hist_ballardong_1vqaetl",
+    "prv_hist_banggarla_1byfc94",
+    "prv_hist_banjima_k91599",
+    "prv_hist_bardi_yous4p",
+    "prv_hist_barunggam_fxpb1",
+    "prv_hist_bibbulman_1koztdn",
+    "prv_hist_bidjara_qa18ys",
+    "prv_hist_bidwell_oq3hd4",
+    "prv_hist_bigambul_1jmrmsu",
+    "prv_hist_bilinara_1i70gkj",
+    "prv_hist_bindjali_1otj7g8",
+    "prv_hist_biri_1lvdtd",
+    "prv_hist_boonwurrung_16sy8at",
+    "prv_hist_buandig_1pabqhx",
+    "prv_hist_bukurnidja_1g5geq8",
+    "prv_hist_bundjalung_d144bj",
+    "prv_hist_burarra_5b23n0",
+    "prv_hist_dangbon_a4ubi0",
+    "prv_hist_dharawala_1n2t6fy",
+    "prv_hist_dja_dja_wurrung_mjq0bj",
+    "prv_hist_dyungungoo_gubbi_gubbi_14ie1qn",
+    "prv_hist_gadubanud_19fb30m",
+    "prv_hist_gagudju_f96eye",
+    "prv_hist_giraiwurung_1n96lkd",
+    "prv_hist_goreng_35wzhd",
+    "prv_hist_gugu_badhun_1leaunq",
+    "prv_hist_gunditjmara_1hjnkfr",
+    "prv_hist_gungabula_12qghcf",
+    "prv_hist_gunggari_14skn6n",
+    "prv_hist_gunwinggu_8uecae",
+    "prv_hist_gurindji_1rqpu0j",
+    "prv_hist_jabirrjabirr_iu4xul",
+    "prv_hist_jardwadjali_j3t3nw",
+    "prv_hist_jawoyn_i4mwsd",
+    "prv_hist_jukun_1hzhb66",
+    "prv_hist_kalaako_malpa_1oouqm9",
+    "prv_hist_kalaamaya_1ny1ij5",
+    "prv_hist_kaniyang_1d7de41",
+    "prv_hist_karajarri_18gfxhg",
+    "prv_hist_karangpurru_adhqur",
+    "prv_hist_kaurna_pangkarra_g1raj8",
+    "prv_hist_kokatha_1d3bc1i",
+    "prv_hist_konbudj_udw8ns",
+    "prv_hist_kooma_trd94i",
+    "prv_hist_kukatj_1nqkwtz",
+    "prv_hist_kundjey_mi_1pwtaxa",
+    "prv_hist_kungarakany_1t7fr4x",
+    "prv_hist_kunja_xbet7c",
+    "prv_hist_kunjen_80nv9a",
+    "prv_hist_kurnai_11qtpxv",
+    "prv_hist_kurrama_chp7we",
+    "prv_hist_kurtjar_eclek",
+    "prv_hist_kuthant_dhqd0i",
+    "prv_hist_kuuku_ya_u_1ejmr6r",
+    "prv_hist_kuwarra_rm6ub8",
+    "prv_hist_kuwema_1iklqbz",
+    "prv_hist_lamalama_12blyst",
+    "prv_hist_larrakia_1rrgsv8",
+    "prv_hist_limilngan_coskh4",
+    "prv_hist_luthigh_jhkfoy",
+    "prv_hist_malak_malak_1yfk7kf",
+    "prv_hist_malkana_1ijqs7o",
+    "prv_hist_mandandanji_13crr2s",
+    "prv_hist_mara_fmwg3i",
+    "prv_hist_margany_kale9a",
+    "prv_hist_maya_debcg5",
+    "prv_hist_mayi_kulan_ncxws7",
+    "prv_hist_mayi_kutuna_ebq8b2",
+    "prv_hist_mbeiwum_1g06wov",
+    "prv_hist_mbukarla_1kksaly",
+    "prv_hist_minang_1195vcp",
+    "prv_hist_mingin_9e54tr",
+    "prv_hist_mirning_16mzti9",
+    "prv_hist_mudburra_16itacb",
+    "prv_hist_narangga_xw9vwa",
+    "prv_hist_nawu_7ocf74",
+    "prv_hist_ngalakan_164cmlk",
+    "prv_hist_ngalawangka_3cawqt",
+    "prv_hist_ngalea_12hd43x",
+    "prv_hist_ngalkbun_uevijd",
+    "prv_hist_ngandi_f2zqgu",
+    "prv_hist_ngarabal_ho3vgb",
+    "prv_hist_ngarrindjeri_bestm",
+    "prv_hist_ngatjumay_b4uskb",
+    "prv_hist_ngombur_l8nc5f",
+    "prv_hist_ngumbarl_13r99ar",
+    "prv_hist_nhanta_1u8zzpj",
+    "prv_hist_nhuwala_dhd0bl",
+    "prv_hist_nimanburu_bfvdyw",
+    "prv_hist_nukunu_q6ubct",
+    "prv_hist_nunggubuyu_oukop0",
+    "prv_hist_nyaki_nyaki_1u4m6eu",
+    "prv_hist_nyanganyatjara_7pj0ur",
+    "prv_hist_nyangumarda_17dh966",
+    "prv_hist_nyawaygi_100rdjm",
+    "prv_hist_nyikina_tpb9j6",
+    "prv_hist_nyul_nyul_606clf",
+    "prv_hist_payungu_1vy2afu",
+    "prv_hist_rembarnga_lmn5y2",
+    "prv_hist_thaayorre_6vlkki",
+    "prv_hist_thalanyji_ig8tdb",
+    "prv_hist_tharawal_9uwb17",
+    "prv_hist_thiin_bmzx0n",
+    "prv_hist_thul_garrie_waja_bindal_dk9ms",
+    "prv_hist_tjerratj_1027dlf",
+    "prv_hist_turrbal_tgknwh",
+    "prv_hist_umida_19rw70x",
+    "prv_hist_unggarangi_16y5qik",
+    "prv_hist_wagiman_1wjcbev",
+    "prv_hist_wajuk_1496yvt",
+    "prv_hist_waka_waka_d5yhan",
+    "prv_hist_wangkamana_7rmg15",
+    "prv_hist_wangkangurru_1mk6d8r",
+    "prv_hist_wangkathaa_gjxtbs",
+    "prv_hist_wardaman_1hwrzwq",
+    "prv_hist_wardandi_zhet1z",
+    "prv_hist_warray_1iri7vj",
+    "prv_hist_warwa_z5qhjp",
+    "prv_hist_wathaurong_1bxb7hb",
+    "prv_hist_watjarri_1cc951d",
+    "prv_hist_wergaia_ursm5v",
+    "prv_hist_wiilman_b1w8ys",
+    "prv_hist_wik_vhtak2",
+    "prv_hist_winda_winda_z8g93r",
+    "prv_hist_wirangu_qdtolm",
+    "prv_hist_woolna_1tgrbup",
+    "prv_hist_worimi_1e3fwbs",
+    "prv_hist_wudjari_bzlqgr",
+    "prv_hist_wulgurukaba_1qhyuuz",
+    "prv_hist_wuningangk_1e3k81m",
+    "prv_hist_wuthathi_ouo5df",
+    "prv_hist_yangman_usy2vs",
+    "prv_hist_yawuru_v70x9q",
+    "prv_hist_yiman_zksy0p",
+    "prv_hist_yinggarda_dfzgp9",
+    "prv_hist_yinhawangka_ysho03",
+    "prv_hist_yinwum_k00dui",
+    "prv_hist_yir_yoront_1im1ys8",
+    "prv_hist_yolngu_6zkztf",
+    "prv_hist_yuat_jh4ifa",
+    "prv_hist_yugambeh_gpmihd",
+    "prv_hist_yuggera_11wo8e9",
+    "prv_hist_yuin_gpzx34",
+    "prv_hist_yuru_jpfvte"
+  ],
+  "prv_hist_austrian_empire_4ushiu": ["prv_hist_prussia_1bjv03m"],
+  "prv_hist_ava_11fvm9p": [
+    "prv_hist_arakan_1h2oduh",
+    "prv_hist_ayutthaya_15u6dqb",
+    "prv_hist_lan_na_4am99d",
+    "prv_hist_laotian_states_1g04kuz",
+    "prv_hist_mughal_empire_qll6pn",
+    "prv_hist_post_ming_warlords_s2ed3v",
+    "prv_hist_shan_states_1tmmjwd"
+  ],
+  "prv_hist_awabakal_1o8u4yv": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_darkinung_f2pvem",
+    "prv_hist_guringai_17o0bm1",
+    "prv_hist_wonnarua_sbub9q",
+    "prv_hist_worimi_1e3fwbs"
+  ],
+  "prv_hist_awngthim_x7qkv8": [
+    "prv_hist_anguthimri_17ieoad",
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_luthigh_jhkfoy",
+    "prv_hist_mbeiwum_1g06wov",
+    "prv_hist_winda_winda_z8g93r"
+  ],
+  "prv_hist_awsa_1sq10gl": [
+    "prv_hist_ethiopia_4bedm6",
+    "prv_hist_oromo_1kcuxfl",
+    "prv_hist_ottoman_empire_yesr83"
+  ],
+  "prv_hist_ayutthaya_15u6dqb": [
+    "prv_hist_ava_11fvm9p",
+    "prv_hist_cambodia_4ffs3f",
+    "prv_hist_lan_na_4am99d",
+    "prv_hist_laotian_states_1g04kuz",
+    "prv_hist_malaya_aknc2i"
+  ],
+  "prv_hist_badimaya_t7elq3": [
+    "prv_hist_amangu_s2114o",
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_kalaamaya_1ny1ij5",
+    "prv_hist_kuwarra_rm6ub8",
+    "prv_hist_tjupany_1o0vuww",
+    "prv_hist_watjarri_1cc951d"
+  ],
+  "prv_hist_badtjala_h16ngy": ["prv_hist_dyungungoo_gubbi_gubbi_14ie1qn"],
+  "prv_hist_bagirmi_18xo180": ["prv_hist_bornu_kanem_r1acys", "prv_hist_wadai_1a5n9wd"],
+  "prv_hist_bakanh_1g4eqfe": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_kaantju_1ewo8un",
+    "prv_hist_kunjen_80nv9a",
+    "prv_hist_kuuku_yani_pc6xa0",
+    "prv_hist_lamalama_12blyst",
+    "prv_hist_thaayorre_6vlkki",
+    "prv_hist_umbindhamu_a9f5x1",
+    "prv_hist_wik_vhtak2"
+  ],
+  "prv_hist_ballardong_1vqaetl": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_kalaamaya_1ny1ij5",
+    "prv_hist_nyaki_nyaki_1u4m6eu",
+    "prv_hist_wiilman_b1w8ys"
+  ],
+  "prv_hist_bandjigali_xo3ni4": [
+    "prv_hist_barundji_1nb83sa",
+    "prv_hist_danggali_vvi79a",
+    "prv_hist_karenggapa_1y4c2t0",
+    "prv_hist_malyangaba_pa8qoa",
+    "prv_hist_wadigali_1wsybr1",
+    "prv_hist_wandjiwalgu_1yzas3i",
+    "prv_hist_wiljali_1kx2sv1"
+  ],
+  "prv_hist_banggarla_1byfc94": [
+    "prv_hist_andyamathanha_jznrea",
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_kokatha_1d3bc1i",
+    "prv_hist_kuyani_1yyxoh2",
+    "prv_hist_nawu_7ocf74",
+    "prv_hist_ngadjuri_pubejz",
+    "prv_hist_nukunu_q6ubct",
+    "prv_hist_wirangu_qdtolm"
+  ],
+  "prv_hist_banjima_k91599": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_kurrama_chp7we",
+    "prv_hist_ngalawangka_3cawqt",
+    "prv_hist_palyku_nj5zq9",
+    "prv_hist_wawula_1rin18a",
+    "prv_hist_yindjibarndi_7ny4p2",
+    "prv_hist_yinhawangka_ysho03"
+  ],
+  "prv_hist_baraba_baraba_h3lzvd": [
+    "prv_hist_dja_dja_wurrung_mjq0bj",
+    "prv_hist_ngurraiillam_t6axb0",
+    "prv_hist_taungurung_1n9xkxv",
+    "prv_hist_wemba_wemba_m0ko9f",
+    "prv_hist_wergaia_ursm5v",
+    "prv_hist_wiradjuri_u41jrk",
+    "prv_hist_yorta_yorta_1jf0817"
+  ],
+  "prv_hist_baradha_p094zg": [
+    "prv_hist_barna_11zs9uv",
+    "prv_hist_biri_1lvdtd",
+    "prv_hist_darumbal_1418wp9",
+    "prv_hist_gabalbara_d5u4yk",
+    "prv_hist_guwinmal_5eqj11",
+    "prv_hist_yuwi_hhuqdb"
+  ],
+  "prv_hist_bardi_yous4p": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_nyul_nyul_606clf"
+  ],
+  "prv_hist_barindji_wgkmuu": [
+    "prv_hist_barkindji_1wnvkc1",
+    "prv_hist_barundji_1nb83sa",
+    "prv_hist_kureinji_hojodm",
+    "prv_hist_madi_madi_1361rz9",
+    "prv_hist_wiradjuri_u41jrk",
+    "prv_hist_wongaibon_ktk6o5",
+    "prv_hist_yitha_yitha_6h0v3"
+  ],
+  "prv_hist_barkindji_1wnvkc1": [
+    "prv_hist_barindji_wgkmuu",
+    "prv_hist_barundji_1nb83sa",
+    "prv_hist_danggali_vvi79a",
+    "prv_hist_kureinji_hojodm",
+    "prv_hist_madi_madi_1361rz9",
+    "prv_hist_meru_8u7hq"
+  ],
+  "prv_hist_barna_11zs9uv": [
+    "prv_hist_baradha_p094zg",
+    "prv_hist_biri_1lvdtd",
+    "prv_hist_gabalbara_d5u4yk",
+    "prv_hist_wangan_1ffocsl",
+    "prv_hist_yambina_10s9qyu",
+    "prv_hist_yangga_16fmhs0"
+  ],
+  "prv_hist_barranbinya_h1iy7u": [
+    "prv_hist_gunu_1gocbv4",
+    "prv_hist_kamilaroi_1q8xqqu",
+    "prv_hist_muruwari_clcyt3",
+    "prv_hist_wailwan_y0d2da",
+    "prv_hist_wongaibon_ktk6o5"
+  ],
+  "prv_hist_barundji_1nb83sa": [
+    "prv_hist_bandjigali_xo3ni4",
+    "prv_hist_barindji_wgkmuu",
+    "prv_hist_barkindji_1wnvkc1",
+    "prv_hist_budjari_16bkq6g",
+    "prv_hist_danggali_vvi79a",
+    "prv_hist_gunu_1gocbv4",
+    "prv_hist_karenggapa_1y4c2t0",
+    "prv_hist_kullilla_jvtkyn",
+    "prv_hist_kunja_xbet7c",
+    "prv_hist_wandjiwalgu_1yzas3i",
+    "prv_hist_wongaibon_ktk6o5"
+  ],
+  "prv_hist_barunggam_fxpb1": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_bigambul_1jmrmsu",
+    "prv_hist_gureng_gureng_tdvg9r",
+    "prv_hist_mandandanji_13crr2s",
+    "prv_hist_ngarabal_ho3vgb",
+    "prv_hist_waka_waka_d5yhan",
+    "prv_hist_wuli_wuli_omoomy",
+    "prv_hist_yiman_zksy0p",
+    "prv_hist_yuggera_11wo8e9"
+  ],
+  "prv_hist_bayali_19n8ox": [
+    "prv_hist_darumbal_1418wp9",
+    "prv_hist_gangulu_1huk42y",
+    "prv_hist_gureng_gureng_tdvg9r"
+  ],
+  "prv_hist_belize_1fknuae": ["prv_hist_vice_royalty_of_new_spain_12n6mfp"],
+  "prv_hist_benin_nymb11": ["prv_hist_oyo_1u0dy6"],
+  "prv_hist_bhutan_exzyip": ["prv_hist_mughal_empire_qll6pn", "prv_hist_tibet_1gxg1qt"],
+  "prv_hist_bibbulman_1koztdn": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_kaniyang_1d7de41",
+    "prv_hist_minang_1195vcp",
+    "prv_hist_wardandi_zhet1z"
+  ],
+  "prv_hist_bidar_11cahdf": [
+    "prv_hist_ahmadnagar_1d991uf",
+    "prv_hist_bijapur_hkk3pc",
+    "prv_hist_golkonda_3jkju4"
+  ],
+  "prv_hist_bidjara_qa18ys": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_dharawala_1n2t6fy",
+    "prv_hist_garingbal_1m7plna",
+    "prv_hist_gayiri_2s285u",
+    "prv_hist_gungabula_12qghcf",
+    "prv_hist_gunggari_14skn6n",
+    "prv_hist_iningai_cy8gm8",
+    "prv_hist_kuungkari_1w0o5ia",
+    "prv_hist_mandandanji_13crr2s",
+    "prv_hist_nguri_cmdqhw",
+    "prv_hist_yagalingu_1ilkn4q"
+  ],
+  "prv_hist_bidwell_oq3hd4": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_jaitmatang_1gxaidr",
+    "prv_hist_kurnai_11qtpxv",
+    "prv_hist_ngarigo_8yzjx2",
+    "prv_hist_yuin_gpzx34"
+  ],
+  "prv_hist_bigambul_1jmrmsu": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_barunggam_fxpb1",
+    "prv_hist_kamilaroi_1q8xqqu",
+    "prv_hist_kooma_trd94i",
+    "prv_hist_mandandanji_13crr2s",
+    "prv_hist_ngarabal_ho3vgb"
+  ],
+  "prv_hist_bijapur_hkk3pc": [
+    "prv_hist_ahmadnagar_1d991uf",
+    "prv_hist_bidar_11cahdf",
+    "prv_hist_golkonda_3jkju4",
+    "prv_hist_vijayanagara_1b3xg9b"
+  ],
+  "prv_hist_bilinara_1i70gkj": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_gurindji_1rqpu0j",
+    "prv_hist_karangpurru_adhqur",
+    "prv_hist_ngarinman_8296wu"
+  ],
+  "prv_hist_binbinga_1nh6z4v": [
+    "prv_hist_alawa_1b7no8n",
+    "prv_hist_garawa_1q0bu40",
+    "prv_hist_gunindiri_13q5tlg",
+    "prv_hist_mara_fmwg3i",
+    "prv_hist_ngandji_iea8di",
+    "prv_hist_yanyuwa_ku47l5"
+  ],
+  "prv_hist_bindjali_1otj7g8": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_jardwadjali_j3t3nw",
+    "prv_hist_ngargad_kzb90n",
+    "prv_hist_ngarrindjeri_bestm",
+    "prv_hist_wergaia_ursm5v"
+  ],
+  "prv_hist_biri_1lvdtd": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_baradha_p094zg",
+    "prv_hist_barna_11zs9uv",
+    "prv_hist_giya_3pvk8n",
+    "prv_hist_gugu_badhun_1leaunq",
+    "prv_hist_guwinmal_5eqj11",
+    "prv_hist_yangga_16fmhs0",
+    "prv_hist_yuru_jpfvte",
+    "prv_hist_yuwi_hhuqdb"
+  ],
+  "prv_hist_biripi_a0emku": [
+    "prv_hist_dainggatti_15wpuw1",
+    "prv_hist_geawegal_46bv88",
+    "prv_hist_kamilaroi_1q8xqqu",
+    "prv_hist_nganyaywana_1h11oav",
+    "prv_hist_worimi_1e3fwbs"
+  ],
+  "prv_hist_birria_lhlh7y": [
+    "prv_hist_dharawala_1n2t6fy",
+    "prv_hist_karuwali_2ctiwf",
+    "prv_hist_kuungkari_1w0o5ia",
+    "prv_hist_maiawali_4fpbae",
+    "prv_hist_wangkumara_1fsjcsh",
+    "prv_hist_yawarawarka_gf9g90"
+  ],
+  "prv_hist_blackfoot_1dtac20": [
+    "prv_hist_crow_644rjy",
+    "prv_hist_gros_ventre_mkge70",
+    "prv_hist_shoshoni_yx9snc"
+  ],
+  "prv_hist_boonwurrung_16sy8at": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_kurnai_11qtpxv",
+    "prv_hist_wathaurong_1bxb7hb",
+    "prv_hist_wurundjeri_nzt2by"
+  ],
+  "prv_hist_bornu_kanem_r1acys": ["prv_hist_bagirmi_18xo180", "prv_hist_hausa_states_27nwwd"],
+  "prv_hist_brunei_dc243g": ["prv_hist_malaya_aknc2i"],
+  "prv_hist_buandig_1pabqhx": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_gunditjmara_1hjnkfr",
+    "prv_hist_ngarrindjeri_bestm"
+  ],
+  "prv_hist_budjari_16bkq6g": [
+    "prv_hist_barundji_1nb83sa",
+    "prv_hist_kullilla_jvtkyn",
+    "prv_hist_kunja_xbet7c",
+    "prv_hist_margany_kale9a"
+  ],
+  "prv_hist_bukurnidja_1g5geq8": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_gagudju_f96eye",
+    "prv_hist_kundjey_mi_1pwtaxa",
+    "prv_hist_mbukarla_1kksaly",
+    "prv_hist_ngombur_l8nc5f",
+    "prv_hist_wuningangk_1e3k81m"
+  ],
+  "prv_hist_bularnu_1m7eo62": [
+    "prv_hist_alyawarre_1128sgl",
+    "prv_hist_andegerebenha_622r6i",
+    "prv_hist_kalkadoon_1pnuj5v",
+    "prv_hist_wakaya_1xj1w23",
+    "prv_hist_warluwarra_4e3gud"
+  ],
+  "prv_hist_bundjalung_d144bj": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_gumbainggir_dqiz4z",
+    "prv_hist_ngarabal_ho3vgb",
+    "prv_hist_yugambeh_gpmihd",
+    "prv_hist_yuggera_11wo8e9"
+  ],
+  "prv_hist_burarra_5b23n0": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_dangbon_a4ubi0",
+    "prv_hist_nakara_s82eet",
+    "prv_hist_yolngu_6zkztf"
+  ],
+  "prv_hist_caddo_6jqtpu": [
+    "prv_hist_atakapa_1ds3cjs",
+    "prv_hist_natchez_78wtl8",
+    "prv_hist_osage_akz45q",
+    "prv_hist_quapaw_190gquq",
+    "prv_hist_tonkawa_77c5qq",
+    "prv_hist_tunica_1nh59dz",
+    "prv_hist_wichita_1w7gke6"
+  ],
+  "prv_hist_cambodia_4ffs3f": [
+    "prv_hist_ai_viet_16rdo5l",
+    "prv_hist_ayutthaya_15u6dqb",
+    "prv_hist_laotian_states_1g04kuz"
+  ],
+  "prv_hist_caribbean_hunter_gatherers_1nsrse": ["prv_hist_vice_royalty_of_new_spain_12n6mfp"],
+  "prv_hist_catawba_1xx00gi": [],
+  "prv_hist_cayenne_1lrqsti": [],
+  "prv_hist_cayuse_iqh35f": [
+    "prv_hist_nez_perce_1mnl9it",
+    "prv_hist_northern_paiute_19h3x5b",
+    "prv_hist_umatilla_mfhmf4",
+    "prv_hist_yakima_1ypq6c5"
+  ],
+  "prv_hist_central_asian_khanates_17b38uz": [
+    "prv_hist_khiva_khanate_82r4z4",
+    "prv_hist_manchu_empire_x5ws8h",
+    "prv_hist_mughal_empire_qll6pn",
+    "prv_hist_nogai_horde_15ttsfn",
+    "prv_hist_quazaq_khanate_1pbf6iy",
+    "prv_hist_safavid_empire_rmsx0p",
+    "prv_hist_tibet_1gxg1qt",
+    "prv_hist_tsardom_of_muscovy_p4dn7m"
+  ],
+  "prv_hist_ceylon_1n32v4x": ["prv_hist_ceylon_dutch_qa9s64", "prv_hist_kandy_cnzapi"],
+  "prv_hist_ceylon_dutch_qa9s64": ["prv_hist_ceylon_1n32v4x", "prv_hist_kandy_cnzapi"],
+  "prv_hist_cherokee_d97dy5": ["prv_hist_shawnee_1wlifke", "prv_hist_yuchi_1j6efhv"],
+  "prv_hist_cheyenne_lrq6oe": [
+    "prv_hist_arapaho_qldwwv",
+    "prv_hist_crow_644rjy",
+    "prv_hist_teton_6fyhxn"
+  ],
+  "prv_hist_chtimacha_h8i9mb": ["prv_hist_atakapa_1ds3cjs"],
+  "prv_hist_chukchi_3tq2m4": [
+    "prv_hist_itelmen_1s7eof",
+    "prv_hist_koryaks_1xqbeav",
+    "prv_hist_tsardom_of_muscovy_p4dn7m"
+  ],
+  "prv_hist_comanche_1bsnvpx": [
+    "prv_hist_arapaho_qldwwv",
+    "prv_hist_jicarilla_1untl9s",
+    "prv_hist_kiowa_pjs4i2",
+    "prv_hist_lipan_14sx41h",
+    "prv_hist_mescalero_1mas280",
+    "prv_hist_tonkawa_77c5qq",
+    "prv_hist_wichita_1w7gke6"
+  ],
+  "prv_hist_congo_1wih3dd": [],
+  "prv_hist_cree_b2xnu6": [
+    "prv_hist_assiniboin_16pnzrg",
+    "prv_hist_athabaskan_161fp17",
+    "prv_hist_obiwa_1z0z8o3",
+    "prv_hist_subarctic_forest_hunter_gatherers_14drxm4",
+    "prv_hist_t_atsaot_ine_eg7ygf"
+  ],
+  "prv_hist_crow_644rjy": [
+    "prv_hist_arapaho_qldwwv",
+    "prv_hist_assiniboin_16pnzrg",
+    "prv_hist_blackfoot_1dtac20",
+    "prv_hist_cheyenne_lrq6oe",
+    "prv_hist_gros_ventre_mkge70",
+    "prv_hist_shoshoni_yx9snc",
+    "prv_hist_teton_6fyhxn"
+  ],
+  "prv_hist_cuba_spain_x1nhes": [],
+  "prv_hist_dadi_dadi_1yul5xj": [
+    "prv_hist_kureinji_hojodm",
+    "prv_hist_latje_latje_lrq7jb",
+    "prv_hist_madi_madi_1361rz9",
+    "prv_hist_wadi_wadi_bjzm8x",
+    "prv_hist_wergaia_ursm5v"
+  ],
+  "prv_hist_dainggatti_15wpuw1": [
+    "prv_hist_biripi_a0emku",
+    "prv_hist_gumbainggir_dqiz4z",
+    "prv_hist_nganyaywana_1h11oav"
+  ],
+  "prv_hist_dangbon_a4ubi0": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_burarra_5b23n0",
+    "prv_hist_gunbalang_1gt42jk",
+    "prv_hist_gungurugoni_uj78hr",
+    "prv_hist_gunibidji_he4vw2",
+    "prv_hist_gunwinggu_8uecae",
+    "prv_hist_nakara_s82eet",
+    "prv_hist_rembarnga_lmn5y2",
+    "prv_hist_yolngu_6zkztf"
+  ],
+  "prv_hist_danggali_vvi79a": [
+    "prv_hist_bandjigali_xo3ni4",
+    "prv_hist_barkindji_1wnvkc1",
+    "prv_hist_barundji_1nb83sa",
+    "prv_hist_meru_8u7hq",
+    "prv_hist_ngadjuri_pubejz",
+    "prv_hist_wandjiwalgu_1yzas3i",
+    "prv_hist_wiljali_1kx2sv1"
+  ],
+  "prv_hist_darfur_1998hx5": [],
+  "prv_hist_darkinung_f2pvem": [
+    "prv_hist_awabakal_1o8u4yv",
+    "prv_hist_dharug_18hqre",
+    "prv_hist_guringai_17o0bm1",
+    "prv_hist_wiradjuri_u41jrk",
+    "prv_hist_wonnarua_sbub9q"
+  ],
+  "prv_hist_darumbal_1418wp9": [
+    "prv_hist_baradha_p094zg",
+    "prv_hist_bayali_19n8ox",
+    "prv_hist_gabalbara_d5u4yk",
+    "prv_hist_gangulu_1huk42y",
+    "prv_hist_guwinmal_5eqj11"
+  ],
+  "prv_hist_delagoa_bay_13jid7u": [],
+  "prv_hist_denmark_norway_foon7y": [
+    "prv_hist_finnmark_1ctnwgl",
+    "prv_hist_holy_roman_empire_ww24g6",
+    "prv_hist_sweden_1he15ql"
+  ],
+  "prv_hist_dharawala_1n2t6fy": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_bidjara_qa18ys",
+    "prv_hist_birria_lhlh7y",
+    "prv_hist_iningai_cy8gm8",
+    "prv_hist_kuungkari_1w0o5ia",
+    "prv_hist_margany_kale9a",
+    "prv_hist_wangkumara_1fsjcsh"
+  ],
+  "prv_hist_dharug_18hqre": [
+    "prv_hist_darkinung_f2pvem",
+    "prv_hist_eora_zr6lpw",
+    "prv_hist_gundungurra_b8zpf7",
+    "prv_hist_guringai_17o0bm1",
+    "prv_hist_tharawal_9uwb17",
+    "prv_hist_wiradjuri_u41jrk"
+  ],
+  "prv_hist_dhirari_nr3xgs": [
+    "prv_hist_arabana_16tbqh5",
+    "prv_hist_dieri_bzavlc",
+    "prv_hist_kuyani_1yyxoh2",
+    "prv_hist_wangkangurru_1mk6d8r"
+  ],
+  "prv_hist_dieri_bzavlc": [
+    "prv_hist_andyamathanha_jznrea",
+    "prv_hist_dhirari_nr3xgs",
+    "prv_hist_kuyani_1yyxoh2",
+    "prv_hist_ngamini_xq0sum",
+    "prv_hist_pirlatapa_1tn1enn",
+    "prv_hist_wangkangurru_1mk6d8r",
+    "prv_hist_yandruwandha_tmmbn5",
+    "prv_hist_yawarawarka_gf9g90"
+  ],
+  "prv_hist_dja_dja_wurrung_mjq0bj": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_baraba_baraba_h3lzvd",
+    "prv_hist_djabwurung_6gjg02",
+    "prv_hist_jardwadjali_j3t3nw",
+    "prv_hist_ngurraiillam_t6axb0",
+    "prv_hist_taungurung_1n9xkxv",
+    "prv_hist_wathaurong_1bxb7hb",
+    "prv_hist_wergaia_ursm5v",
+    "prv_hist_wurundjeri_nzt2by"
+  ],
+  "prv_hist_djabuganjdji_1j2zj98": [
+    "prv_hist_djirbalngan_cfgbj7",
+    "prv_hist_kuku_yalanji_1730v80",
+    "prv_hist_yidinjdji_8yttd"
+  ],
+  "prv_hist_djabwurung_6gjg02": [
+    "prv_hist_dja_dja_wurrung_mjq0bj",
+    "prv_hist_giraiwurung_1n96lkd",
+    "prv_hist_gunditjmara_1hjnkfr",
+    "prv_hist_jardwadjali_j3t3nw",
+    "prv_hist_wathaurong_1bxb7hb"
+  ],
+  "prv_hist_djargurdwurung_1dhtp5s": [
+    "prv_hist_giraiwurung_1n96lkd",
+    "prv_hist_gulidjan_my2rj3",
+    "prv_hist_wathaurong_1bxb7hb"
+  ],
+  "prv_hist_djirbalngan_cfgbj7": [
+    "prv_hist_djabuganjdji_1j2zj98",
+    "prv_hist_gugu_badhun_1leaunq",
+    "prv_hist_kuku_yalanji_1730v80",
+    "prv_hist_mbabaram_1s3fdwc",
+    "prv_hist_wargamaygan_6w5go8",
+    "prv_hist_yidinjdji_8yttd"
+  ],
+  "prv_hist_doolboong_miriwoong_li3nzg": [
+    "prv_hist_jaminjung_1gtpbdy",
+    "prv_hist_kadjerong_u3d1la",
+    "prv_hist_kija_bwo5iw",
+    "prv_hist_ngarinman_8296wu",
+    "prv_hist_ngarinyin_171dxaq"
+  ],
+  "prv_hist_dutch_brazil_h1na4h": [
+    "prv_hist_amazon_hunter_gatherers_1e08msl",
+    "prv_hist_portuguese_brazil_16msotq"
+  ],
+  "prv_hist_dutch_east_indies_1m2w1ti": ["prv_hist_malaya_aknc2i", "prv_hist_papous_ghe3jn"],
+  "prv_hist_dutch_formosa_1j7ynry": ["prv_hist_middag_kingdom_q86hly"],
+  "prv_hist_dutch_republic_bn2q5n": [
+    "prv_hist_holy_roman_empire_ww24g6",
+    "prv_hist_luxembourg_2k5pih"
+  ],
+  "prv_hist_dyungungoo_gubbi_gubbi_14ie1qn": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_badtjala_h16ngy",
+    "prv_hist_gureng_gureng_tdvg9r",
+    "prv_hist_waka_waka_d5yhan"
+  ],
+  "prv_hist_england_and_ireland_89s2kc": ["prv_hist_scottalnd_19mzxvv"],
+  "prv_hist_eora_zr6lpw": [
+    "prv_hist_dharug_18hqre",
+    "prv_hist_guringai_17o0bm1",
+    "prv_hist_tharawal_9uwb17"
+  ],
+  "prv_hist_erie_193o8oo": [
+    "prv_hist_iroquois_q8udw2",
+    "prv_hist_miami_c2v0q0",
+    "prv_hist_potawatomi_1rwd7ww"
+  ],
+  "prv_hist_essequibo_1j15231": ["prv_hist_vice_royalty_of_new_spain_12n6mfp"],
+  "prv_hist_ethiopia_4bedm6": [
+    "prv_hist_awsa_1sq10gl",
+    "prv_hist_oromo_1kcuxfl",
+    "prv_hist_ottoman_empire_yesr83"
+  ],
+  "prv_hist_expansionist_kingdom_of_merina_17nf4wi": ["prv_hist_madagascar_1wme75h"],
+  "prv_hist_eyaq_1e5klal": ["prv_hist_athabascan_1yi68v7", "prv_hist_athabaskan_161fp17"],
+  "prv_hist_finnmark_1ctnwgl": [
+    "prv_hist_denmark_norway_foon7y",
+    "prv_hist_sweden_1he15ql",
+    "prv_hist_tsardom_of_muscovy_p4dn7m"
+  ],
+  "prv_hist_fivizzano_5f6hz3": ["prv_hist_modena_25qy27", "prv_hist_parma_lru30a"],
+  "prv_hist_florida_7qs81q": [],
+  "prv_hist_fox_72n2lq": ["prv_hist_obiwa_1z0z8o3", "prv_hist_winebago_hldqi7"],
+  "prv_hist_france_y6f35m": [
+    "prv_hist_franche_comte_m9c5wn",
+    "prv_hist_holy_roman_empire_ww24g6",
+    "prv_hist_luxembourg_2k5pih",
+    "prv_hist_sardinia_piedmont_1ws9drx",
+    "prv_hist_spain_1s1lfqm"
+  ],
+  "prv_hist_franche_comte_m9c5wn": [
+    "prv_hist_france_y6f35m",
+    "prv_hist_holy_roman_empire_ww24g6",
+    "prv_hist_sardinia_piedmont_1ws9drx",
+    "prv_hist_swiss_confederation_lt0lah"
+  ],
+  "prv_hist_gabalbara_d5u4yk": [
+    "prv_hist_baradha_p094zg",
+    "prv_hist_barna_11zs9uv",
+    "prv_hist_darumbal_1418wp9",
+    "prv_hist_gangulu_1huk42y",
+    "prv_hist_gayiri_2s285u",
+    "prv_hist_wangan_1ffocsl"
+  ],
+  "prv_hist_gadubanud_19fb30m": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_giraiwurung_1n96lkd",
+    "prv_hist_gulidjan_my2rj3",
+    "prv_hist_wathaurong_1bxb7hb"
+  ],
+  "prv_hist_gagudju_f96eye": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_bukurnidja_1g5geq8",
+    "prv_hist_konbudj_udw8ns",
+    "prv_hist_kundjey_mi_1pwtaxa",
+    "prv_hist_ngombur_l8nc5f"
+  ],
+  "prv_hist_gamberre_1re2r24": [
+    "prv_hist_miwa_1w415pj",
+    "prv_hist_ngarinyin_171dxaq",
+    "prv_hist_wunambul_jboisa"
+  ],
+  "prv_hist_gananggalinda_1k1rurp": ["prv_hist_ganggalida_3p2tt6"],
+  "prv_hist_ganggalida_3p2tt6": [
+    "prv_hist_gananggalinda_1k1rurp",
+    "prv_hist_garawa_1q0bu40",
+    "prv_hist_mingin_9e54tr",
+    "prv_hist_nguburinji_1gqursw",
+    "prv_hist_waanyi_16qcs64",
+    "prv_hist_yanyuwa_ku47l5"
+  ],
+  "prv_hist_gangulu_1huk42y": [
+    "prv_hist_bayali_19n8ox",
+    "prv_hist_darumbal_1418wp9",
+    "prv_hist_gabalbara_d5u4yk",
+    "prv_hist_garingbal_1m7plna",
+    "prv_hist_gayiri_2s285u",
+    "prv_hist_gureng_gureng_tdvg9r",
+    "prv_hist_wadjigu_xv8rgy",
+    "prv_hist_wuli_wuli_omoomy",
+    "prv_hist_yiman_zksy0p"
+  ],
+  "prv_hist_garawa_1q0bu40": [
+    "prv_hist_binbinga_1nh6z4v",
+    "prv_hist_ganggalida_3p2tt6",
+    "prv_hist_gunindiri_13q5tlg",
+    "prv_hist_waanyi_16qcs64",
+    "prv_hist_yanyuwa_ku47l5"
+  ],
+  "prv_hist_garingbal_1m7plna": [
+    "prv_hist_bidjara_qa18ys",
+    "prv_hist_gangulu_1huk42y",
+    "prv_hist_gayiri_2s285u",
+    "prv_hist_gungabula_12qghcf",
+    "prv_hist_gunggari_14skn6n",
+    "prv_hist_nguri_cmdqhw",
+    "prv_hist_wadjigu_xv8rgy",
+    "prv_hist_yiman_zksy0p"
+  ],
+  "prv_hist_gayiri_2s285u": [
+    "prv_hist_bidjara_qa18ys",
+    "prv_hist_gabalbara_d5u4yk",
+    "prv_hist_gangulu_1huk42y",
+    "prv_hist_garingbal_1m7plna",
+    "prv_hist_gunggari_14skn6n",
+    "prv_hist_wangan_1ffocsl",
+    "prv_hist_yagalingu_1ilkn4q"
+  ],
+  "prv_hist_geawegal_46bv88": [
+    "prv_hist_biripi_a0emku",
+    "prv_hist_kamilaroi_1q8xqqu",
+    "prv_hist_wiradjuri_u41jrk",
+    "prv_hist_wonnarua_sbub9q",
+    "prv_hist_worimi_1e3fwbs"
+  ],
+  "prv_hist_genoa_eitpb1": [
+    "prv_hist_milan_1fa0pm6",
+    "prv_hist_modena_25qy27",
+    "prv_hist_parma_lru30a",
+    "prv_hist_pontremoli_jdg3i4",
+    "prv_hist_sardinia_piedmont_1ws9drx"
+  ],
+  "prv_hist_gharra_1h8uxw0": ["prv_hist_mahra_1ocid5s", "prv_hist_oman_vstvuq"],
+  "prv_hist_giraiwurung_1n96lkd": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_djabwurung_6gjg02",
+    "prv_hist_djargurdwurung_1dhtp5s",
+    "prv_hist_gadubanud_19fb30m",
+    "prv_hist_gulidjan_my2rj3",
+    "prv_hist_gunditjmara_1hjnkfr",
+    "prv_hist_wathaurong_1bxb7hb"
+  ],
+  "prv_hist_giya_3pvk8n": ["prv_hist_biri_1lvdtd", "prv_hist_yuru_jpfvte", "prv_hist_yuwi_hhuqdb"],
+  "prv_hist_golkonda_3jkju4": [
+    "prv_hist_ahmadnagar_1d991uf",
+    "prv_hist_bidar_11cahdf",
+    "prv_hist_bijapur_hkk3pc",
+    "prv_hist_islamic_and_hindu_states_8v5a56",
+    "prv_hist_vijayanagara_1b3xg9b"
+  ],
+  "prv_hist_gooniyandi_12g090s": [
+    "prv_hist_jaru_y4zzyd",
+    "prv_hist_kija_bwo5iw",
+    "prv_hist_nyikina_tpb9j6",
+    "prv_hist_punuba_h60bcy",
+    "prv_hist_walmatjarri_1l79ea5"
+  ],
+  "prv_hist_goreng_35wzhd": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_kaniyang_1d7de41",
+    "prv_hist_minang_1195vcp",
+    "prv_hist_wiilman_b1w8ys",
+    "prv_hist_wudjari_bzlqgr"
+  ],
+  "prv_hist_gros_ventre_mkge70": [
+    "prv_hist_assiniboin_16pnzrg",
+    "prv_hist_blackfoot_1dtac20",
+    "prv_hist_crow_644rjy"
+  ],
+  "prv_hist_guanches_11s2h9": [],
+  "prv_hist_gugu_badhun_1leaunq": [
+    "prv_hist_agwarmin_1ttyc3f",
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_biri_1lvdtd",
+    "prv_hist_djirbalngan_cfgbj7",
+    "prv_hist_mbabaram_1s3fdwc",
+    "prv_hist_mbara_lkfoj8",
+    "prv_hist_nyawaygi_100rdjm",
+    "prv_hist_thul_garrie_waja_bindal_dk9ms",
+    "prv_hist_wargamaygan_6w5go8",
+    "prv_hist_wulgurukaba_1qhyuuz",
+    "prv_hist_yangga_16fmhs0",
+    "prv_hist_yilba_1twimhk",
+    "prv_hist_yirandali_8rfexg"
+  ],
+  "prv_hist_gulidjan_my2rj3": [
+    "prv_hist_djargurdwurung_1dhtp5s",
+    "prv_hist_gadubanud_19fb30m",
+    "prv_hist_giraiwurung_1n96lkd",
+    "prv_hist_wathaurong_1bxb7hb"
+  ],
+  "prv_hist_gumbainggir_dqiz4z": [
+    "prv_hist_bundjalung_d144bj",
+    "prv_hist_dainggatti_15wpuw1",
+    "prv_hist_nganyaywana_1h11oav",
+    "prv_hist_ngarabal_ho3vgb"
+  ],
+  "prv_hist_gunbalang_1gt42jk": [
+    "prv_hist_dangbon_a4ubi0",
+    "prv_hist_gunibidji_he4vw2",
+    "prv_hist_gunwinggu_8uecae"
+  ],
+  "prv_hist_gunditjmara_1hjnkfr": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_buandig_1pabqhx",
+    "prv_hist_djabwurung_6gjg02",
+    "prv_hist_giraiwurung_1n96lkd",
+    "prv_hist_jardwadjali_j3t3nw"
+  ],
+  "prv_hist_gundungurra_b8zpf7": [
+    "prv_hist_dharug_18hqre",
+    "prv_hist_ngambri_kxtssj",
+    "prv_hist_ngunawal_1py740g",
+    "prv_hist_tharawal_9uwb17",
+    "prv_hist_wiradjuri_u41jrk",
+    "prv_hist_yuin_gpzx34"
+  ],
+  "prv_hist_gungabula_12qghcf": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_bidjara_qa18ys",
+    "prv_hist_garingbal_1m7plna",
+    "prv_hist_gunggari_14skn6n",
+    "prv_hist_mandandanji_13crr2s",
+    "prv_hist_nguri_cmdqhw",
+    "prv_hist_wadjigu_xv8rgy",
+    "prv_hist_yiman_zksy0p"
+  ],
+  "prv_hist_gunggari_14skn6n": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_bidjara_qa18ys",
+    "prv_hist_garingbal_1m7plna",
+    "prv_hist_gayiri_2s285u",
+    "prv_hist_gungabula_12qghcf",
+    "prv_hist_kooma_trd94i",
+    "prv_hist_mandandanji_13crr2s",
+    "prv_hist_nguri_cmdqhw"
+  ],
+  "prv_hist_gungurugoni_uj78hr": [
+    "prv_hist_dangbon_a4ubi0",
+    "prv_hist_gunibidji_he4vw2",
+    "prv_hist_nakara_s82eet"
+  ],
+  "prv_hist_gunibidji_he4vw2": [
+    "prv_hist_dangbon_a4ubi0",
+    "prv_hist_gunbalang_1gt42jk",
+    "prv_hist_gungurugoni_uj78hr",
+    "prv_hist_nakara_s82eet"
+  ],
+  "prv_hist_gunindiri_13q5tlg": [
+    "prv_hist_binbinga_1nh6z4v",
+    "prv_hist_garawa_1q0bu40",
+    "prv_hist_ngandji_iea8di",
+    "prv_hist_waanyi_16qcs64",
+    "prv_hist_wambaya_1vyjx6v"
+  ],
+  "prv_hist_gunu_1gocbv4": [
+    "prv_hist_barranbinya_h1iy7u",
+    "prv_hist_barundji_1nb83sa",
+    "prv_hist_kunja_xbet7c",
+    "prv_hist_muruwari_clcyt3",
+    "prv_hist_wongaibon_ktk6o5"
+  ],
+  "prv_hist_gunwinggu_8uecae": [
+    "prv_hist_amarak_1uvnn10",
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_dangbon_a4ubi0",
+    "prv_hist_gunbalang_1gt42jk",
+    "prv_hist_iwaidja_9qd6fo",
+    "prv_hist_maung_1lvro0h",
+    "prv_hist_wuningangk_1e3k81m"
+  ],
+  "prv_hist_gureng_gureng_tdvg9r": [
+    "prv_hist_barunggam_fxpb1",
+    "prv_hist_bayali_19n8ox",
+    "prv_hist_dyungungoo_gubbi_gubbi_14ie1qn",
+    "prv_hist_gangulu_1huk42y",
+    "prv_hist_waka_waka_d5yhan",
+    "prv_hist_wuli_wuli_omoomy"
+  ],
+  "prv_hist_gurindji_1rqpu0j": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_bilinara_1i70gkj",
+    "prv_hist_jaru_y4zzyd",
+    "prv_hist_kija_bwo5iw",
+    "prv_hist_mudburra_16itacb",
+    "prv_hist_ngarinman_8296wu",
+    "prv_hist_warlmanpa_9tkhxm",
+    "prv_hist_warlpiri_1vsyl6d"
+  ],
+  "prv_hist_guringai_17o0bm1": [
+    "prv_hist_awabakal_1o8u4yv",
+    "prv_hist_darkinung_f2pvem",
+    "prv_hist_dharug_18hqre",
+    "prv_hist_eora_zr6lpw"
+  ],
+  "prv_hist_guugu_yimidhirr_jvzxgm": [
+    "prv_hist_kokowarra_du8l4w",
+    "prv_hist_kuku_yalanji_1730v80",
+    "prv_hist_mutumui_1hu5hah"
+  ],
+  "prv_hist_guwa_1pm6rcx": [
+    "prv_hist_iningai_cy8gm8",
+    "prv_hist_maiawali_4fpbae",
+    "prv_hist_wunumara_gy97pf",
+    "prv_hist_yanda_1inp864",
+    "prv_hist_yirandali_8rfexg"
+  ],
+  "prv_hist_guwinmal_5eqj11": [
+    "prv_hist_baradha_p094zg",
+    "prv_hist_biri_1lvdtd",
+    "prv_hist_darumbal_1418wp9",
+    "prv_hist_yuwi_hhuqdb"
+  ],
+  "prv_hist_hadramaut_5obzw8": ["prv_hist_mahra_1ocid5s", "prv_hist_ottoman_empire_yesr83"],
+  "prv_hist_hausa_states_27nwwd": ["prv_hist_bornu_kanem_r1acys"],
+  "prv_hist_hispaniola_spain_1ksj1gp": [],
+  "prv_hist_holy_roman_empire_ww24g6": [
+    "prv_hist_denmark_norway_foon7y",
+    "prv_hist_dutch_republic_bn2q5n",
+    "prv_hist_france_y6f35m",
+    "prv_hist_franche_comte_m9c5wn",
+    "prv_hist_luxembourg_2k5pih",
+    "prv_hist_ottoman_empire_yesr83",
+    "prv_hist_polish_lithuanian_commonwealth_1hgvc5m",
+    "prv_hist_sweden_1he15ql",
+    "prv_hist_swiss_confederation_lt0lah",
+    "prv_hist_venice_12k1qyt"
+  ],
+  "prv_hist_hong_kong_h40xf8": [],
+  "prv_hist_hopie_11p883m": ["prv_hist_southern_paiute_vzgl3h"],
+  "prv_hist_houma_1gguld9": ["prv_hist_natchez_78wtl8"],
+  "prv_hist_illinnois_s9q34g": [
+    "prv_hist_iowa_50x6tl",
+    "prv_hist_miami_c2v0q0",
+    "prv_hist_missouri_54nzic",
+    "prv_hist_osage_akz45q",
+    "prv_hist_quapaw_190gquq",
+    "prv_hist_santee_18cn86d",
+    "prv_hist_shawnee_1wlifke",
+    "prv_hist_winebago_hldqi7"
+  ],
+  "prv_hist_iningai_cy8gm8": [
+    "prv_hist_bidjara_qa18ys",
+    "prv_hist_dharawala_1n2t6fy",
+    "prv_hist_guwa_1pm6rcx",
+    "prv_hist_kuungkari_1w0o5ia",
+    "prv_hist_maiawali_4fpbae",
+    "prv_hist_miyan_sjowi1",
+    "prv_hist_yagalingu_1ilkn4q",
+    "prv_hist_yirandali_8rfexg"
+  ],
+  "prv_hist_inupiaq_1nus7no": ["prv_hist_athabaskan_161fp17"],
+  "prv_hist_iowa_50x6tl": [
+    "prv_hist_illinnois_s9q34g",
+    "prv_hist_missouri_54nzic",
+    "prv_hist_omaha_tvq28z",
+    "prv_hist_oto_apx4n7",
+    "prv_hist_santee_18cn86d",
+    "prv_hist_yankton_1i1m13x"
+  ],
+  "prv_hist_iroquois_q8udw2": ["prv_hist_erie_193o8oo", "prv_hist_new_amsterdam_5bqbhx"],
+  "prv_hist_islamic_and_hindu_states_8v5a56": [
+    "prv_hist_ahmadnagar_1d991uf",
+    "prv_hist_golkonda_3jkju4",
+    "prv_hist_mughal_empire_qll6pn"
+  ],
+  "prv_hist_itelmen_1s7eof": ["prv_hist_chukchi_3tq2m4", "prv_hist_koryaks_1xqbeav"],
+  "prv_hist_iwaidja_9qd6fo": [
+    "prv_hist_amarak_1uvnn10",
+    "prv_hist_gunwinggu_8uecae",
+    "prv_hist_maung_1lvro0h"
+  ],
+  "prv_hist_jabirrjabirr_iu4xul": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_ngumbarl_13r99ar",
+    "prv_hist_nimanburu_bfvdyw",
+    "prv_hist_nyul_nyul_606clf"
+  ],
+  "prv_hist_jaburrara_1blwcy9": ["prv_hist_martuthunira_vglrkb", "prv_hist_ngarluma_p9po1s"],
+  "prv_hist_jaitmatang_1gxaidr": [
+    "prv_hist_bidwell_oq3hd4",
+    "prv_hist_kurnai_11qtpxv",
+    "prv_hist_ngarigo_8yzjx2",
+    "prv_hist_waveroo_fgx0ew",
+    "prv_hist_wiradjuri_u41jrk"
+  ],
+  "prv_hist_jaminjung_1gtpbdy": [
+    "prv_hist_doolboong_miriwoong_li3nzg",
+    "prv_hist_kadjerong_u3d1la",
+    "prv_hist_murrinh_patha_12l1mn3",
+    "prv_hist_ngarinman_8296wu",
+    "prv_hist_nungali_1jl98xx",
+    "prv_hist_wagiman_1wjcbev",
+    "prv_hist_wardaman_1hwrzwq"
+  ],
+  "prv_hist_jardwadjali_j3t3nw": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_bindjali_1otj7g8",
+    "prv_hist_dja_dja_wurrung_mjq0bj",
+    "prv_hist_djabwurung_6gjg02",
+    "prv_hist_gunditjmara_1hjnkfr",
+    "prv_hist_wergaia_ursm5v"
+  ],
+  "prv_hist_jaru_y4zzyd": [
+    "prv_hist_gooniyandi_12g090s",
+    "prv_hist_gurindji_1rqpu0j",
+    "prv_hist_kija_bwo5iw",
+    "prv_hist_kukatja_ixyag2",
+    "prv_hist_ngarti_ijs79e",
+    "prv_hist_walmatjarri_1l79ea5",
+    "prv_hist_warlpiri_1vsyl6d"
+  ],
+  "prv_hist_jawoyn_i4mwsd": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_mangarayi_11jx4pw",
+    "prv_hist_mbukarla_1kksaly",
+    "prv_hist_ngalakan_164cmlk",
+    "prv_hist_wagiman_1wjcbev",
+    "prv_hist_wardaman_1hwrzwq",
+    "prv_hist_warray_1iri7vj",
+    "prv_hist_wuningangk_1e3k81m",
+    "prv_hist_yangman_usy2vs"
+  ],
+  "prv_hist_jicarilla_1untl9s": [
+    "prv_hist_arapaho_qldwwv",
+    "prv_hist_comanche_1bsnvpx",
+    "prv_hist_mescalero_1mas280",
+    "prv_hist_ute_16riea3"
+  ],
+  "prv_hist_jingili_5xq18t": [
+    "prv_hist_alawa_1b7no8n",
+    "prv_hist_mudburra_16itacb",
+    "prv_hist_ngandji_iea8di",
+    "prv_hist_wambaya_1vyjx6v",
+    "prv_hist_warlmanpa_9tkhxm",
+    "prv_hist_warumungu_1eieqwo",
+    "prv_hist_yangman_usy2vs"
+  ],
+  "prv_hist_jiwarli_jku2r9": [
+    "prv_hist_jurruru_13spxpe",
+    "prv_hist_pinikura_h0izmu",
+    "prv_hist_purduna_458eau",
+    "prv_hist_thalanyji_ig8tdb",
+    "prv_hist_thiin_bmzx0n",
+    "prv_hist_yinhawangka_ysho03"
+  ],
+  "prv_hist_jukun_1hzhb66": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_ngumbarl_13r99ar",
+    "prv_hist_yawuru_v70x9q"
+  ],
+  "prv_hist_jurruru_13spxpe": [
+    "prv_hist_jiwarli_jku2r9",
+    "prv_hist_kurrama_chp7we",
+    "prv_hist_pinikura_h0izmu",
+    "prv_hist_yinhawangka_ysho03"
+  ],
+  "prv_hist_kaantju_1ewo8un": [
+    "prv_hist_bakanh_1g4eqfe",
+    "prv_hist_kuuku_ya_u_1ejmr6r",
+    "prv_hist_kuuku_yani_pc6xa0",
+    "prv_hist_umbindhamu_a9f5x1",
+    "prv_hist_umpila_cipl9n",
+    "prv_hist_uutaalnganu_9dzwfc",
+    "prv_hist_wik_vhtak2",
+    "prv_hist_yinwum_k00dui"
+  ],
+  "prv_hist_kadjerong_u3d1la": [
+    "prv_hist_doolboong_miriwoong_li3nzg",
+    "prv_hist_jaminjung_1gtpbdy",
+    "prv_hist_ngarinyin_171dxaq",
+    "prv_hist_yiiji_bw7oej"
+  ],
+  "prv_hist_kalaako_malpa_1oouqm9": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_kalaamaya_1ny1ij5",
+    "prv_hist_ngatjumay_b4uskb",
+    "prv_hist_nyaki_nyaki_1u4m6eu",
+    "prv_hist_wangkathaa_gjxtbs",
+    "prv_hist_wudjari_bzlqgr"
+  ],
+  "prv_hist_kalaamaya_1ny1ij5": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_badimaya_t7elq3",
+    "prv_hist_ballardong_1vqaetl",
+    "prv_hist_kalaako_malpa_1oouqm9",
+    "prv_hist_kuwarra_rm6ub8",
+    "prv_hist_nyaki_nyaki_1u4m6eu",
+    "prv_hist_wangkathaa_gjxtbs",
+    "prv_hist_yuat_jh4ifa"
+  ],
+  "prv_hist_kalapuya_1baoqyr": ["prv_hist_northern_paiute_19h3x5b", "prv_hist_tenimo_1grpx37"],
+  "prv_hist_kalispel_1xdegnk": [],
+  "prv_hist_kalkadoon_1pnuj5v": [
+    "prv_hist_bularnu_1m7eo62",
+    "prv_hist_mayi_kutuna_ebq8b2",
+    "prv_hist_mayi_thakurti_1xencmc",
+    "prv_hist_mayi_yapi_ia034p",
+    "prv_hist_wakabunga_1x6l8zy",
+    "prv_hist_wakaya_1xj1w23",
+    "prv_hist_warluwarra_4e3gud",
+    "prv_hist_wunumara_gy97pf",
+    "prv_hist_yalarrnga_1mijn5q",
+    "prv_hist_yanda_1inp864"
+  ],
+  "prv_hist_kamilaroi_1q8xqqu": [
+    "prv_hist_barranbinya_h1iy7u",
+    "prv_hist_bigambul_1jmrmsu",
+    "prv_hist_biripi_a0emku",
+    "prv_hist_geawegal_46bv88",
+    "prv_hist_kooma_trd94i",
+    "prv_hist_muruwari_clcyt3",
+    "prv_hist_nganyaywana_1h11oav",
+    "prv_hist_ngarabal_ho3vgb",
+    "prv_hist_wailwan_y0d2da",
+    "prv_hist_wiradjuri_u41jrk"
+  ],
+  "prv_hist_kandy_cnzapi": ["prv_hist_ceylon_1n32v4x", "prv_hist_ceylon_dutch_qa9s64"],
+  "prv_hist_kaniyang_1d7de41": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_bibbulman_1koztdn",
+    "prv_hist_goreng_35wzhd",
+    "prv_hist_pinjarup_p9ztos",
+    "prv_hist_wardandi_zhet1z",
+    "prv_hist_wiilman_b1w8ys"
+  ],
+  "prv_hist_kansa_jdqlnl": [
+    "prv_hist_kiowa_pjs4i2",
+    "prv_hist_missouri_54nzic",
+    "prv_hist_osage_akz45q",
+    "prv_hist_oto_apx4n7",
+    "prv_hist_pawnee_qblm9p"
+  ],
+  "prv_hist_karajarri_18gfxhg": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_mangala_1j5cuak",
+    "prv_hist_nyangumarda_17dh966",
+    "prv_hist_yawuru_v70x9q"
+  ],
+  "prv_hist_karangpurru_adhqur": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_bilinara_1i70gkj",
+    "prv_hist_mudburra_16itacb",
+    "prv_hist_ngaliwuru_179ojmr",
+    "prv_hist_ngarinman_8296wu",
+    "prv_hist_wardaman_1hwrzwq"
+  ],
+  "prv_hist_karangura_ltbfqn": [
+    "prv_hist_ngamini_xq0sum",
+    "prv_hist_wangkamana_7rmg15",
+    "prv_hist_wangkangurru_1mk6d8r",
+    "prv_hist_yarluyandi_xh3m4j"
+  ],
+  "prv_hist_karenggapa_1y4c2t0": [
+    "prv_hist_bandjigali_xo3ni4",
+    "prv_hist_barundji_1nb83sa",
+    "prv_hist_kullilla_jvtkyn",
+    "prv_hist_malyangaba_pa8qoa",
+    "prv_hist_wadigali_1wsybr1",
+    "prv_hist_wangkumara_1fsjcsh"
+  ],
+  "prv_hist_kariyarra_1bng8p": [
+    "prv_hist_ngarluma_p9po1s",
+    "prv_hist_nyamal_umhre7",
+    "prv_hist_yindjibarndi_7ny4p2"
+  ],
+  "prv_hist_karuwali_2ctiwf": [
+    "prv_hist_birria_lhlh7y",
+    "prv_hist_maiawali_4fpbae",
+    "prv_hist_mithaka_1sa9z9q",
+    "prv_hist_pitta_pitta_168859u",
+    "prv_hist_yarluyandi_xh3m4j",
+    "prv_hist_yawarawarka_gf9g90"
+  ],
+  "prv_hist_kaurna_pangkarra_g1raj8": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_narangga_xw9vwa",
+    "prv_hist_ngadjuri_pubejz",
+    "prv_hist_ngarrindjeri_bestm",
+    "prv_hist_nukunu_q6ubct",
+    "prv_hist_peramangk_nrjxsr"
+  ],
+  "prv_hist_kawahsu_vnl55b": [
+    "prv_hist_serano_1gyobmj",
+    "prv_hist_shoshoni_yx9snc",
+    "prv_hist_yokuts_17kihlw"
+  ],
+  "prv_hist_kaytej_1im3rmj": [
+    "prv_hist_alyawarre_1128sgl",
+    "prv_hist_anmatyerre_1smrid",
+    "prv_hist_wakaya_1xj1w23",
+    "prv_hist_warlpiri_1vsyl6d",
+    "prv_hist_warumungu_1eieqwo"
+  ],
+  "prv_hist_khiva_khanate_82r4z4": [
+    "prv_hist_central_asian_khanates_17b38uz",
+    "prv_hist_mughal_empire_qll6pn",
+    "prv_hist_nogai_horde_15ttsfn",
+    "prv_hist_quazaq_khanate_1pbf6iy",
+    "prv_hist_safavid_empire_rmsx0p",
+    "prv_hist_tsardom_of_muscovy_p4dn7m"
+  ],
+  "prv_hist_kija_bwo5iw": [
+    "prv_hist_doolboong_miriwoong_li3nzg",
+    "prv_hist_gooniyandi_12g090s",
+    "prv_hist_gurindji_1rqpu0j",
+    "prv_hist_jaru_y4zzyd",
+    "prv_hist_ngarinman_8296wu",
+    "prv_hist_ngarinyin_171dxaq",
+    "prv_hist_punuba_h60bcy",
+    "prv_hist_worla_1q99818"
+  ],
+  "prv_hist_kiowa_pjs4i2": [
+    "prv_hist_arapaho_qldwwv",
+    "prv_hist_comanche_1bsnvpx",
+    "prv_hist_kansa_jdqlnl",
+    "prv_hist_osage_akz45q",
+    "prv_hist_pawnee_qblm9p",
+    "prv_hist_wichita_1w7gke6"
+  ],
+  "prv_hist_kokatha_1d3bc1i": [
+    "prv_hist_antakarinja_5hledv",
+    "prv_hist_arabana_16tbqh5",
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_banggarla_1byfc94",
+    "prv_hist_kuyani_1yyxoh2",
+    "prv_hist_nakako_srdbp6",
+    "prv_hist_ngalea_12hd43x",
+    "prv_hist_pitjantjatjara_cl4l3k",
+    "prv_hist_wirangu_qdtolm",
+    "prv_hist_yankuntjatjara_hqbggs"
+  ],
+  "prv_hist_koknar_13ztacl": [
+    "prv_hist_koko_bera_1m5l72s",
+    "prv_hist_kunjen_80nv9a",
+    "prv_hist_kurtjar_eclek"
+  ],
+  "prv_hist_koko_bera_1m5l72s": [
+    "prv_hist_koknar_13ztacl",
+    "prv_hist_kunjen_80nv9a",
+    "prv_hist_yir_yoront_1im1ys8"
+  ],
+  "prv_hist_kokomini_141qd3y": [
+    "prv_hist_agwarmin_1ttyc3f",
+    "prv_hist_kokowarra_du8l4w",
+    "prv_hist_kuku_yalanji_1730v80",
+    "prv_hist_kunjen_80nv9a"
+  ],
+  "prv_hist_kokowarra_du8l4w": [
+    "prv_hist_guugu_yimidhirr_jvzxgm",
+    "prv_hist_kokomini_141qd3y",
+    "prv_hist_kuku_yalanji_1730v80",
+    "prv_hist_kunjen_80nv9a",
+    "prv_hist_lamalama_12blyst",
+    "prv_hist_mutumui_1hu5hah"
+  ],
+  "prv_hist_konbudj_udw8ns": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_gagudju_f96eye",
+    "prv_hist_limilngan_coskh4"
+  ],
+  "prv_hist_kooma_trd94i": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_bigambul_1jmrmsu",
+    "prv_hist_gunggari_14skn6n",
+    "prv_hist_kamilaroi_1q8xqqu",
+    "prv_hist_kunja_xbet7c",
+    "prv_hist_muruwari_clcyt3"
+  ],
+  "prv_hist_korea_imo1p1": ["prv_hist_manchu_empire_x5ws8h"],
+  "prv_hist_koryaks_1xqbeav": ["prv_hist_chukchi_3tq2m4", "prv_hist_itelmen_1s7eof"],
+  "prv_hist_kukatj_1nqkwtz": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_kuthant_dhqd0i",
+    "prv_hist_mayi_kulan_ncxws7",
+    "prv_hist_mayi_kutuna_ebq8b2",
+    "prv_hist_mayi_yapi_ia034p",
+    "prv_hist_mingin_9e54tr"
+  ],
+  "prv_hist_kukatja_ixyag2": [
+    "prv_hist_jaru_y4zzyd",
+    "prv_hist_mardu_1glph4o",
+    "prv_hist_ngarti_ijs79e",
+    "prv_hist_pintupi_yourvw",
+    "prv_hist_walmatjarri_1l79ea5",
+    "prv_hist_yulparitja_1ewk1e4"
+  ],
+  "prv_hist_kuku_yalanji_1730v80": [
+    "prv_hist_agwarmin_1ttyc3f",
+    "prv_hist_djabuganjdji_1j2zj98",
+    "prv_hist_djirbalngan_cfgbj7",
+    "prv_hist_guugu_yimidhirr_jvzxgm",
+    "prv_hist_kokomini_141qd3y",
+    "prv_hist_kokowarra_du8l4w",
+    "prv_hist_mbabaram_1s3fdwc"
+  ],
+  "prv_hist_kullilla_jvtkyn": [
+    "prv_hist_barundji_1nb83sa",
+    "prv_hist_budjari_16bkq6g",
+    "prv_hist_karenggapa_1y4c2t0",
+    "prv_hist_margany_kale9a",
+    "prv_hist_wangkumara_1fsjcsh"
+  ],
+  "prv_hist_kundjey_mi_1pwtaxa": [
+    "prv_hist_amarak_1uvnn10",
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_bukurnidja_1g5geq8",
+    "prv_hist_gagudju_f96eye"
+  ],
+  "prv_hist_kungarakany_1t7fr4x": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_kuwema_1iklqbz",
+    "prv_hist_larrakia_1rrgsv8",
+    "prv_hist_malak_malak_1yfk7kf",
+    "prv_hist_tjerratj_1027dlf",
+    "prv_hist_wagiman_1wjcbev",
+    "prv_hist_warray_1iri7vj"
+  ],
+  "prv_hist_kunja_xbet7c": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_barundji_1nb83sa",
+    "prv_hist_budjari_16bkq6g",
+    "prv_hist_gunu_1gocbv4",
+    "prv_hist_kooma_trd94i",
+    "prv_hist_margany_kale9a",
+    "prv_hist_muruwari_clcyt3"
+  ],
+  "prv_hist_kunjen_80nv9a": [
+    "prv_hist_agwarmin_1ttyc3f",
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_bakanh_1g4eqfe",
+    "prv_hist_koknar_13ztacl",
+    "prv_hist_koko_bera_1m5l72s",
+    "prv_hist_kokomini_141qd3y",
+    "prv_hist_kokowarra_du8l4w",
+    "prv_hist_kurtjar_eclek",
+    "prv_hist_lamalama_12blyst",
+    "prv_hist_thaayorre_6vlkki",
+    "prv_hist_yir_yoront_1im1ys8"
+  ],
+  "prv_hist_kureinji_hojodm": [
+    "prv_hist_barindji_wgkmuu",
+    "prv_hist_barkindji_1wnvkc1",
+    "prv_hist_dadi_dadi_1yul5xj",
+    "prv_hist_latje_latje_lrq7jb",
+    "prv_hist_madi_madi_1361rz9",
+    "prv_hist_meru_8u7hq"
+  ],
+  "prv_hist_kurnai_11qtpxv": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_bidwell_oq3hd4",
+    "prv_hist_boonwurrung_16sy8at",
+    "prv_hist_jaitmatang_1gxaidr",
+    "prv_hist_ngarigo_8yzjx2",
+    "prv_hist_taungurung_1n9xkxv",
+    "prv_hist_waveroo_fgx0ew",
+    "prv_hist_wurundjeri_nzt2by"
+  ],
+  "prv_hist_kurrama_chp7we": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_banjima_k91599",
+    "prv_hist_jurruru_13spxpe",
+    "prv_hist_martuthunira_vglrkb",
+    "prv_hist_nhuwala_dhd0bl",
+    "prv_hist_pinikura_h0izmu",
+    "prv_hist_thalanyji_ig8tdb",
+    "prv_hist_yindjibarndi_7ny4p2",
+    "prv_hist_yinhawangka_ysho03"
+  ],
+  "prv_hist_kurtjar_eclek": [
+    "prv_hist_agwarmin_1ttyc3f",
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_koknar_13ztacl",
+    "prv_hist_kunjen_80nv9a",
+    "prv_hist_kuthant_dhqd0i",
+    "prv_hist_mayi_kulan_ncxws7",
+    "prv_hist_takalak_d6pm1a",
+    "prv_hist_walangama_1ubytxy"
+  ],
+  "prv_hist_kuthant_dhqd0i": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_kukatj_1nqkwtz",
+    "prv_hist_kurtjar_eclek",
+    "prv_hist_mayi_kulan_ncxws7",
+    "prv_hist_walangama_1ubytxy"
+  ],
+  "prv_hist_kuuku_ya_u_1ejmr6r": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_kaantju_1ewo8un",
+    "prv_hist_mpalitjanh_d4md37",
+    "prv_hist_uutaalnganu_9dzwfc",
+    "prv_hist_wuthathi_ouo5df",
+    "prv_hist_yinwum_k00dui"
+  ],
+  "prv_hist_kuuku_yani_pc6xa0": [
+    "prv_hist_bakanh_1g4eqfe",
+    "prv_hist_kaantju_1ewo8un",
+    "prv_hist_umbindhamu_a9f5x1",
+    "prv_hist_umpila_cipl9n"
+  ],
+  "prv_hist_kuungkari_1w0o5ia": [
+    "prv_hist_bidjara_qa18ys",
+    "prv_hist_birria_lhlh7y",
+    "prv_hist_dharawala_1n2t6fy",
+    "prv_hist_iningai_cy8gm8",
+    "prv_hist_maiawali_4fpbae"
+  ],
+  "prv_hist_kuwarra_rm6ub8": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_badimaya_t7elq3",
+    "prv_hist_kalaamaya_1ny1ij5",
+    "prv_hist_nana_gm6uox",
+    "prv_hist_tjalkanti_kk0rjf",
+    "prv_hist_tjupany_1o0vuww",
+    "prv_hist_wangkathaa_gjxtbs"
+  ],
+  "prv_hist_kuwema_1iklqbz": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_kungarakany_1t7fr4x",
+    "prv_hist_malak_malak_1yfk7kf",
+    "prv_hist_maranunggu_sq0f4c",
+    "prv_hist_tjerratj_1027dlf"
+  ],
+  "prv_hist_kuyani_1yyxoh2": [
+    "prv_hist_andyamathanha_jznrea",
+    "prv_hist_arabana_16tbqh5",
+    "prv_hist_banggarla_1byfc94",
+    "prv_hist_dhirari_nr3xgs",
+    "prv_hist_dieri_bzavlc",
+    "prv_hist_kokatha_1d3bc1i"
+  ],
+  "prv_hist_kwini_x5i5a7": [
+    "prv_hist_miwa_1w415pj",
+    "prv_hist_ngarinyin_171dxaq",
+    "prv_hist_yiiji_bw7oej"
+  ],
+  "prv_hist_lamalama_12blyst": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_bakanh_1g4eqfe",
+    "prv_hist_kokowarra_du8l4w",
+    "prv_hist_kunjen_80nv9a",
+    "prv_hist_mutumui_1hu5hah",
+    "prv_hist_umbindhamu_a9f5x1"
+  ],
+  "prv_hist_lan_na_4am99d": [
+    "prv_hist_ava_11fvm9p",
+    "prv_hist_ayutthaya_15u6dqb",
+    "prv_hist_laotian_states_1g04kuz"
+  ],
+  "prv_hist_laotian_states_1g04kuz": [
+    "prv_hist_ai_viet_16rdo5l",
+    "prv_hist_ava_11fvm9p",
+    "prv_hist_ayutthaya_15u6dqb",
+    "prv_hist_cambodia_4ffs3f",
+    "prv_hist_lan_na_4am99d",
+    "prv_hist_post_ming_warlords_s2ed3v"
+  ],
+  "prv_hist_larrakia_1rrgsv8": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_kungarakany_1t7fr4x",
+    "prv_hist_woolna_1tgrbup"
+  ],
+  "prv_hist_latje_latje_lrq7jb": [
+    "prv_hist_dadi_dadi_1yul5xj",
+    "prv_hist_kureinji_hojodm",
+    "prv_hist_meru_8u7hq",
+    "prv_hist_wergaia_ursm5v"
+  ],
+  "prv_hist_limilngan_coskh4": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_konbudj_udw8ns",
+    "prv_hist_woolna_1tgrbup"
+  ],
+  "prv_hist_lipan_14sx41h": [
+    "prv_hist_atakapa_1ds3cjs",
+    "prv_hist_comanche_1bsnvpx",
+    "prv_hist_mescalero_1mas280",
+    "prv_hist_tonkawa_77c5qq"
+  ],
+  "prv_hist_lombardy_2vtjer": [
+    "prv_hist_milan_1fa0pm6",
+    "prv_hist_modena_25qy27",
+    "prv_hist_parma_lru30a",
+    "prv_hist_venice_12k1qyt"
+  ],
+  "prv_hist_luba_pv7hmz": ["prv_hist_lunda_w4jswb"],
+  "prv_hist_lucca_15bjj6z": [
+    "prv_hist_massa_lei4ds",
+    "prv_hist_modena_25qy27",
+    "prv_hist_tuscany_heaomy"
+  ],
+  "prv_hist_lunda_w4jswb": ["prv_hist_luba_pv7hmz"],
+  "prv_hist_luritja_1855uv8": [
+    "prv_hist_anmatyerre_1smrid",
+    "prv_hist_antakarinja_5hledv",
+    "prv_hist_arrernte_u6j8ww",
+    "prv_hist_pintupi_yourvw",
+    "prv_hist_pitjantjatjara_cl4l3k",
+    "prv_hist_warlpiri_1vsyl6d",
+    "prv_hist_yankuntjatjara_hqbggs"
+  ],
+  "prv_hist_luthigh_jhkfoy": [
+    "prv_hist_anguthimri_17ieoad",
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_awngthim_x7qkv8",
+    "prv_hist_mbeiwum_1g06wov",
+    "prv_hist_mpalitjanh_d4md37",
+    "prv_hist_teppathiggi_1d45tg1",
+    "prv_hist_wik_vhtak2",
+    "prv_hist_yinwum_k00dui"
+  ],
+  "prv_hist_luxembourg_2k5pih": [
+    "prv_hist_dutch_republic_bn2q5n",
+    "prv_hist_france_y6f35m",
+    "prv_hist_holy_roman_empire_ww24g6"
+  ],
+  "prv_hist_madagascar_1wme75h": ["prv_hist_expansionist_kingdom_of_merina_17nf4wi"],
+  "prv_hist_madi_madi_1361rz9": [
+    "prv_hist_barindji_wgkmuu",
+    "prv_hist_barkindji_1wnvkc1",
+    "prv_hist_dadi_dadi_1yul5xj",
+    "prv_hist_kureinji_hojodm",
+    "prv_hist_nari_nari_1qfa05z",
+    "prv_hist_wadi_wadi_bjzm8x",
+    "prv_hist_yitha_yitha_6h0v3"
+  ],
+  "prv_hist_mahra_1ocid5s": ["prv_hist_gharra_1h8uxw0", "prv_hist_hadramaut_5obzw8"],
+  "prv_hist_maiawali_4fpbae": [
+    "prv_hist_birria_lhlh7y",
+    "prv_hist_guwa_1pm6rcx",
+    "prv_hist_iningai_cy8gm8",
+    "prv_hist_karuwali_2ctiwf",
+    "prv_hist_kuungkari_1w0o5ia",
+    "prv_hist_pitta_pitta_168859u",
+    "prv_hist_yanda_1inp864"
+  ],
+  "prv_hist_maiou_15cztxm": ["prv_hist_northern_paiute_19h3x5b"],
+  "prv_hist_malak_malak_1yfk7kf": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_kungarakany_1t7fr4x",
+    "prv_hist_kuwema_1iklqbz",
+    "prv_hist_maranunggu_sq0f4c",
+    "prv_hist_marramaninjsji_tn9mib",
+    "prv_hist_ngan_giwumirri_bybmp1",
+    "prv_hist_tjerratj_1027dlf",
+    "prv_hist_wagiman_1wjcbev"
+  ],
+  "prv_hist_malaya_aknc2i": [
+    "prv_hist_ayutthaya_15u6dqb",
+    "prv_hist_brunei_dc243g",
+    "prv_hist_dutch_east_indies_1m2w1ti"
+  ],
+  "prv_hist_mali_nfxvpw": [],
+  "prv_hist_malkana_1ijqs7o": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_nhanta_1u8zzpj",
+    "prv_hist_watjarri_1cc951d",
+    "prv_hist_yinggarda_dfzgp9"
+  ],
+  "prv_hist_malyangaba_pa8qoa": [
+    "prv_hist_andyamathanha_jznrea",
+    "prv_hist_bandjigali_xo3ni4",
+    "prv_hist_karenggapa_1y4c2t0",
+    "prv_hist_ngadjuri_pubejz",
+    "prv_hist_pirlatapa_1tn1enn",
+    "prv_hist_wadigali_1wsybr1",
+    "prv_hist_wiljali_1kx2sv1"
+  ],
+  "prv_hist_manchu_empire_x5ws8h": [
+    "prv_hist_central_asian_khanates_17b38uz",
+    "prv_hist_korea_imo1p1",
+    "prv_hist_post_ming_warlords_s2ed3v",
+    "prv_hist_shan_states_1tmmjwd",
+    "prv_hist_tibet_1gxg1qt"
+  ],
+  "prv_hist_mandan_159dxbu": [
+    "prv_hist_arikara_12qt1ks",
+    "prv_hist_teton_6fyhxn",
+    "prv_hist_yankontai_cz9kjt"
+  ],
+  "prv_hist_mandandanji_13crr2s": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_barunggam_fxpb1",
+    "prv_hist_bidjara_qa18ys",
+    "prv_hist_bigambul_1jmrmsu",
+    "prv_hist_gungabula_12qghcf",
+    "prv_hist_gunggari_14skn6n"
+  ],
+  "prv_hist_mandjindja_nnb6rv": [
+    "prv_hist_nakako_srdbp6",
+    "prv_hist_ngaanyatjarra_1eyp3p4",
+    "prv_hist_nyanganyatjara_7pj0ur",
+    "prv_hist_tjalkanti_kk0rjf"
+  ],
+  "prv_hist_mangala_1j5cuak": [
+    "prv_hist_karajarri_18gfxhg",
+    "prv_hist_nyangumarda_17dh966",
+    "prv_hist_nyikina_tpb9j6",
+    "prv_hist_walmatjarri_1l79ea5",
+    "prv_hist_yawuru_v70x9q",
+    "prv_hist_yulparitja_1ewk1e4"
+  ],
+  "prv_hist_mangarayi_11jx4pw": [
+    "prv_hist_alawa_1b7no8n",
+    "prv_hist_jawoyn_i4mwsd",
+    "prv_hist_ngalakan_164cmlk",
+    "prv_hist_yangman_usy2vs"
+  ],
+  "prv_hist_maori_mry76h": [],
+  "prv_hist_mara_fmwg3i": [
+    "prv_hist_alawa_1b7no8n",
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_binbinga_1nh6z4v",
+    "prv_hist_ngalakan_164cmlk",
+    "prv_hist_ngandi_f2zqgu",
+    "prv_hist_nunggubuyu_oukop0",
+    "prv_hist_yanyuwa_ku47l5"
+  ],
+  "prv_hist_maranunggu_sq0f4c": [
+    "prv_hist_kuwema_1iklqbz",
+    "prv_hist_malak_malak_1yfk7kf",
+    "prv_hist_marrithiyel_1ekdr0p"
+  ],
+  "prv_hist_mardu_1glph4o": [
+    "prv_hist_kukatja_ixyag2",
+    "prv_hist_ngaanyatjarra_1eyp3p4",
+    "prv_hist_ngatatjara_1g5ase",
+    "prv_hist_nyamal_umhre7",
+    "prv_hist_nyangumarda_17dh966",
+    "prv_hist_palyku_nj5zq9",
+    "prv_hist_pintupi_yourvw",
+    "prv_hist_wawula_1rin18a",
+    "prv_hist_yulparitja_1ewk1e4"
+  ],
+  "prv_hist_margany_kale9a": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_budjari_16bkq6g",
+    "prv_hist_dharawala_1n2t6fy",
+    "prv_hist_kullilla_jvtkyn",
+    "prv_hist_kunja_xbet7c",
+    "prv_hist_wangkumara_1fsjcsh"
+  ],
+  "prv_hist_marramaninjsji_tn9mib": [
+    "prv_hist_malak_malak_1yfk7kf",
+    "prv_hist_marrithiyel_1ekdr0p",
+    "prv_hist_ngan_gikurunggurr_1nzd97e",
+    "prv_hist_ngan_giwumirri_bybmp1"
+  ],
+  "prv_hist_marringarr_fcuzds": [
+    "prv_hist_marrithiyel_1ekdr0p",
+    "prv_hist_murrinh_patha_12l1mn3",
+    "prv_hist_ngan_gikurunggurr_1nzd97e",
+    "prv_hist_ngan_giwumirri_bybmp1"
+  ],
+  "prv_hist_marrithiyel_1ekdr0p": [
+    "prv_hist_maranunggu_sq0f4c",
+    "prv_hist_marramaninjsji_tn9mib",
+    "prv_hist_marringarr_fcuzds",
+    "prv_hist_ngan_gikurunggurr_1nzd97e"
+  ],
+  "prv_hist_martuthunira_vglrkb": [
+    "prv_hist_jaburrara_1blwcy9",
+    "prv_hist_kurrama_chp7we",
+    "prv_hist_ngarluma_p9po1s",
+    "prv_hist_nhuwala_dhd0bl",
+    "prv_hist_yindjibarndi_7ny4p2"
+  ],
+  "prv_hist_massa_lei4ds": ["prv_hist_lucca_15bjj6z", "prv_hist_modena_25qy27"],
+  "prv_hist_massachusetts_bay_1s9n55n": ["prv_hist_new_amsterdam_5bqbhx"],
+  "prv_hist_maung_1lvro0h": ["prv_hist_gunwinggu_8uecae", "prv_hist_iwaidja_9qd6fo"],
+  "prv_hist_maya_debcg5": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_payungu_1vy2afu",
+    "prv_hist_tharrgari_1l8rg31",
+    "prv_hist_yinggarda_dfzgp9"
+  ],
+  "prv_hist_mayi_kulan_ncxws7": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_kukatj_1nqkwtz",
+    "prv_hist_kurtjar_eclek",
+    "prv_hist_kuthant_dhqd0i",
+    "prv_hist_mayi_thakurti_1xencmc",
+    "prv_hist_mayi_yapi_ia034p",
+    "prv_hist_ngawun_rn7z4p",
+    "prv_hist_walangama_1ubytxy",
+    "prv_hist_yanga_1n3775z"
+  ],
+  "prv_hist_mayi_kutuna_ebq8b2": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_kalkadoon_1pnuj5v",
+    "prv_hist_kukatj_1nqkwtz",
+    "prv_hist_mayi_yapi_ia034p",
+    "prv_hist_mingin_9e54tr",
+    "prv_hist_nguburinji_1gqursw",
+    "prv_hist_wakabunga_1x6l8zy"
+  ],
+  "prv_hist_mayi_thakurti_1xencmc": [
+    "prv_hist_kalkadoon_1pnuj5v",
+    "prv_hist_mayi_kulan_ncxws7",
+    "prv_hist_mayi_yapi_ia034p",
+    "prv_hist_ngawun_rn7z4p",
+    "prv_hist_wakabunga_1x6l8zy",
+    "prv_hist_wunumara_gy97pf"
+  ],
+  "prv_hist_mayi_yapi_ia034p": [
+    "prv_hist_kalkadoon_1pnuj5v",
+    "prv_hist_kukatj_1nqkwtz",
+    "prv_hist_mayi_kulan_ncxws7",
+    "prv_hist_mayi_kutuna_ebq8b2",
+    "prv_hist_mayi_thakurti_1xencmc",
+    "prv_hist_ngawun_rn7z4p",
+    "prv_hist_wakabunga_1x6l8zy"
+  ],
+  "prv_hist_mbabaram_1s3fdwc": [
+    "prv_hist_agwarmin_1ttyc3f",
+    "prv_hist_djirbalngan_cfgbj7",
+    "prv_hist_gugu_badhun_1leaunq",
+    "prv_hist_kuku_yalanji_1730v80"
+  ],
+  "prv_hist_mbara_lkfoj8": [
+    "prv_hist_agwarmin_1ttyc3f",
+    "prv_hist_gugu_badhun_1leaunq",
+    "prv_hist_ngawun_rn7z4p",
+    "prv_hist_wunumara_gy97pf",
+    "prv_hist_yanga_1n3775z",
+    "prv_hist_yirandali_8rfexg"
+  ],
+  "prv_hist_mbeiwum_1g06wov": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_awngthim_x7qkv8",
+    "prv_hist_luthigh_jhkfoy",
+    "prv_hist_wik_vhtak2",
+    "prv_hist_winda_winda_z8g93r"
+  ],
+  "prv_hist_mbukarla_1kksaly": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_bukurnidja_1g5geq8",
+    "prv_hist_jawoyn_i4mwsd",
+    "prv_hist_ngombur_l8nc5f",
+    "prv_hist_wuningangk_1e3k81m"
+  ],
+  "prv_hist_menomini_9b8ajv": [],
+  "prv_hist_meru_8u7hq": [
+    "prv_hist_barkindji_1wnvkc1",
+    "prv_hist_danggali_vvi79a",
+    "prv_hist_kureinji_hojodm",
+    "prv_hist_latje_latje_lrq7jb",
+    "prv_hist_ngadjuri_pubejz",
+    "prv_hist_ngargad_kzb90n",
+    "prv_hist_ngarrindjeri_bestm",
+    "prv_hist_peramangk_nrjxsr",
+    "prv_hist_wergaia_ursm5v"
+  ],
+  "prv_hist_mescalero_1mas280": [
+    "prv_hist_comanche_1bsnvpx",
+    "prv_hist_jicarilla_1untl9s",
+    "prv_hist_lipan_14sx41h",
+    "prv_hist_tano_14qflrp",
+    "prv_hist_vice_royalty_of_new_spain_12n6mfp"
+  ],
+  "prv_hist_mi_kma_ki_yr0zws": [],
+  "prv_hist_miami_c2v0q0": [
+    "prv_hist_erie_193o8oo",
+    "prv_hist_illinnois_s9q34g",
+    "prv_hist_potawatomi_1rwd7ww"
+  ],
+  "prv_hist_middag_kingdom_q86hly": ["prv_hist_dutch_formosa_1j7ynry"],
+  "prv_hist_milan_1fa0pm6": [
+    "prv_hist_genoa_eitpb1",
+    "prv_hist_lombardy_2vtjer",
+    "prv_hist_modena_25qy27",
+    "prv_hist_parma_lru30a",
+    "prv_hist_republic_of_the_seven_zenden_1k5perc",
+    "prv_hist_sardinia_piedmont_1ws9drx",
+    "prv_hist_swiss_confederation_lt0lah",
+    "prv_hist_venice_12k1qyt"
+  ],
+  "prv_hist_minang_1195vcp": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_bibbulman_1koztdn",
+    "prv_hist_goreng_35wzhd"
+  ],
+  "prv_hist_mingin_9e54tr": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_ganggalida_3p2tt6",
+    "prv_hist_kukatj_1nqkwtz",
+    "prv_hist_mayi_kutuna_ebq8b2",
+    "prv_hist_nguburinji_1gqursw"
+  ],
+  "prv_hist_mirning_16mzti9": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_ngatjumay_b4uskb",
+    "prv_hist_nyanganyatjara_7pj0ur",
+    "prv_hist_wirangu_qdtolm"
+  ],
+  "prv_hist_missouri_54nzic": [
+    "prv_hist_illinnois_s9q34g",
+    "prv_hist_iowa_50x6tl",
+    "prv_hist_kansa_jdqlnl",
+    "prv_hist_osage_akz45q",
+    "prv_hist_oto_apx4n7"
+  ],
+  "prv_hist_mithaka_1sa9z9q": [
+    "prv_hist_karuwali_2ctiwf",
+    "prv_hist_pitta_pitta_168859u",
+    "prv_hist_wangkamana_7rmg15",
+    "prv_hist_yarluyandi_xh3m4j"
+  ],
+  "prv_hist_miwa_1w415pj": [
+    "prv_hist_gamberre_1re2r24",
+    "prv_hist_kwini_x5i5a7",
+    "prv_hist_ngarinyin_171dxaq"
+  ],
+  "prv_hist_miwok_1e1qf52": ["prv_hist_northern_paiute_19h3x5b", "prv_hist_yokuts_17kihlw"],
+  "prv_hist_miyan_sjowi1": [
+    "prv_hist_iningai_cy8gm8",
+    "prv_hist_yagalingu_1ilkn4q",
+    "prv_hist_yambina_10s9qyu",
+    "prv_hist_yangga_16fmhs0",
+    "prv_hist_yilba_1twimhk",
+    "prv_hist_yirandali_8rfexg"
+  ],
+  "prv_hist_modena_25qy27": [
+    "prv_hist_fivizzano_5f6hz3",
+    "prv_hist_genoa_eitpb1",
+    "prv_hist_lombardy_2vtjer",
+    "prv_hist_lucca_15bjj6z",
+    "prv_hist_massa_lei4ds",
+    "prv_hist_milan_1fa0pm6",
+    "prv_hist_papal_states_1ls7617",
+    "prv_hist_parma_lru30a",
+    "prv_hist_pontremoli_jdg3i4",
+    "prv_hist_tuscany_heaomy",
+    "prv_hist_venice_12k1qyt"
+  ],
+  "prv_hist_modoc_pyr58l": ["prv_hist_northern_paiute_19h3x5b"],
+  "prv_hist_montagnais_innu_1oja89c": ["prv_hist_naskapi_innu_14ljnhs"],
+  "prv_hist_morocco_j5wux": [
+    "prv_hist_algiers_2uxs2o",
+    "prv_hist_ottoman_empire_yesr83",
+    "prv_hist_songhai_18ksh6a"
+  ],
+  "prv_hist_mossi_states_774yys": [],
+  "prv_hist_mpalitjanh_d4md37": [
+    "prv_hist_anggamudi_ibqipe",
+    "prv_hist_kuuku_ya_u_1ejmr6r",
+    "prv_hist_luthigh_jhkfoy",
+    "prv_hist_teppathiggi_1d45tg1",
+    "prv_hist_wuthathi_ouo5df",
+    "prv_hist_yinwum_k00dui"
+  ],
+  "prv_hist_mudburra_16itacb": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_gurindji_1rqpu0j",
+    "prv_hist_jingili_5xq18t",
+    "prv_hist_karangpurru_adhqur",
+    "prv_hist_warlmanpa_9tkhxm",
+    "prv_hist_yangman_usy2vs"
+  ],
+  "prv_hist_mughal_empire_qll6pn": [
+    "prv_hist_ahmadnagar_1d991uf",
+    "prv_hist_arakan_1h2oduh",
+    "prv_hist_ava_11fvm9p",
+    "prv_hist_bhutan_exzyip",
+    "prv_hist_central_asian_khanates_17b38uz",
+    "prv_hist_islamic_and_hindu_states_8v5a56",
+    "prv_hist_khiva_khanate_82r4z4",
+    "prv_hist_nepal_1b22f8p",
+    "prv_hist_safavid_empire_rmsx0p",
+    "prv_hist_shan_states_1tmmjwd",
+    "prv_hist_tibet_1gxg1qt"
+  ],
+  "prv_hist_murrinh_patha_12l1mn3": [
+    "prv_hist_jaminjung_1gtpbdy",
+    "prv_hist_marringarr_fcuzds",
+    "prv_hist_ngan_gikurunggurr_1nzd97e",
+    "prv_hist_ngan_giwumirri_bybmp1",
+    "prv_hist_wagiman_1wjcbev"
+  ],
+  "prv_hist_muruwari_clcyt3": [
+    "prv_hist_barranbinya_h1iy7u",
+    "prv_hist_gunu_1gocbv4",
+    "prv_hist_kamilaroi_1q8xqqu",
+    "prv_hist_kooma_trd94i",
+    "prv_hist_kunja_xbet7c"
+  ],
+  "prv_hist_mutumui_1hu5hah": [
+    "prv_hist_guugu_yimidhirr_jvzxgm",
+    "prv_hist_kokowarra_du8l4w",
+    "prv_hist_lamalama_12blyst"
+  ],
+  "prv_hist_nakako_srdbp6": [
+    "prv_hist_kokatha_1d3bc1i",
+    "prv_hist_mandjindja_nnb6rv",
+    "prv_hist_ngaanyatjarra_1eyp3p4",
+    "prv_hist_ngalea_12hd43x",
+    "prv_hist_ngatatjara_1g5ase",
+    "prv_hist_nyanganyatjara_7pj0ur",
+    "prv_hist_pitjantjatjara_cl4l3k"
+  ],
+  "prv_hist_nakara_s82eet": [
+    "prv_hist_burarra_5b23n0",
+    "prv_hist_dangbon_a4ubi0",
+    "prv_hist_gungurugoni_uj78hr",
+    "prv_hist_gunibidji_he4vw2"
+  ],
+  "prv_hist_nana_gm6uox": [
+    "prv_hist_kuwarra_rm6ub8",
+    "prv_hist_ngaanyatjarra_1eyp3p4",
+    "prv_hist_tjalkanti_kk0rjf",
+    "prv_hist_tjupany_1o0vuww",
+    "prv_hist_wawula_1rin18a"
+  ],
+  "prv_hist_naples_dnadb4": ["prv_hist_papal_states_1ls7617"],
+  "prv_hist_narangga_xw9vwa": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_kaurna_pangkarra_g1raj8"
+  ],
+  "prv_hist_nari_nari_1qfa05z": [
+    "prv_hist_madi_madi_1361rz9",
+    "prv_hist_wadi_wadi_bjzm8x",
+    "prv_hist_wemba_wemba_m0ko9f",
+    "prv_hist_wiradjuri_u41jrk",
+    "prv_hist_yitha_yitha_6h0v3"
+  ],
+  "prv_hist_naskapi_innu_14ljnhs": ["prv_hist_montagnais_innu_1oja89c"],
+  "prv_hist_natchez_78wtl8": [
+    "prv_hist_atakapa_1ds3cjs",
+    "prv_hist_caddo_6jqtpu",
+    "prv_hist_houma_1gguld9",
+    "prv_hist_tunica_1nh59dz"
+  ],
+  "prv_hist_nawu_7ocf74": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_banggarla_1byfc94",
+    "prv_hist_wirangu_qdtolm"
+  ],
+  "prv_hist_nepal_1b22f8p": ["prv_hist_mughal_empire_qll6pn", "prv_hist_tibet_1gxg1qt"],
+  "prv_hist_new_amsterdam_5bqbhx": [
+    "prv_hist_iroquois_q8udw2",
+    "prv_hist_massachusetts_bay_1s9n55n"
+  ],
+  "prv_hist_new_france_17d0ukg": [],
+  "prv_hist_nez_perce_1mnl9it": [
+    "prv_hist_cayuse_iqh35f",
+    "prv_hist_northern_paiute_19h3x5b",
+    "prv_hist_shoshoni_yx9snc"
+  ],
+  "prv_hist_ngaanyatjarra_1eyp3p4": [
+    "prv_hist_mandjindja_nnb6rv",
+    "prv_hist_mardu_1glph4o",
+    "prv_hist_nakako_srdbp6",
+    "prv_hist_nana_gm6uox",
+    "prv_hist_ngatatjara_1g5ase",
+    "prv_hist_tjalkanti_kk0rjf",
+    "prv_hist_wawula_1rin18a"
+  ],
+  "prv_hist_ngadjuri_pubejz": [
+    "prv_hist_andyamathanha_jznrea",
+    "prv_hist_banggarla_1byfc94",
+    "prv_hist_danggali_vvi79a",
+    "prv_hist_kaurna_pangkarra_g1raj8",
+    "prv_hist_malyangaba_pa8qoa",
+    "prv_hist_meru_8u7hq",
+    "prv_hist_nukunu_q6ubct",
+    "prv_hist_peramangk_nrjxsr",
+    "prv_hist_wiljali_1kx2sv1"
+  ],
+  "prv_hist_ngalakan_164cmlk": [
+    "prv_hist_alawa_1b7no8n",
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_jawoyn_i4mwsd",
+    "prv_hist_mangarayi_11jx4pw",
+    "prv_hist_mara_fmwg3i"
+  ],
+  "prv_hist_ngalawangka_3cawqt": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_banjima_k91599",
+    "prv_hist_watjarri_1cc951d",
+    "prv_hist_wawula_1rin18a"
+  ],
+  "prv_hist_ngalea_12hd43x": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_kokatha_1d3bc1i",
+    "prv_hist_nakako_srdbp6",
+    "prv_hist_nyanganyatjara_7pj0ur",
+    "prv_hist_wirangu_qdtolm"
+  ],
+  "prv_hist_ngaliwuru_179ojmr": [
+    "prv_hist_karangpurru_adhqur",
+    "prv_hist_ngarinman_8296wu",
+    "prv_hist_nungali_1jl98xx",
+    "prv_hist_wardaman_1hwrzwq"
+  ],
+  "prv_hist_ngalkbun_uevijd": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_ngandi_f2zqgu",
+    "prv_hist_nunggubuyu_oukop0",
+    "prv_hist_rembarnga_lmn5y2",
+    "prv_hist_yolngu_6zkztf"
+  ],
+  "prv_hist_ngambri_kxtssj": [
+    "prv_hist_gundungurra_b8zpf7",
+    "prv_hist_ngarigo_8yzjx2",
+    "prv_hist_ngunawal_1py740g",
+    "prv_hist_yuin_gpzx34"
+  ],
+  "prv_hist_ngamini_xq0sum": [
+    "prv_hist_dieri_bzavlc",
+    "prv_hist_karangura_ltbfqn",
+    "prv_hist_wangkangurru_1mk6d8r",
+    "prv_hist_yarluyandi_xh3m4j",
+    "prv_hist_yawarawarka_gf9g90"
+  ],
+  "prv_hist_ngan_gikurunggurr_1nzd97e": [
+    "prv_hist_marramaninjsji_tn9mib",
+    "prv_hist_marringarr_fcuzds",
+    "prv_hist_marrithiyel_1ekdr0p",
+    "prv_hist_murrinh_patha_12l1mn3",
+    "prv_hist_ngan_giwumirri_bybmp1"
+  ],
+  "prv_hist_ngan_giwumirri_bybmp1": [
+    "prv_hist_malak_malak_1yfk7kf",
+    "prv_hist_marramaninjsji_tn9mib",
+    "prv_hist_marringarr_fcuzds",
+    "prv_hist_murrinh_patha_12l1mn3",
+    "prv_hist_ngan_gikurunggurr_1nzd97e",
+    "prv_hist_wagiman_1wjcbev"
+  ],
+  "prv_hist_ngandi_f2zqgu": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_mara_fmwg3i",
+    "prv_hist_ngalkbun_uevijd",
+    "prv_hist_nunggubuyu_oukop0"
+  ],
+  "prv_hist_ngandji_iea8di": [
+    "prv_hist_alawa_1b7no8n",
+    "prv_hist_binbinga_1nh6z4v",
+    "prv_hist_gunindiri_13q5tlg",
+    "prv_hist_jingili_5xq18t",
+    "prv_hist_wambaya_1vyjx6v"
+  ],
+  "prv_hist_nganyaywana_1h11oav": [
+    "prv_hist_biripi_a0emku",
+    "prv_hist_dainggatti_15wpuw1",
+    "prv_hist_gumbainggir_dqiz4z",
+    "prv_hist_kamilaroi_1q8xqqu",
+    "prv_hist_ngarabal_ho3vgb"
+  ],
+  "prv_hist_ngarabal_ho3vgb": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_barunggam_fxpb1",
+    "prv_hist_bigambul_1jmrmsu",
+    "prv_hist_bundjalung_d144bj",
+    "prv_hist_gumbainggir_dqiz4z",
+    "prv_hist_kamilaroi_1q8xqqu",
+    "prv_hist_nganyaywana_1h11oav"
+  ],
+  "prv_hist_ngargad_kzb90n": [
+    "prv_hist_bindjali_1otj7g8",
+    "prv_hist_meru_8u7hq",
+    "prv_hist_ngarrindjeri_bestm",
+    "prv_hist_wergaia_ursm5v"
+  ],
+  "prv_hist_ngarigo_8yzjx2": [
+    "prv_hist_bidwell_oq3hd4",
+    "prv_hist_jaitmatang_1gxaidr",
+    "prv_hist_kurnai_11qtpxv",
+    "prv_hist_ngambri_kxtssj",
+    "prv_hist_ngunawal_1py740g",
+    "prv_hist_wiradjuri_u41jrk",
+    "prv_hist_yuin_gpzx34"
+  ],
+  "prv_hist_ngarinman_8296wu": [
+    "prv_hist_bilinara_1i70gkj",
+    "prv_hist_doolboong_miriwoong_li3nzg",
+    "prv_hist_gurindji_1rqpu0j",
+    "prv_hist_jaminjung_1gtpbdy",
+    "prv_hist_karangpurru_adhqur",
+    "prv_hist_kija_bwo5iw",
+    "prv_hist_ngaliwuru_179ojmr",
+    "prv_hist_nungali_1jl98xx"
+  ],
+  "prv_hist_ngarinyin_171dxaq": [
+    "prv_hist_doolboong_miriwoong_li3nzg",
+    "prv_hist_gamberre_1re2r24",
+    "prv_hist_kadjerong_u3d1la",
+    "prv_hist_kija_bwo5iw",
+    "prv_hist_kwini_x5i5a7",
+    "prv_hist_miwa_1w415pj",
+    "prv_hist_unggumi_fembtp",
+    "prv_hist_worla_1q99818",
+    "prv_hist_worora_16otspt",
+    "prv_hist_wunambul_jboisa",
+    "prv_hist_yiiji_bw7oej"
+  ],
+  "prv_hist_ngarla_7iieb6": ["prv_hist_nyamal_umhre7", "prv_hist_nyangumarda_17dh966"],
+  "prv_hist_ngarluma_p9po1s": [
+    "prv_hist_jaburrara_1blwcy9",
+    "prv_hist_kariyarra_1bng8p",
+    "prv_hist_martuthunira_vglrkb",
+    "prv_hist_yindjibarndi_7ny4p2"
+  ],
+  "prv_hist_ngarrindjeri_bestm": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_bindjali_1otj7g8",
+    "prv_hist_buandig_1pabqhx",
+    "prv_hist_kaurna_pangkarra_g1raj8",
+    "prv_hist_meru_8u7hq",
+    "prv_hist_ngargad_kzb90n",
+    "prv_hist_peramangk_nrjxsr"
+  ],
+  "prv_hist_ngarti_ijs79e": [
+    "prv_hist_jaru_y4zzyd",
+    "prv_hist_kukatja_ixyag2",
+    "prv_hist_pintupi_yourvw",
+    "prv_hist_warlpiri_1vsyl6d"
+  ],
+  "prv_hist_ngatatjara_1g5ase": [
+    "prv_hist_mardu_1glph4o",
+    "prv_hist_nakako_srdbp6",
+    "prv_hist_ngaanyatjarra_1eyp3p4",
+    "prv_hist_pintupi_yourvw",
+    "prv_hist_pitjantjatjara_cl4l3k"
+  ],
+  "prv_hist_ngatjumay_b4uskb": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_kalaako_malpa_1oouqm9",
+    "prv_hist_mirning_16mzti9",
+    "prv_hist_wudjari_bzlqgr"
+  ],
+  "prv_hist_ngawun_rn7z4p": [
+    "prv_hist_mayi_kulan_ncxws7",
+    "prv_hist_mayi_thakurti_1xencmc",
+    "prv_hist_mayi_yapi_ia034p",
+    "prv_hist_mbara_lkfoj8",
+    "prv_hist_wunumara_gy97pf",
+    "prv_hist_yanga_1n3775z"
+  ],
+  "prv_hist_ngombur_l8nc5f": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_bukurnidja_1g5geq8",
+    "prv_hist_gagudju_f96eye",
+    "prv_hist_mbukarla_1kksaly"
+  ],
+  "prv_hist_nguburinji_1gqursw": [
+    "prv_hist_ganggalida_3p2tt6",
+    "prv_hist_mayi_kutuna_ebq8b2",
+    "prv_hist_mingin_9e54tr",
+    "prv_hist_waanyi_16qcs64",
+    "prv_hist_wakabunga_1x6l8zy"
+  ],
+  "prv_hist_ngumbarl_13r99ar": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_jabirrjabirr_iu4xul",
+    "prv_hist_jukun_1hzhb66",
+    "prv_hist_nimanburu_bfvdyw",
+    "prv_hist_yawuru_v70x9q"
+  ],
+  "prv_hist_ngunawal_1py740g": [
+    "prv_hist_gundungurra_b8zpf7",
+    "prv_hist_ngambri_kxtssj",
+    "prv_hist_ngarigo_8yzjx2",
+    "prv_hist_wiradjuri_u41jrk",
+    "prv_hist_yuin_gpzx34"
+  ],
+  "prv_hist_nguri_cmdqhw": [
+    "prv_hist_bidjara_qa18ys",
+    "prv_hist_garingbal_1m7plna",
+    "prv_hist_gungabula_12qghcf",
+    "prv_hist_gunggari_14skn6n"
+  ],
+  "prv_hist_ngurraiillam_t6axb0": [
+    "prv_hist_baraba_baraba_h3lzvd",
+    "prv_hist_dja_dja_wurrung_mjq0bj",
+    "prv_hist_taungurung_1n9xkxv",
+    "prv_hist_yorta_yorta_1jf0817"
+  ],
+  "prv_hist_nhanta_1u8zzpj": [
+    "prv_hist_amangu_s2114o",
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_malkana_1ijqs7o",
+    "prv_hist_watjarri_1cc951d"
+  ],
+  "prv_hist_nhuwala_dhd0bl": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_kurrama_chp7we",
+    "prv_hist_martuthunira_vglrkb",
+    "prv_hist_thalanyji_ig8tdb"
+  ],
+  "prv_hist_nimanburu_bfvdyw": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_jabirrjabirr_iu4xul",
+    "prv_hist_ngumbarl_13r99ar",
+    "prv_hist_nyikina_tpb9j6",
+    "prv_hist_nyul_nyul_606clf",
+    "prv_hist_yawuru_v70x9q"
+  ],
+  "prv_hist_nogai_horde_15ttsfn": [
+    "prv_hist_central_asian_khanates_17b38uz",
+    "prv_hist_khiva_khanate_82r4z4",
+    "prv_hist_quazaq_khanate_1pbf6iy",
+    "prv_hist_tsardom_of_muscovy_p4dn7m"
+  ],
+  "prv_hist_northern_paiute_19h3x5b": [
+    "prv_hist_cayuse_iqh35f",
+    "prv_hist_kalapuya_1baoqyr",
+    "prv_hist_maiou_15cztxm",
+    "prv_hist_miwok_1e1qf52",
+    "prv_hist_modoc_pyr58l",
+    "prv_hist_nez_perce_1mnl9it",
+    "prv_hist_shoshoni_yx9snc",
+    "prv_hist_tenimo_1grpx37",
+    "prv_hist_umatilla_mfhmf4"
+  ],
+  "prv_hist_nukunu_q6ubct": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_banggarla_1byfc94",
+    "prv_hist_kaurna_pangkarra_g1raj8",
+    "prv_hist_ngadjuri_pubejz"
+  ],
+  "prv_hist_nungali_1jl98xx": [
+    "prv_hist_jaminjung_1gtpbdy",
+    "prv_hist_ngaliwuru_179ojmr",
+    "prv_hist_ngarinman_8296wu",
+    "prv_hist_wardaman_1hwrzwq"
+  ],
+  "prv_hist_nunggubuyu_oukop0": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_mara_fmwg3i",
+    "prv_hist_ngalkbun_uevijd",
+    "prv_hist_ngandi_f2zqgu",
+    "prv_hist_yolngu_6zkztf"
+  ],
+  "prv_hist_nyaki_nyaki_1u4m6eu": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_ballardong_1vqaetl",
+    "prv_hist_kalaako_malpa_1oouqm9",
+    "prv_hist_kalaamaya_1ny1ij5",
+    "prv_hist_wiilman_b1w8ys",
+    "prv_hist_wudjari_bzlqgr"
+  ],
+  "prv_hist_nyamal_umhre7": [
+    "prv_hist_kariyarra_1bng8p",
+    "prv_hist_mardu_1glph4o",
+    "prv_hist_ngarla_7iieb6",
+    "prv_hist_nyangumarda_17dh966",
+    "prv_hist_palyku_nj5zq9",
+    "prv_hist_yindjibarndi_7ny4p2"
+  ],
+  "prv_hist_nyanganyatjara_7pj0ur": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_mandjindja_nnb6rv",
+    "prv_hist_mirning_16mzti9",
+    "prv_hist_nakako_srdbp6",
+    "prv_hist_ngalea_12hd43x",
+    "prv_hist_tjalkanti_kk0rjf",
+    "prv_hist_wangkathaa_gjxtbs"
+  ],
+  "prv_hist_nyangumarda_17dh966": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_karajarri_18gfxhg",
+    "prv_hist_mangala_1j5cuak",
+    "prv_hist_mardu_1glph4o",
+    "prv_hist_ngarla_7iieb6",
+    "prv_hist_nyamal_umhre7",
+    "prv_hist_yulparitja_1ewk1e4"
+  ],
+  "prv_hist_nyawaygi_100rdjm": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_gugu_badhun_1leaunq",
+    "prv_hist_wargamaygan_6w5go8",
+    "prv_hist_wulgurukaba_1qhyuuz"
+  ],
+  "prv_hist_nyikina_tpb9j6": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_gooniyandi_12g090s",
+    "prv_hist_mangala_1j5cuak",
+    "prv_hist_nimanburu_bfvdyw",
+    "prv_hist_punuba_h60bcy",
+    "prv_hist_unggumi_fembtp",
+    "prv_hist_walmatjarri_1l79ea5",
+    "prv_hist_warwa_z5qhjp",
+    "prv_hist_yawuru_v70x9q"
+  ],
+  "prv_hist_nyul_nyul_606clf": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_bardi_yous4p",
+    "prv_hist_jabirrjabirr_iu4xul",
+    "prv_hist_nimanburu_bfvdyw"
+  ],
+  "prv_hist_obiwa_1z0z8o3": [
+    "prv_hist_assiniboin_16pnzrg",
+    "prv_hist_cree_b2xnu6",
+    "prv_hist_fox_72n2lq",
+    "prv_hist_santee_18cn86d",
+    "prv_hist_yankontai_cz9kjt"
+  ],
+  "prv_hist_omaha_tvq28z": [
+    "prv_hist_iowa_50x6tl",
+    "prv_hist_oto_apx4n7",
+    "prv_hist_pawnee_qblm9p",
+    "prv_hist_ponca_1whl6ji",
+    "prv_hist_yankton_1i1m13x"
+  ],
+  "prv_hist_oman_vstvuq": ["prv_hist_gharra_1h8uxw0"],
+  "prv_hist_oromo_1kcuxfl": ["prv_hist_awsa_1sq10gl", "prv_hist_ethiopia_4bedm6"],
+  "prv_hist_osage_akz45q": [
+    "prv_hist_caddo_6jqtpu",
+    "prv_hist_illinnois_s9q34g",
+    "prv_hist_kansa_jdqlnl",
+    "prv_hist_kiowa_pjs4i2",
+    "prv_hist_missouri_54nzic",
+    "prv_hist_quapaw_190gquq",
+    "prv_hist_wichita_1w7gke6"
+  ],
+  "prv_hist_oto_apx4n7": [
+    "prv_hist_iowa_50x6tl",
+    "prv_hist_kansa_jdqlnl",
+    "prv_hist_missouri_54nzic",
+    "prv_hist_omaha_tvq28z",
+    "prv_hist_pawnee_qblm9p"
+  ],
+  "prv_hist_ottoman_empire_yesr83": [
+    "prv_hist_algiers_2uxs2o",
+    "prv_hist_awsa_1sq10gl",
+    "prv_hist_ethiopia_4bedm6",
+    "prv_hist_hadramaut_5obzw8",
+    "prv_hist_holy_roman_empire_ww24g6",
+    "prv_hist_morocco_j5wux",
+    "prv_hist_polish_lithuanian_commonwealth_1hgvc5m",
+    "prv_hist_safavid_empire_rmsx0p",
+    "prv_hist_tsardom_of_muscovy_p4dn7m",
+    "prv_hist_tunis_15g53ak"
+  ],
+  "prv_hist_oyo_1u0dy6": ["prv_hist_benin_nymb11"],
+  "prv_hist_palyku_nj5zq9": [
+    "prv_hist_banjima_k91599",
+    "prv_hist_mardu_1glph4o",
+    "prv_hist_nyamal_umhre7",
+    "prv_hist_wawula_1rin18a",
+    "prv_hist_yindjibarndi_7ny4p2"
+  ],
+  "prv_hist_pampas_cultures_efg2ze": [
+    "prv_hist_andean_hunter_gatherers_1jjihv0",
+    "prv_hist_patagonian_shellfish_and_marine_mammal_hunte_1xmjiao",
+    "prv_hist_savanna_hunter_gatherers_y6jkmn",
+    "prv_hist_vice_royalty_of_peru_pos64t"
+  ],
+  "prv_hist_papal_states_1ls7617": [
+    "prv_hist_modena_25qy27",
+    "prv_hist_naples_dnadb4",
+    "prv_hist_tuscany_heaomy",
+    "prv_hist_venice_12k1qyt"
+  ],
+  "prv_hist_papous_ghe3jn": ["prv_hist_dutch_east_indies_1m2w1ti"],
+  "prv_hist_parma_lru30a": [
+    "prv_hist_fivizzano_5f6hz3",
+    "prv_hist_genoa_eitpb1",
+    "prv_hist_lombardy_2vtjer",
+    "prv_hist_milan_1fa0pm6",
+    "prv_hist_modena_25qy27",
+    "prv_hist_pontremoli_jdg3i4"
+  ],
+  "prv_hist_patagonian_shellfish_and_marine_mammal_hunte_1xmjiao": [
+    "prv_hist_pampas_cultures_efg2ze",
+    "prv_hist_vice_royalty_of_peru_pos64t"
+  ],
+  "prv_hist_pawnee_qblm9p": [
+    "prv_hist_arapaho_qldwwv",
+    "prv_hist_kansa_jdqlnl",
+    "prv_hist_kiowa_pjs4i2",
+    "prv_hist_omaha_tvq28z",
+    "prv_hist_oto_apx4n7",
+    "prv_hist_ponca_1whl6ji",
+    "prv_hist_teton_6fyhxn"
+  ],
+  "prv_hist_payungu_1vy2afu": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_maya_debcg5",
+    "prv_hist_purduna_458eau",
+    "prv_hist_thalanyji_ig8tdb",
+    "prv_hist_tharrgari_1l8rg31"
+  ],
+  "prv_hist_peramangk_nrjxsr": [
+    "prv_hist_kaurna_pangkarra_g1raj8",
+    "prv_hist_meru_8u7hq",
+    "prv_hist_ngadjuri_pubejz",
+    "prv_hist_ngarrindjeri_bestm"
+  ],
+  "prv_hist_philippines_1338jsc": [],
+  "prv_hist_pinikura_h0izmu": [
+    "prv_hist_jiwarli_jku2r9",
+    "prv_hist_jurruru_13spxpe",
+    "prv_hist_kurrama_chp7we",
+    "prv_hist_thalanyji_ig8tdb"
+  ],
+  "prv_hist_pinjarup_p9ztos": [
+    "prv_hist_kaniyang_1d7de41",
+    "prv_hist_wajuk_1496yvt",
+    "prv_hist_wiilman_b1w8ys"
+  ],
+  "prv_hist_pintupi_yourvw": [
+    "prv_hist_kukatja_ixyag2",
+    "prv_hist_luritja_1855uv8",
+    "prv_hist_mardu_1glph4o",
+    "prv_hist_ngarti_ijs79e",
+    "prv_hist_ngatatjara_1g5ase",
+    "prv_hist_pitjantjatjara_cl4l3k",
+    "prv_hist_warlpiri_1vsyl6d"
+  ],
+  "prv_hist_pirlatapa_1tn1enn": [
+    "prv_hist_andyamathanha_jznrea",
+    "prv_hist_dieri_bzavlc",
+    "prv_hist_malyangaba_pa8qoa",
+    "prv_hist_wadigali_1wsybr1",
+    "prv_hist_yandruwandha_tmmbn5"
+  ],
+  "prv_hist_pitjantjatjara_cl4l3k": [
+    "prv_hist_kokatha_1d3bc1i",
+    "prv_hist_luritja_1855uv8",
+    "prv_hist_nakako_srdbp6",
+    "prv_hist_ngatatjara_1g5ase",
+    "prv_hist_pintupi_yourvw",
+    "prv_hist_yankuntjatjara_hqbggs"
+  ],
+  "prv_hist_pitta_pitta_168859u": [
+    "prv_hist_karuwali_2ctiwf",
+    "prv_hist_maiawali_4fpbae",
+    "prv_hist_mithaka_1sa9z9q",
+    "prv_hist_wangkamana_7rmg15",
+    "prv_hist_warluwarra_4e3gud",
+    "prv_hist_yalarrnga_1mijn5q",
+    "prv_hist_yanda_1inp864"
+  ],
+  "prv_hist_polish_lithuanian_commonwealth_1hgvc5m": [
+    "prv_hist_holy_roman_empire_ww24g6",
+    "prv_hist_ottoman_empire_yesr83",
+    "prv_hist_prussia_1bjv03m",
+    "prv_hist_sweden_1he15ql",
+    "prv_hist_tsardom_of_muscovy_p4dn7m"
+  ],
+  "prv_hist_polynesians_q7nkk6": [],
+  "prv_hist_pomo_1xae688": [],
+  "prv_hist_ponca_1whl6ji": [
+    "prv_hist_omaha_tvq28z",
+    "prv_hist_pawnee_qblm9p",
+    "prv_hist_teton_6fyhxn",
+    "prv_hist_yankton_1i1m13x"
+  ],
+  "prv_hist_pontremoli_jdg3i4": [
+    "prv_hist_genoa_eitpb1",
+    "prv_hist_modena_25qy27",
+    "prv_hist_parma_lru30a"
+  ],
+  "prv_hist_portugal_ap23k7": ["prv_hist_spain_1s1lfqm"],
+  "prv_hist_portuguese_brazil_16msotq": [
+    "prv_hist_amazon_hunter_gatherers_1e08msl",
+    "prv_hist_dutch_brazil_h1na4h",
+    "prv_hist_savanna_hunter_gatherers_y6jkmn"
+  ],
+  "prv_hist_portuguese_east_africa_36anr5": [],
+  "prv_hist_portuguese_guinea_1td6tdd": [],
+  "prv_hist_post_ming_warlords_s2ed3v": [
+    "prv_hist_ai_viet_16rdo5l",
+    "prv_hist_ava_11fvm9p",
+    "prv_hist_laotian_states_1g04kuz",
+    "prv_hist_manchu_empire_x5ws8h",
+    "prv_hist_shan_states_1tmmjwd"
+  ],
+  "prv_hist_potawatomi_1rwd7ww": ["prv_hist_erie_193o8oo", "prv_hist_miami_c2v0q0"],
+  "prv_hist_prussia_1bjv03m": [
+    "prv_hist_austrian_empire_4ushiu",
+    "prv_hist_polish_lithuanian_commonwealth_1hgvc5m"
+  ],
+  "prv_hist_punuba_h60bcy": [
+    "prv_hist_gooniyandi_12g090s",
+    "prv_hist_kija_bwo5iw",
+    "prv_hist_nyikina_tpb9j6",
+    "prv_hist_unggumi_fembtp",
+    "prv_hist_worla_1q99818"
+  ],
+  "prv_hist_purduna_458eau": [
+    "prv_hist_jiwarli_jku2r9",
+    "prv_hist_payungu_1vy2afu",
+    "prv_hist_thalanyji_ig8tdb",
+    "prv_hist_tharrgari_1l8rg31",
+    "prv_hist_thiin_bmzx0n"
+  ],
+  "prv_hist_quapaw_190gquq": [
+    "prv_hist_caddo_6jqtpu",
+    "prv_hist_illinnois_s9q34g",
+    "prv_hist_osage_akz45q",
+    "prv_hist_tunica_1nh59dz"
+  ],
+  "prv_hist_quazaq_khanate_1pbf6iy": [
+    "prv_hist_central_asian_khanates_17b38uz",
+    "prv_hist_khiva_khanate_82r4z4",
+    "prv_hist_nogai_horde_15ttsfn",
+    "prv_hist_tsardom_of_muscovy_p4dn7m"
+  ],
+  "prv_hist_rembarnga_lmn5y2": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_dangbon_a4ubi0",
+    "prv_hist_ngalkbun_uevijd",
+    "prv_hist_yolngu_6zkztf"
+  ],
+  "prv_hist_republic_of_the_seven_zenden_1k5perc": [
+    "prv_hist_milan_1fa0pm6",
+    "prv_hist_sardinia_piedmont_1ws9drx",
+    "prv_hist_swiss_confederation_lt0lah"
+  ],
+  "prv_hist_rozwi_1tz9jvs": [],
+  "prv_hist_safavid_empire_rmsx0p": [
+    "prv_hist_central_asian_khanates_17b38uz",
+    "prv_hist_khiva_khanate_82r4z4",
+    "prv_hist_mughal_empire_qll6pn",
+    "prv_hist_ottoman_empire_yesr83"
+  ],
+  "prv_hist_santee_18cn86d": [
+    "prv_hist_illinnois_s9q34g",
+    "prv_hist_iowa_50x6tl",
+    "prv_hist_obiwa_1z0z8o3",
+    "prv_hist_yankontai_cz9kjt",
+    "prv_hist_yankton_1i1m13x"
+  ],
+  "prv_hist_sardinia_piedmont_1ws9drx": [
+    "prv_hist_france_y6f35m",
+    "prv_hist_franche_comte_m9c5wn",
+    "prv_hist_genoa_eitpb1",
+    "prv_hist_milan_1fa0pm6",
+    "prv_hist_republic_of_the_seven_zenden_1k5perc",
+    "prv_hist_swiss_confederation_lt0lah"
+  ],
+  "prv_hist_sardinia_ztxg0i": [],
+  "prv_hist_savanna_hunter_gatherers_y6jkmn": [
+    "prv_hist_amazon_hunter_gatherers_1e08msl",
+    "prv_hist_andean_hunter_gatherers_1jjihv0",
+    "prv_hist_pampas_cultures_efg2ze",
+    "prv_hist_portuguese_brazil_16msotq",
+    "prv_hist_vice_royalty_of_peru_pos64t"
+  ],
+  "prv_hist_scottalnd_19mzxvv": ["prv_hist_england_and_ireland_89s2kc"],
+  "prv_hist_senegal_m31fqc": [],
+  "prv_hist_serano_1gyobmj": ["prv_hist_kawahsu_vnl55b", "prv_hist_yokuts_17kihlw"],
+  "prv_hist_shan_states_1tmmjwd": [
+    "prv_hist_ava_11fvm9p",
+    "prv_hist_manchu_empire_x5ws8h",
+    "prv_hist_mughal_empire_qll6pn",
+    "prv_hist_post_ming_warlords_s2ed3v",
+    "prv_hist_tibet_1gxg1qt"
+  ],
+  "prv_hist_shawnee_1wlifke": [
+    "prv_hist_cherokee_d97dy5",
+    "prv_hist_illinnois_s9q34g",
+    "prv_hist_yuchi_1j6efhv"
+  ],
+  "prv_hist_shoshoni_yx9snc": [
+    "prv_hist_arapaho_qldwwv",
+    "prv_hist_blackfoot_1dtac20",
+    "prv_hist_crow_644rjy",
+    "prv_hist_kawahsu_vnl55b",
+    "prv_hist_nez_perce_1mnl9it",
+    "prv_hist_northern_paiute_19h3x5b",
+    "prv_hist_southern_paiute_vzgl3h",
+    "prv_hist_ute_16riea3"
+  ],
+  "prv_hist_shuar_1k4vava": ["prv_hist_vice_royalty_of_peru_pos64t"],
+  "prv_hist_sicily_12oiqim": [],
+  "prv_hist_songhai_18ksh6a": ["prv_hist_morocco_j5wux"],
+  "prv_hist_south_carolina_1mdvqyb": [],
+  "prv_hist_southern_paiute_vzgl3h": [
+    "prv_hist_hopie_11p883m",
+    "prv_hist_shoshoni_yx9snc",
+    "prv_hist_ute_16riea3"
+  ],
+  "prv_hist_spain_1s1lfqm": ["prv_hist_france_y6f35m", "prv_hist_portugal_ap23k7"],
+  "prv_hist_subarctic_forest_hunter_gatherers_14drxm4": [
+    "prv_hist_assiniboin_16pnzrg",
+    "prv_hist_athabaskan_161fp17",
+    "prv_hist_cree_b2xnu6"
+  ],
+  "prv_hist_surinam_o3dpkw": [],
+  "prv_hist_suspiaq_1ulkswv": ["prv_hist_athabaskan_161fp17", "prv_hist_yup_ik_and_cup_ik_bu4kst"],
+  "prv_hist_sweden_1he15ql": [
+    "prv_hist_denmark_norway_foon7y",
+    "prv_hist_finnmark_1ctnwgl",
+    "prv_hist_holy_roman_empire_ww24g6",
+    "prv_hist_polish_lithuanian_commonwealth_1hgvc5m",
+    "prv_hist_tsardom_of_muscovy_p4dn7m"
+  ],
+  "prv_hist_swiss_confederation_lt0lah": [
+    "prv_hist_franche_comte_m9c5wn",
+    "prv_hist_holy_roman_empire_ww24g6",
+    "prv_hist_milan_1fa0pm6",
+    "prv_hist_republic_of_the_seven_zenden_1k5perc",
+    "prv_hist_sardinia_piedmont_1ws9drx",
+    "prv_hist_venice_12k1qyt"
+  ],
+  "prv_hist_t_atsaot_ine_eg7ygf": ["prv_hist_cree_b2xnu6"],
+  "prv_hist_takalak_d6pm1a": [
+    "prv_hist_agwarmin_1ttyc3f",
+    "prv_hist_kurtjar_eclek",
+    "prv_hist_walangama_1ubytxy",
+    "prv_hist_yanga_1n3775z"
+  ],
+  "prv_hist_tano_14qflrp": ["prv_hist_mescalero_1mas280"],
+  "prv_hist_tasmanian_hunter_gatherers_a85twb": [],
+  "prv_hist_taungurung_1n9xkxv": [
+    "prv_hist_baraba_baraba_h3lzvd",
+    "prv_hist_dja_dja_wurrung_mjq0bj",
+    "prv_hist_kurnai_11qtpxv",
+    "prv_hist_ngurraiillam_t6axb0",
+    "prv_hist_waveroo_fgx0ew",
+    "prv_hist_wurundjeri_nzt2by",
+    "prv_hist_yorta_yorta_1jf0817"
+  ],
+  "prv_hist_tenimo_1grpx37": [
+    "prv_hist_kalapuya_1baoqyr",
+    "prv_hist_northern_paiute_19h3x5b",
+    "prv_hist_umatilla_mfhmf4",
+    "prv_hist_yakima_1ypq6c5"
+  ],
+  "prv_hist_teppathiggi_1d45tg1": [
+    "prv_hist_anggamudi_ibqipe",
+    "prv_hist_anguthimri_17ieoad",
+    "prv_hist_luthigh_jhkfoy",
+    "prv_hist_mpalitjanh_d4md37",
+    "prv_hist_tjungundji_1krswav",
+    "prv_hist_yupangathi_1t9b7rh"
+  ],
+  "prv_hist_teton_6fyhxn": [
+    "prv_hist_arapaho_qldwwv",
+    "prv_hist_arikara_12qt1ks",
+    "prv_hist_assiniboin_16pnzrg",
+    "prv_hist_cheyenne_lrq6oe",
+    "prv_hist_crow_644rjy",
+    "prv_hist_mandan_159dxbu",
+    "prv_hist_pawnee_qblm9p",
+    "prv_hist_ponca_1whl6ji",
+    "prv_hist_yankontai_cz9kjt",
+    "prv_hist_yankton_1i1m13x"
+  ],
+  "prv_hist_thaayorre_6vlkki": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_bakanh_1g4eqfe",
+    "prv_hist_kunjen_80nv9a",
+    "prv_hist_wik_vhtak2",
+    "prv_hist_yir_yoront_1im1ys8"
+  ],
+  "prv_hist_thalanyji_ig8tdb": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_jiwarli_jku2r9",
+    "prv_hist_kurrama_chp7we",
+    "prv_hist_nhuwala_dhd0bl",
+    "prv_hist_payungu_1vy2afu",
+    "prv_hist_pinikura_h0izmu",
+    "prv_hist_purduna_458eau"
+  ],
+  "prv_hist_tharawal_9uwb17": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_dharug_18hqre",
+    "prv_hist_eora_zr6lpw",
+    "prv_hist_gundungurra_b8zpf7",
+    "prv_hist_yuin_gpzx34"
+  ],
+  "prv_hist_tharrgari_1l8rg31": [
+    "prv_hist_maya_debcg5",
+    "prv_hist_payungu_1vy2afu",
+    "prv_hist_purduna_458eau",
+    "prv_hist_thiin_bmzx0n",
+    "prv_hist_warriyangga_ysxaox",
+    "prv_hist_yinggarda_dfzgp9"
+  ],
+  "prv_hist_thiin_bmzx0n": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_jiwarli_jku2r9",
+    "prv_hist_purduna_458eau",
+    "prv_hist_tharrgari_1l8rg31",
+    "prv_hist_warriyangga_ysxaox",
+    "prv_hist_watjarri_1cc951d",
+    "prv_hist_yinhawangka_ysho03"
+  ],
+  "prv_hist_thul_garrie_waja_bindal_dk9ms": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_gugu_badhun_1leaunq",
+    "prv_hist_wulgurukaba_1qhyuuz"
+  ],
+  "prv_hist_tibet_1gxg1qt": [
+    "prv_hist_bhutan_exzyip",
+    "prv_hist_central_asian_khanates_17b38uz",
+    "prv_hist_manchu_empire_x5ws8h",
+    "prv_hist_mughal_empire_qll6pn",
+    "prv_hist_nepal_1b22f8p",
+    "prv_hist_shan_states_1tmmjwd"
+  ],
+  "prv_hist_tjalkanti_kk0rjf": [
+    "prv_hist_kuwarra_rm6ub8",
+    "prv_hist_mandjindja_nnb6rv",
+    "prv_hist_nana_gm6uox",
+    "prv_hist_ngaanyatjarra_1eyp3p4",
+    "prv_hist_nyanganyatjara_7pj0ur",
+    "prv_hist_wangkathaa_gjxtbs"
+  ],
+  "prv_hist_tjerratj_1027dlf": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_kungarakany_1t7fr4x",
+    "prv_hist_kuwema_1iklqbz",
+    "prv_hist_malak_malak_1yfk7kf"
+  ],
+  "prv_hist_tjungundji_1krswav": ["prv_hist_teppathiggi_1d45tg1", "prv_hist_yupangathi_1t9b7rh"],
+  "prv_hist_tjupany_1o0vuww": [
+    "prv_hist_badimaya_t7elq3",
+    "prv_hist_kuwarra_rm6ub8",
+    "prv_hist_nana_gm6uox",
+    "prv_hist_watjarri_1cc951d",
+    "prv_hist_wawula_1rin18a"
+  ],
+  "prv_hist_tokugawa_shogunate_192uhe": [],
+  "prv_hist_tonkawa_77c5qq": [
+    "prv_hist_atakapa_1ds3cjs",
+    "prv_hist_caddo_6jqtpu",
+    "prv_hist_comanche_1bsnvpx",
+    "prv_hist_lipan_14sx41h",
+    "prv_hist_wichita_1w7gke6"
+  ],
+  "prv_hist_tsardom_of_muscovy_p4dn7m": [
+    "prv_hist_central_asian_khanates_17b38uz",
+    "prv_hist_chukchi_3tq2m4",
+    "prv_hist_finnmark_1ctnwgl",
+    "prv_hist_khiva_khanate_82r4z4",
+    "prv_hist_nogai_horde_15ttsfn",
+    "prv_hist_ottoman_empire_yesr83",
+    "prv_hist_polish_lithuanian_commonwealth_1hgvc5m",
+    "prv_hist_quazaq_khanate_1pbf6iy",
+    "prv_hist_sweden_1he15ql"
+  ],
+  "prv_hist_tu_i_tonga_empire_74ewot": [],
+  "prv_hist_tunica_1nh59dz": [
+    "prv_hist_caddo_6jqtpu",
+    "prv_hist_natchez_78wtl8",
+    "prv_hist_quapaw_190gquq"
+  ],
+  "prv_hist_tunis_15g53ak": ["prv_hist_ottoman_empire_yesr83"],
+  "prv_hist_turrbal_tgknwh": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_waka_waka_d5yhan",
+    "prv_hist_yuggera_11wo8e9"
+  ],
+  "prv_hist_tuscany_heaomy": [
+    "prv_hist_lucca_15bjj6z",
+    "prv_hist_modena_25qy27",
+    "prv_hist_papal_states_1ls7617"
+  ],
+  "prv_hist_umatilla_mfhmf4": [
+    "prv_hist_cayuse_iqh35f",
+    "prv_hist_northern_paiute_19h3x5b",
+    "prv_hist_tenimo_1grpx37",
+    "prv_hist_yakima_1ypq6c5"
+  ],
+  "prv_hist_umbindhamu_a9f5x1": [
+    "prv_hist_bakanh_1g4eqfe",
+    "prv_hist_kaantju_1ewo8un",
+    "prv_hist_kuuku_yani_pc6xa0",
+    "prv_hist_lamalama_12blyst"
+  ],
+  "prv_hist_umida_19rw70x": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_unggarangi_16y5qik",
+    "prv_hist_unggumi_fembtp",
+    "prv_hist_warwa_z5qhjp"
+  ],
+  "prv_hist_umpila_cipl9n": [
+    "prv_hist_kaantju_1ewo8un",
+    "prv_hist_kuuku_yani_pc6xa0",
+    "prv_hist_uutaalnganu_9dzwfc"
+  ],
+  "prv_hist_unggarangi_16y5qik": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_umida_19rw70x",
+    "prv_hist_warwa_z5qhjp"
+  ],
+  "prv_hist_unggumi_fembtp": [
+    "prv_hist_ngarinyin_171dxaq",
+    "prv_hist_nyikina_tpb9j6",
+    "prv_hist_punuba_h60bcy",
+    "prv_hist_umida_19rw70x",
+    "prv_hist_warwa_z5qhjp",
+    "prv_hist_worla_1q99818",
+    "prv_hist_worora_16otspt"
+  ],
+  "prv_hist_ute_16riea3": [
+    "prv_hist_arapaho_qldwwv",
+    "prv_hist_jicarilla_1untl9s",
+    "prv_hist_shoshoni_yx9snc",
+    "prv_hist_southern_paiute_vzgl3h",
+    "prv_hist_vice_royalty_of_new_spain_12n6mfp"
+  ],
+  "prv_hist_uutaalnganu_9dzwfc": [
+    "prv_hist_kaantju_1ewo8un",
+    "prv_hist_kuuku_ya_u_1ejmr6r",
+    "prv_hist_umpila_cipl9n"
+  ],
+  "prv_hist_venice_12k1qyt": [
+    "prv_hist_holy_roman_empire_ww24g6",
+    "prv_hist_lombardy_2vtjer",
+    "prv_hist_milan_1fa0pm6",
+    "prv_hist_modena_25qy27",
+    "prv_hist_papal_states_1ls7617",
+    "prv_hist_swiss_confederation_lt0lah"
+  ],
+  "prv_hist_vice_royalty_of_new_spain_12n6mfp": [
+    "prv_hist_belize_1fknuae",
+    "prv_hist_caribbean_hunter_gatherers_1nsrse",
+    "prv_hist_essequibo_1j15231",
+    "prv_hist_mescalero_1mas280",
+    "prv_hist_ute_16riea3",
+    "prv_hist_vice_royalty_of_peru_pos64t",
+    "prv_hist_yavapai_tkey6w"
+  ],
+  "prv_hist_vice_royalty_of_peru_pos64t": [
+    "prv_hist_amazon_hunter_gatherers_1e08msl",
+    "prv_hist_andean_hunter_gatherers_1jjihv0",
+    "prv_hist_pampas_cultures_efg2ze",
+    "prv_hist_patagonian_shellfish_and_marine_mammal_hunte_1xmjiao",
+    "prv_hist_savanna_hunter_gatherers_y6jkmn",
+    "prv_hist_shuar_1k4vava",
+    "prv_hist_vice_royalty_of_new_spain_12n6mfp"
+  ],
+  "prv_hist_vijayanagara_1b3xg9b": ["prv_hist_bijapur_hkk3pc", "prv_hist_golkonda_3jkju4"],
+  "prv_hist_virginia_u3o5ny": [],
+  "prv_hist_waanyi_16qcs64": [
+    "prv_hist_ganggalida_3p2tt6",
+    "prv_hist_garawa_1q0bu40",
+    "prv_hist_gunindiri_13q5tlg",
+    "prv_hist_nguburinji_1gqursw",
+    "prv_hist_wakabunga_1x6l8zy",
+    "prv_hist_wakaya_1xj1w23",
+    "prv_hist_wambaya_1vyjx6v"
+  ],
+  "prv_hist_wadai_1a5n9wd": ["prv_hist_bagirmi_18xo180"],
+  "prv_hist_wadi_wadi_bjzm8x": [
+    "prv_hist_dadi_dadi_1yul5xj",
+    "prv_hist_madi_madi_1361rz9",
+    "prv_hist_nari_nari_1qfa05z",
+    "prv_hist_wemba_wemba_m0ko9f",
+    "prv_hist_wergaia_ursm5v"
+  ],
+  "prv_hist_wadigali_1wsybr1": [
+    "prv_hist_bandjigali_xo3ni4",
+    "prv_hist_karenggapa_1y4c2t0",
+    "prv_hist_malyangaba_pa8qoa",
+    "prv_hist_pirlatapa_1tn1enn",
+    "prv_hist_wangkumara_1fsjcsh",
+    "prv_hist_yandruwandha_tmmbn5"
+  ],
+  "prv_hist_wadjigu_xv8rgy": [
+    "prv_hist_gangulu_1huk42y",
+    "prv_hist_garingbal_1m7plna",
+    "prv_hist_gungabula_12qghcf",
+    "prv_hist_wuli_wuli_omoomy",
+    "prv_hist_yiman_zksy0p"
+  ],
+  "prv_hist_wagiman_1wjcbev": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_jaminjung_1gtpbdy",
+    "prv_hist_jawoyn_i4mwsd",
+    "prv_hist_kungarakany_1t7fr4x",
+    "prv_hist_malak_malak_1yfk7kf",
+    "prv_hist_murrinh_patha_12l1mn3",
+    "prv_hist_ngan_giwumirri_bybmp1",
+    "prv_hist_wardaman_1hwrzwq",
+    "prv_hist_warray_1iri7vj"
+  ],
+  "prv_hist_wailwan_y0d2da": [
+    "prv_hist_barranbinya_h1iy7u",
+    "prv_hist_kamilaroi_1q8xqqu",
+    "prv_hist_wiradjuri_u41jrk",
+    "prv_hist_wongaibon_ktk6o5"
+  ],
+  "prv_hist_wajuk_1496yvt": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_pinjarup_p9ztos",
+    "prv_hist_wiilman_b1w8ys",
+    "prv_hist_yuat_jh4ifa"
+  ],
+  "prv_hist_waka_waka_d5yhan": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_barunggam_fxpb1",
+    "prv_hist_dyungungoo_gubbi_gubbi_14ie1qn",
+    "prv_hist_gureng_gureng_tdvg9r",
+    "prv_hist_turrbal_tgknwh",
+    "prv_hist_yuggera_11wo8e9"
+  ],
+  "prv_hist_wakabunga_1x6l8zy": [
+    "prv_hist_kalkadoon_1pnuj5v",
+    "prv_hist_mayi_kutuna_ebq8b2",
+    "prv_hist_mayi_thakurti_1xencmc",
+    "prv_hist_mayi_yapi_ia034p",
+    "prv_hist_nguburinji_1gqursw",
+    "prv_hist_waanyi_16qcs64",
+    "prv_hist_wakaya_1xj1w23"
+  ],
+  "prv_hist_wakaya_1xj1w23": [
+    "prv_hist_alyawarre_1128sgl",
+    "prv_hist_bularnu_1m7eo62",
+    "prv_hist_kalkadoon_1pnuj5v",
+    "prv_hist_kaytej_1im3rmj",
+    "prv_hist_waanyi_16qcs64",
+    "prv_hist_wakabunga_1x6l8zy",
+    "prv_hist_wambaya_1vyjx6v",
+    "prv_hist_warumungu_1eieqwo"
+  ],
+  "prv_hist_walangama_1ubytxy": [
+    "prv_hist_kurtjar_eclek",
+    "prv_hist_kuthant_dhqd0i",
+    "prv_hist_mayi_kulan_ncxws7",
+    "prv_hist_takalak_d6pm1a",
+    "prv_hist_yanga_1n3775z"
+  ],
+  "prv_hist_walmatjarri_1l79ea5": [
+    "prv_hist_gooniyandi_12g090s",
+    "prv_hist_jaru_y4zzyd",
+    "prv_hist_kukatja_ixyag2",
+    "prv_hist_mangala_1j5cuak",
+    "prv_hist_nyikina_tpb9j6",
+    "prv_hist_yulparitja_1ewk1e4"
+  ],
+  "prv_hist_wambaya_1vyjx6v": [
+    "prv_hist_gunindiri_13q5tlg",
+    "prv_hist_jingili_5xq18t",
+    "prv_hist_ngandji_iea8di",
+    "prv_hist_waanyi_16qcs64",
+    "prv_hist_wakaya_1xj1w23",
+    "prv_hist_warumungu_1eieqwo"
+  ],
+  "prv_hist_wandjiwalgu_1yzas3i": [
+    "prv_hist_bandjigali_xo3ni4",
+    "prv_hist_barundji_1nb83sa",
+    "prv_hist_danggali_vvi79a",
+    "prv_hist_wiljali_1kx2sv1"
+  ],
+  "prv_hist_wangan_1ffocsl": [
+    "prv_hist_barna_11zs9uv",
+    "prv_hist_gabalbara_d5u4yk",
+    "prv_hist_gayiri_2s285u",
+    "prv_hist_yagalingu_1ilkn4q",
+    "prv_hist_yambina_10s9qyu"
+  ],
+  "prv_hist_wangkamana_7rmg15": [
+    "prv_hist_andegerebenha_622r6i",
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_karangura_ltbfqn",
+    "prv_hist_mithaka_1sa9z9q",
+    "prv_hist_pitta_pitta_168859u",
+    "prv_hist_wangkangurru_1mk6d8r",
+    "prv_hist_warluwarra_4e3gud",
+    "prv_hist_yarluyandi_xh3m4j"
+  ],
+  "prv_hist_wangkangurru_1mk6d8r": [
+    "prv_hist_arabana_16tbqh5",
+    "prv_hist_arrernte_u6j8ww",
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_dhirari_nr3xgs",
+    "prv_hist_dieri_bzavlc",
+    "prv_hist_karangura_ltbfqn",
+    "prv_hist_ngamini_xq0sum",
+    "prv_hist_wangkamana_7rmg15",
+    "prv_hist_yarluyandi_xh3m4j"
+  ],
+  "prv_hist_wangkathaa_gjxtbs": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_kalaako_malpa_1oouqm9",
+    "prv_hist_kalaamaya_1ny1ij5",
+    "prv_hist_kuwarra_rm6ub8",
+    "prv_hist_nyanganyatjara_7pj0ur",
+    "prv_hist_tjalkanti_kk0rjf"
+  ],
+  "prv_hist_wangkumara_1fsjcsh": [
+    "prv_hist_birria_lhlh7y",
+    "prv_hist_dharawala_1n2t6fy",
+    "prv_hist_karenggapa_1y4c2t0",
+    "prv_hist_kullilla_jvtkyn",
+    "prv_hist_margany_kale9a",
+    "prv_hist_wadigali_1wsybr1",
+    "prv_hist_yandruwandha_tmmbn5",
+    "prv_hist_yawarawarka_gf9g90"
+  ],
+  "prv_hist_wardaman_1hwrzwq": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_jaminjung_1gtpbdy",
+    "prv_hist_jawoyn_i4mwsd",
+    "prv_hist_karangpurru_adhqur",
+    "prv_hist_ngaliwuru_179ojmr",
+    "prv_hist_nungali_1jl98xx",
+    "prv_hist_wagiman_1wjcbev",
+    "prv_hist_yangman_usy2vs"
+  ],
+  "prv_hist_wardandi_zhet1z": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_bibbulman_1koztdn",
+    "prv_hist_kaniyang_1d7de41"
+  ],
+  "prv_hist_wargamaygan_6w5go8": [
+    "prv_hist_djirbalngan_cfgbj7",
+    "prv_hist_gugu_badhun_1leaunq",
+    "prv_hist_nyawaygi_100rdjm"
+  ],
+  "prv_hist_warlmanpa_9tkhxm": [
+    "prv_hist_gurindji_1rqpu0j",
+    "prv_hist_jingili_5xq18t",
+    "prv_hist_mudburra_16itacb",
+    "prv_hist_warlpiri_1vsyl6d",
+    "prv_hist_warumungu_1eieqwo"
+  ],
+  "prv_hist_warlpiri_1vsyl6d": [
+    "prv_hist_anmatyerre_1smrid",
+    "prv_hist_gurindji_1rqpu0j",
+    "prv_hist_jaru_y4zzyd",
+    "prv_hist_kaytej_1im3rmj",
+    "prv_hist_luritja_1855uv8",
+    "prv_hist_ngarti_ijs79e",
+    "prv_hist_pintupi_yourvw",
+    "prv_hist_warlmanpa_9tkhxm",
+    "prv_hist_warumungu_1eieqwo"
+  ],
+  "prv_hist_warluwarra_4e3gud": [
+    "prv_hist_andegerebenha_622r6i",
+    "prv_hist_bularnu_1m7eo62",
+    "prv_hist_kalkadoon_1pnuj5v",
+    "prv_hist_pitta_pitta_168859u",
+    "prv_hist_wangkamana_7rmg15",
+    "prv_hist_yalarrnga_1mijn5q"
+  ],
+  "prv_hist_warray_1iri7vj": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_jawoyn_i4mwsd",
+    "prv_hist_kungarakany_1t7fr4x",
+    "prv_hist_wagiman_1wjcbev"
+  ],
+  "prv_hist_warriyangga_ysxaox": [
+    "prv_hist_tharrgari_1l8rg31",
+    "prv_hist_thiin_bmzx0n",
+    "prv_hist_watjarri_1cc951d",
+    "prv_hist_yinggarda_dfzgp9"
+  ],
+  "prv_hist_warumungu_1eieqwo": [
+    "prv_hist_jingili_5xq18t",
+    "prv_hist_kaytej_1im3rmj",
+    "prv_hist_wakaya_1xj1w23",
+    "prv_hist_wambaya_1vyjx6v",
+    "prv_hist_warlmanpa_9tkhxm",
+    "prv_hist_warlpiri_1vsyl6d"
+  ],
+  "prv_hist_warwa_z5qhjp": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_nyikina_tpb9j6",
+    "prv_hist_umida_19rw70x",
+    "prv_hist_unggarangi_16y5qik",
+    "prv_hist_unggumi_fembtp"
+  ],
+  "prv_hist_wathaurong_1bxb7hb": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_boonwurrung_16sy8at",
+    "prv_hist_dja_dja_wurrung_mjq0bj",
+    "prv_hist_djabwurung_6gjg02",
+    "prv_hist_djargurdwurung_1dhtp5s",
+    "prv_hist_gadubanud_19fb30m",
+    "prv_hist_giraiwurung_1n96lkd",
+    "prv_hist_gulidjan_my2rj3",
+    "prv_hist_wurundjeri_nzt2by"
+  ],
+  "prv_hist_watjarri_1cc951d": [
+    "prv_hist_amangu_s2114o",
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_badimaya_t7elq3",
+    "prv_hist_malkana_1ijqs7o",
+    "prv_hist_ngalawangka_3cawqt",
+    "prv_hist_nhanta_1u8zzpj",
+    "prv_hist_thiin_bmzx0n",
+    "prv_hist_tjupany_1o0vuww",
+    "prv_hist_warriyangga_ysxaox",
+    "prv_hist_wawula_1rin18a",
+    "prv_hist_yinggarda_dfzgp9"
+  ],
+  "prv_hist_waveroo_fgx0ew": [
+    "prv_hist_jaitmatang_1gxaidr",
+    "prv_hist_kurnai_11qtpxv",
+    "prv_hist_taungurung_1n9xkxv",
+    "prv_hist_wiradjuri_u41jrk",
+    "prv_hist_yorta_yorta_1jf0817"
+  ],
+  "prv_hist_wawula_1rin18a": [
+    "prv_hist_banjima_k91599",
+    "prv_hist_mardu_1glph4o",
+    "prv_hist_nana_gm6uox",
+    "prv_hist_ngaanyatjarra_1eyp3p4",
+    "prv_hist_ngalawangka_3cawqt",
+    "prv_hist_palyku_nj5zq9",
+    "prv_hist_tjupany_1o0vuww",
+    "prv_hist_watjarri_1cc951d"
+  ],
+  "prv_hist_wemba_wemba_m0ko9f": [
+    "prv_hist_baraba_baraba_h3lzvd",
+    "prv_hist_nari_nari_1qfa05z",
+    "prv_hist_wadi_wadi_bjzm8x",
+    "prv_hist_wergaia_ursm5v",
+    "prv_hist_wiradjuri_u41jrk"
+  ],
+  "prv_hist_wergaia_ursm5v": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_baraba_baraba_h3lzvd",
+    "prv_hist_bindjali_1otj7g8",
+    "prv_hist_dadi_dadi_1yul5xj",
+    "prv_hist_dja_dja_wurrung_mjq0bj",
+    "prv_hist_jardwadjali_j3t3nw",
+    "prv_hist_latje_latje_lrq7jb",
+    "prv_hist_meru_8u7hq",
+    "prv_hist_ngargad_kzb90n",
+    "prv_hist_wadi_wadi_bjzm8x",
+    "prv_hist_wemba_wemba_m0ko9f"
+  ],
+  "prv_hist_wichita_1w7gke6": [
+    "prv_hist_caddo_6jqtpu",
+    "prv_hist_comanche_1bsnvpx",
+    "prv_hist_kiowa_pjs4i2",
+    "prv_hist_osage_akz45q",
+    "prv_hist_tonkawa_77c5qq"
+  ],
+  "prv_hist_wiilman_b1w8ys": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_ballardong_1vqaetl",
+    "prv_hist_goreng_35wzhd",
+    "prv_hist_kaniyang_1d7de41",
+    "prv_hist_nyaki_nyaki_1u4m6eu",
+    "prv_hist_pinjarup_p9ztos",
+    "prv_hist_wajuk_1496yvt"
+  ],
+  "prv_hist_wik_vhtak2": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_bakanh_1g4eqfe",
+    "prv_hist_kaantju_1ewo8un",
+    "prv_hist_luthigh_jhkfoy",
+    "prv_hist_mbeiwum_1g06wov",
+    "prv_hist_thaayorre_6vlkki",
+    "prv_hist_winda_winda_z8g93r",
+    "prv_hist_yinwum_k00dui"
+  ],
+  "prv_hist_wiljali_1kx2sv1": [
+    "prv_hist_andyamathanha_jznrea",
+    "prv_hist_bandjigali_xo3ni4",
+    "prv_hist_danggali_vvi79a",
+    "prv_hist_malyangaba_pa8qoa",
+    "prv_hist_ngadjuri_pubejz",
+    "prv_hist_wandjiwalgu_1yzas3i"
+  ],
+  "prv_hist_winda_winda_z8g93r": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_awngthim_x7qkv8",
+    "prv_hist_mbeiwum_1g06wov",
+    "prv_hist_wik_vhtak2"
+  ],
+  "prv_hist_winebago_hldqi7": ["prv_hist_fox_72n2lq", "prv_hist_illinnois_s9q34g"],
+  "prv_hist_wiradjuri_u41jrk": [
+    "prv_hist_baraba_baraba_h3lzvd",
+    "prv_hist_barindji_wgkmuu",
+    "prv_hist_darkinung_f2pvem",
+    "prv_hist_dharug_18hqre",
+    "prv_hist_geawegal_46bv88",
+    "prv_hist_gundungurra_b8zpf7",
+    "prv_hist_jaitmatang_1gxaidr",
+    "prv_hist_kamilaroi_1q8xqqu",
+    "prv_hist_nari_nari_1qfa05z",
+    "prv_hist_ngarigo_8yzjx2",
+    "prv_hist_ngunawal_1py740g",
+    "prv_hist_wailwan_y0d2da",
+    "prv_hist_waveroo_fgx0ew",
+    "prv_hist_wemba_wemba_m0ko9f",
+    "prv_hist_wongaibon_ktk6o5",
+    "prv_hist_wonnarua_sbub9q",
+    "prv_hist_yitha_yitha_6h0v3",
+    "prv_hist_yorta_yorta_1jf0817"
+  ],
+  "prv_hist_wirangu_qdtolm": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_banggarla_1byfc94",
+    "prv_hist_kokatha_1d3bc1i",
+    "prv_hist_mirning_16mzti9",
+    "prv_hist_nawu_7ocf74",
+    "prv_hist_ngalea_12hd43x"
+  ],
+  "prv_hist_wongaibon_ktk6o5": [
+    "prv_hist_barindji_wgkmuu",
+    "prv_hist_barranbinya_h1iy7u",
+    "prv_hist_barundji_1nb83sa",
+    "prv_hist_gunu_1gocbv4",
+    "prv_hist_wailwan_y0d2da",
+    "prv_hist_wiradjuri_u41jrk",
+    "prv_hist_yitha_yitha_6h0v3"
+  ],
+  "prv_hist_wonnarua_sbub9q": [
+    "prv_hist_awabakal_1o8u4yv",
+    "prv_hist_darkinung_f2pvem",
+    "prv_hist_geawegal_46bv88",
+    "prv_hist_wiradjuri_u41jrk",
+    "prv_hist_worimi_1e3fwbs"
+  ],
+  "prv_hist_woolna_1tgrbup": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_larrakia_1rrgsv8",
+    "prv_hist_limilngan_coskh4"
+  ],
+  "prv_hist_worimi_1e3fwbs": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_awabakal_1o8u4yv",
+    "prv_hist_biripi_a0emku",
+    "prv_hist_geawegal_46bv88",
+    "prv_hist_wonnarua_sbub9q"
+  ],
+  "prv_hist_worla_1q99818": [
+    "prv_hist_kija_bwo5iw",
+    "prv_hist_ngarinyin_171dxaq",
+    "prv_hist_punuba_h60bcy",
+    "prv_hist_unggumi_fembtp"
+  ],
+  "prv_hist_worora_16otspt": [
+    "prv_hist_ngarinyin_171dxaq",
+    "prv_hist_unggumi_fembtp",
+    "prv_hist_wunambul_jboisa"
+  ],
+  "prv_hist_wudjari_bzlqgr": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_goreng_35wzhd",
+    "prv_hist_kalaako_malpa_1oouqm9",
+    "prv_hist_ngatjumay_b4uskb",
+    "prv_hist_nyaki_nyaki_1u4m6eu"
+  ],
+  "prv_hist_wulgurukaba_1qhyuuz": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_gugu_badhun_1leaunq",
+    "prv_hist_nyawaygi_100rdjm",
+    "prv_hist_thul_garrie_waja_bindal_dk9ms"
+  ],
+  "prv_hist_wuli_wuli_omoomy": [
+    "prv_hist_barunggam_fxpb1",
+    "prv_hist_gangulu_1huk42y",
+    "prv_hist_gureng_gureng_tdvg9r",
+    "prv_hist_wadjigu_xv8rgy",
+    "prv_hist_yiman_zksy0p"
+  ],
+  "prv_hist_wunambul_jboisa": [
+    "prv_hist_gamberre_1re2r24",
+    "prv_hist_ngarinyin_171dxaq",
+    "prv_hist_worora_16otspt"
+  ],
+  "prv_hist_wuningangk_1e3k81m": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_bukurnidja_1g5geq8",
+    "prv_hist_gunwinggu_8uecae",
+    "prv_hist_jawoyn_i4mwsd",
+    "prv_hist_mbukarla_1kksaly"
+  ],
+  "prv_hist_wunumara_gy97pf": [
+    "prv_hist_guwa_1pm6rcx",
+    "prv_hist_kalkadoon_1pnuj5v",
+    "prv_hist_mayi_thakurti_1xencmc",
+    "prv_hist_mbara_lkfoj8",
+    "prv_hist_ngawun_rn7z4p",
+    "prv_hist_yanda_1inp864",
+    "prv_hist_yirandali_8rfexg"
+  ],
+  "prv_hist_wurundjeri_nzt2by": [
+    "prv_hist_boonwurrung_16sy8at",
+    "prv_hist_dja_dja_wurrung_mjq0bj",
+    "prv_hist_kurnai_11qtpxv",
+    "prv_hist_taungurung_1n9xkxv",
+    "prv_hist_wathaurong_1bxb7hb"
+  ],
+  "prv_hist_wuthathi_ouo5df": [
+    "prv_hist_anggamudi_ibqipe",
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_kuuku_ya_u_1ejmr6r",
+    "prv_hist_mpalitjanh_d4md37",
+    "prv_hist_yadhaigana_9nzk40"
+  ],
+  "prv_hist_yadhaigana_9nzk40": ["prv_hist_anggamudi_ibqipe", "prv_hist_wuthathi_ouo5df"],
+  "prv_hist_yagalingu_1ilkn4q": [
+    "prv_hist_bidjara_qa18ys",
+    "prv_hist_gayiri_2s285u",
+    "prv_hist_iningai_cy8gm8",
+    "prv_hist_miyan_sjowi1",
+    "prv_hist_wangan_1ffocsl",
+    "prv_hist_yambina_10s9qyu"
+  ],
+  "prv_hist_yakima_1ypq6c5": [
+    "prv_hist_cayuse_iqh35f",
+    "prv_hist_tenimo_1grpx37",
+    "prv_hist_umatilla_mfhmf4"
+  ],
+  "prv_hist_yalarrnga_1mijn5q": [
+    "prv_hist_kalkadoon_1pnuj5v",
+    "prv_hist_pitta_pitta_168859u",
+    "prv_hist_warluwarra_4e3gud",
+    "prv_hist_yanda_1inp864"
+  ],
+  "prv_hist_yambina_10s9qyu": [
+    "prv_hist_barna_11zs9uv",
+    "prv_hist_miyan_sjowi1",
+    "prv_hist_wangan_1ffocsl",
+    "prv_hist_yagalingu_1ilkn4q",
+    "prv_hist_yangga_16fmhs0"
+  ],
+  "prv_hist_yanda_1inp864": [
+    "prv_hist_guwa_1pm6rcx",
+    "prv_hist_kalkadoon_1pnuj5v",
+    "prv_hist_maiawali_4fpbae",
+    "prv_hist_pitta_pitta_168859u",
+    "prv_hist_wunumara_gy97pf",
+    "prv_hist_yalarrnga_1mijn5q"
+  ],
+  "prv_hist_yandruwandha_tmmbn5": [
+    "prv_hist_dieri_bzavlc",
+    "prv_hist_pirlatapa_1tn1enn",
+    "prv_hist_wadigali_1wsybr1",
+    "prv_hist_wangkumara_1fsjcsh",
+    "prv_hist_yawarawarka_gf9g90"
+  ],
+  "prv_hist_yanga_1n3775z": [
+    "prv_hist_agwarmin_1ttyc3f",
+    "prv_hist_mayi_kulan_ncxws7",
+    "prv_hist_mbara_lkfoj8",
+    "prv_hist_ngawun_rn7z4p",
+    "prv_hist_takalak_d6pm1a",
+    "prv_hist_walangama_1ubytxy"
+  ],
+  "prv_hist_yangga_16fmhs0": [
+    "prv_hist_barna_11zs9uv",
+    "prv_hist_biri_1lvdtd",
+    "prv_hist_gugu_badhun_1leaunq",
+    "prv_hist_miyan_sjowi1",
+    "prv_hist_yambina_10s9qyu",
+    "prv_hist_yilba_1twimhk"
+  ],
+  "prv_hist_yangman_usy2vs": [
+    "prv_hist_alawa_1b7no8n",
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_jawoyn_i4mwsd",
+    "prv_hist_jingili_5xq18t",
+    "prv_hist_mangarayi_11jx4pw",
+    "prv_hist_mudburra_16itacb",
+    "prv_hist_wardaman_1hwrzwq"
+  ],
+  "prv_hist_yankontai_cz9kjt": [
+    "prv_hist_arikara_12qt1ks",
+    "prv_hist_assiniboin_16pnzrg",
+    "prv_hist_mandan_159dxbu",
+    "prv_hist_obiwa_1z0z8o3",
+    "prv_hist_santee_18cn86d",
+    "prv_hist_teton_6fyhxn",
+    "prv_hist_yankton_1i1m13x"
+  ],
+  "prv_hist_yankton_1i1m13x": [
+    "prv_hist_iowa_50x6tl",
+    "prv_hist_omaha_tvq28z",
+    "prv_hist_ponca_1whl6ji",
+    "prv_hist_santee_18cn86d",
+    "prv_hist_teton_6fyhxn",
+    "prv_hist_yankontai_cz9kjt"
+  ],
+  "prv_hist_yankuntjatjara_hqbggs": [
+    "prv_hist_antakarinja_5hledv",
+    "prv_hist_kokatha_1d3bc1i",
+    "prv_hist_luritja_1855uv8",
+    "prv_hist_pitjantjatjara_cl4l3k"
+  ],
+  "prv_hist_yanyuwa_ku47l5": [
+    "prv_hist_binbinga_1nh6z4v",
+    "prv_hist_ganggalida_3p2tt6",
+    "prv_hist_garawa_1q0bu40",
+    "prv_hist_mara_fmwg3i"
+  ],
+  "prv_hist_yarluyandi_xh3m4j": [
+    "prv_hist_karangura_ltbfqn",
+    "prv_hist_karuwali_2ctiwf",
+    "prv_hist_mithaka_1sa9z9q",
+    "prv_hist_ngamini_xq0sum",
+    "prv_hist_wangkamana_7rmg15",
+    "prv_hist_wangkangurru_1mk6d8r",
+    "prv_hist_yawarawarka_gf9g90"
+  ],
+  "prv_hist_yavapai_tkey6w": ["prv_hist_vice_royalty_of_new_spain_12n6mfp"],
+  "prv_hist_yawarawarka_gf9g90": [
+    "prv_hist_birria_lhlh7y",
+    "prv_hist_dieri_bzavlc",
+    "prv_hist_karuwali_2ctiwf",
+    "prv_hist_ngamini_xq0sum",
+    "prv_hist_wangkumara_1fsjcsh",
+    "prv_hist_yandruwandha_tmmbn5",
+    "prv_hist_yarluyandi_xh3m4j"
+  ],
+  "prv_hist_yawuru_v70x9q": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_jukun_1hzhb66",
+    "prv_hist_karajarri_18gfxhg",
+    "prv_hist_mangala_1j5cuak",
+    "prv_hist_ngumbarl_13r99ar",
+    "prv_hist_nimanburu_bfvdyw",
+    "prv_hist_nyikina_tpb9j6"
+  ],
+  "prv_hist_yidinjdji_8yttd": ["prv_hist_djabuganjdji_1j2zj98", "prv_hist_djirbalngan_cfgbj7"],
+  "prv_hist_yiiji_bw7oej": [
+    "prv_hist_kadjerong_u3d1la",
+    "prv_hist_kwini_x5i5a7",
+    "prv_hist_ngarinyin_171dxaq"
+  ],
+  "prv_hist_yilba_1twimhk": [
+    "prv_hist_gugu_badhun_1leaunq",
+    "prv_hist_miyan_sjowi1",
+    "prv_hist_yangga_16fmhs0",
+    "prv_hist_yirandali_8rfexg"
+  ],
+  "prv_hist_yiman_zksy0p": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_barunggam_fxpb1",
+    "prv_hist_gangulu_1huk42y",
+    "prv_hist_garingbal_1m7plna",
+    "prv_hist_gungabula_12qghcf",
+    "prv_hist_wadjigu_xv8rgy",
+    "prv_hist_wuli_wuli_omoomy"
+  ],
+  "prv_hist_yindjibarndi_7ny4p2": [
+    "prv_hist_banjima_k91599",
+    "prv_hist_kariyarra_1bng8p",
+    "prv_hist_kurrama_chp7we",
+    "prv_hist_martuthunira_vglrkb",
+    "prv_hist_ngarluma_p9po1s",
+    "prv_hist_nyamal_umhre7",
+    "prv_hist_palyku_nj5zq9"
+  ],
+  "prv_hist_yinggarda_dfzgp9": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_malkana_1ijqs7o",
+    "prv_hist_maya_debcg5",
+    "prv_hist_tharrgari_1l8rg31",
+    "prv_hist_warriyangga_ysxaox",
+    "prv_hist_watjarri_1cc951d"
+  ],
+  "prv_hist_yinhawangka_ysho03": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_banjima_k91599",
+    "prv_hist_jiwarli_jku2r9",
+    "prv_hist_jurruru_13spxpe",
+    "prv_hist_kurrama_chp7we",
+    "prv_hist_thiin_bmzx0n"
+  ],
+  "prv_hist_yinwum_k00dui": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_kaantju_1ewo8un",
+    "prv_hist_kuuku_ya_u_1ejmr6r",
+    "prv_hist_luthigh_jhkfoy",
+    "prv_hist_mpalitjanh_d4md37",
+    "prv_hist_wik_vhtak2"
+  ],
+  "prv_hist_yir_yoront_1im1ys8": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_koko_bera_1m5l72s",
+    "prv_hist_kunjen_80nv9a",
+    "prv_hist_thaayorre_6vlkki"
+  ],
+  "prv_hist_yirandali_8rfexg": [
+    "prv_hist_gugu_badhun_1leaunq",
+    "prv_hist_guwa_1pm6rcx",
+    "prv_hist_iningai_cy8gm8",
+    "prv_hist_mbara_lkfoj8",
+    "prv_hist_miyan_sjowi1",
+    "prv_hist_wunumara_gy97pf",
+    "prv_hist_yilba_1twimhk"
+  ],
+  "prv_hist_yitha_yitha_6h0v3": [
+    "prv_hist_barindji_wgkmuu",
+    "prv_hist_madi_madi_1361rz9",
+    "prv_hist_nari_nari_1qfa05z",
+    "prv_hist_wiradjuri_u41jrk",
+    "prv_hist_wongaibon_ktk6o5"
+  ],
+  "prv_hist_yokuts_17kihlw": [
+    "prv_hist_kawahsu_vnl55b",
+    "prv_hist_miwok_1e1qf52",
+    "prv_hist_serano_1gyobmj"
+  ],
+  "prv_hist_yolngu_6zkztf": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_burarra_5b23n0",
+    "prv_hist_dangbon_a4ubi0",
+    "prv_hist_ngalkbun_uevijd",
+    "prv_hist_nunggubuyu_oukop0",
+    "prv_hist_rembarnga_lmn5y2"
+  ],
+  "prv_hist_yorta_yorta_1jf0817": [
+    "prv_hist_baraba_baraba_h3lzvd",
+    "prv_hist_ngurraiillam_t6axb0",
+    "prv_hist_taungurung_1n9xkxv",
+    "prv_hist_waveroo_fgx0ew",
+    "prv_hist_wiradjuri_u41jrk"
+  ],
+  "prv_hist_yuat_jh4ifa": [
+    "prv_hist_amangu_s2114o",
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_kalaamaya_1ny1ij5",
+    "prv_hist_wajuk_1496yvt"
+  ],
+  "prv_hist_yuchi_1j6efhv": ["prv_hist_cherokee_d97dy5", "prv_hist_shawnee_1wlifke"],
+  "prv_hist_yugambeh_gpmihd": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_bundjalung_d144bj",
+    "prv_hist_yuggera_11wo8e9"
+  ],
+  "prv_hist_yuggera_11wo8e9": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_barunggam_fxpb1",
+    "prv_hist_bundjalung_d144bj",
+    "prv_hist_turrbal_tgknwh",
+    "prv_hist_waka_waka_d5yhan",
+    "prv_hist_yugambeh_gpmihd"
+  ],
+  "prv_hist_yuin_gpzx34": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_bidwell_oq3hd4",
+    "prv_hist_gundungurra_b8zpf7",
+    "prv_hist_ngambri_kxtssj",
+    "prv_hist_ngarigo_8yzjx2",
+    "prv_hist_ngunawal_1py740g",
+    "prv_hist_tharawal_9uwb17"
+  ],
+  "prv_hist_yulparitja_1ewk1e4": [
+    "prv_hist_kukatja_ixyag2",
+    "prv_hist_mangala_1j5cuak",
+    "prv_hist_mardu_1glph4o",
+    "prv_hist_nyangumarda_17dh966",
+    "prv_hist_walmatjarri_1l79ea5"
+  ],
+  "prv_hist_yup_ik_and_cup_ik_bu4kst": ["prv_hist_athabaskan_161fp17", "prv_hist_suspiaq_1ulkswv"],
+  "prv_hist_yupangathi_1t9b7rh": [
+    "prv_hist_anguthimri_17ieoad",
+    "prv_hist_teppathiggi_1d45tg1",
+    "prv_hist_tjungundji_1krswav"
+  ],
+  "prv_hist_yuru_jpfvte": [
+    "prv_hist_australian_aboriginal_hunter_gatherers_182s7yr",
+    "prv_hist_biri_1lvdtd",
+    "prv_hist_giya_3pvk8n"
+  ],
+  "prv_hist_yuwi_hhuqdb": [
+    "prv_hist_baradha_p094zg",
+    "prv_hist_biri_1lvdtd",
+    "prv_hist_giya_3pvk8n",
+    "prv_hist_guwinmal_5eqj11"
+  ],
+  "prv_hkg_adm0": [],
+  "prv_hmd_adm0": [],
+  "prv_hnd_adm0": [],
+  "prv_hrv_adm0": [],
+  "prv_hti_adm0": [],
+  "prv_hun_adm0": [],
+  "prv_idn_adm0": [],
+  "prv_imn_adm0": [],
+  "prv_ind_adm0": [],
+  "prv_iot_adm0": [],
+  "prv_irl_adm0": [],
+  "prv_irn_adm0": [],
+  "prv_irq_adm0": [],
+  "prv_isl_adm0": [],
+  "prv_isr_adm0": [],
+  "prv_ita_adm0": [],
+  "prv_jam_adm0": [],
+  "prv_jey_adm0": [],
+  "prv_jor_adm0": [],
+  "prv_jpn_adm0": [],
+  "prv_kaz_adm0": [],
+  "prv_ken_adm0": [],
+  "prv_kgz_adm0": [],
+  "prv_khm_adm0": [],
+  "prv_kir_adm0": [],
+  "prv_kna_adm0": [],
+  "prv_kor_adm0": [],
+  "prv_kwt_adm0": [],
+  "prv_lao_adm0": [],
+  "prv_lbn_adm0": [],
+  "prv_lbr_adm0": [],
+  "prv_lby_adm0": [],
+  "prv_lca_adm0": [],
+  "prv_lie_adm0": [],
+  "prv_lka_adm0": [],
+  "prv_lso_adm0": [],
+  "prv_ltu_adm0": [],
+  "prv_lux_adm0": [],
+  "prv_lva_adm0": [],
+  "prv_mac_adm0": [],
+  "prv_maf_adm0": [],
+  "prv_mar_adm0": [],
+  "prv_mco_adm0": [],
+  "prv_mda_adm0": [],
+  "prv_mdg_adm0": [],
+  "prv_mdv_adm0": [],
+  "prv_mex_adm0": [],
+  "prv_mhl_adm0": [],
+  "prv_mkd_adm0": [],
+  "prv_mli_adm0": [],
+  "prv_mlt_adm0": [],
+  "prv_mmr_adm0": [],
+  "prv_mne_adm0": [],
+  "prv_mng_adm0": [],
+  "prv_mnp_adm0": [],
+  "prv_moz_adm0": [],
+  "prv_mrt_adm0": [],
+  "prv_msr_adm0": [],
+  "prv_mtq_adm0": [],
+  "prv_mus_adm0": [],
+  "prv_mwi_adm0": [],
+  "prv_mys_adm0": [],
+  "prv_myt_adm0": [],
+  "prv_nam_adm0": [],
+  "prv_ncl_adm0": [],
+  "prv_ner_adm0": [],
+  "prv_nfk_adm0": [],
+  "prv_nga_adm0": [],
+  "prv_nic_adm0": [],
+  "prv_niu_adm0": [],
+  "prv_nld_adm0": [],
+  "prv_nor_adm0": [],
+  "prv_npl_adm0": [],
+  "prv_nru_adm0": [],
+  "prv_nzl_adm0": [],
+  "prv_omn_adm0": [],
+  "prv_pak_adm0": [],
+  "prv_pan_adm0": [],
+  "prv_pcn_adm0": [],
+  "prv_per_adm0": [],
+  "prv_phl_adm0": [],
+  "prv_plw_adm0": [],
+  "prv_png_adm0": [],
+  "prv_pol_adm0": [],
+  "prv_pri_adm0": [],
+  "prv_prk_adm0": [],
+  "prv_prt_adm0": [],
+  "prv_pry_adm0": [],
+  "prv_pse_adm0": [],
+  "prv_pyf_adm0": [],
+  "prv_qat_adm0": [],
+  "prv_reu_adm0": [],
+  "prv_rou_adm0": [],
+  "prv_rus_adm0": [],
+  "prv_rwa_adm0": [],
+  "prv_sau_adm0": [],
+  "prv_sdn_adm0": [],
+  "prv_sen_adm0": [],
+  "prv_sgp_adm0": [],
+  "prv_sgs_adm0": [],
+  "prv_shn_adm0": [],
+  "prv_sjm_adm0": [],
+  "prv_slb_adm0": [],
+  "prv_sle_adm0": [],
+  "prv_slv_adm0": [],
+  "prv_smr_adm0": [],
+  "prv_som_adm0": [],
+  "prv_spm_adm0": [],
+  "prv_srb_adm0": [],
+  "prv_ssd_adm0": [],
+  "prv_stp_adm0": [],
+  "prv_sur_adm0": [],
+  "prv_svk_adm0": [],
+  "prv_svn_adm0": [],
+  "prv_swe_adm0": [],
+  "prv_swz_adm0": [],
+  "prv_sxm_adm0": [],
+  "prv_syc_adm0": [],
+  "prv_syr_adm0": [],
+  "prv_tca_adm0": [],
+  "prv_tcd_adm0": [],
+  "prv_tgo_adm0": [],
+  "prv_tha_adm0": [],
+  "prv_tjk_adm0": [],
+  "prv_tkl_adm0": [],
+  "prv_tkm_adm0": [],
+  "prv_tls_adm0": [],
+  "prv_ton_adm0": [],
+  "prv_tto_adm0": [],
+  "prv_tun_adm0": [],
+  "prv_tur_adm0": [],
+  "prv_tuv_adm0": [],
+  "prv_twn_adm0": [],
+  "prv_tza_adm0": [],
+  "prv_uga_adm0": [],
+  "prv_ukr_adm0": [],
+  "prv_umi_adm0": [],
+  "prv_ury_adm0": [],
+  "prv_usa_adm0": [],
+  "prv_uzb_adm0": [],
+  "prv_vat_adm0": [],
+  "prv_vct_adm0": [],
+  "prv_ven_adm0": [],
+  "prv_vgb_adm0": [],
+  "prv_vir_adm0": [],
+  "prv_vnm_adm0": [],
+  "prv_vut_adm0": [],
+  "prv_wlf_adm0": [],
+  "prv_wsm_adm0": [],
+  "prv_xkk_adm0": [],
+  "prv_yem_adm0": [],
+  "prv_zaf_adm0": [],
+  "prv_zmb_adm0": [],
+  "prv_zwe_adm0": []
+}

@@ -233,6 +233,17 @@ export const createCampaignStateFromScenario = (
   if (customPolityName !== undefined && customPolityName.length === 0) {
     throw new RangeError("INVALID_CUSTOM_POLITY_NAME");
   }
+  const initialUnits = scenario.initialUnits ?? [];
+  for (const unit of initialUnits) {
+    const province = scenario.provinces.find((candidate) => candidate.id === unit.provinceId);
+    if (
+      !scenario.nations.some((nation) => nation.id === unit.nationId) ||
+      province === undefined ||
+      province.ownerNationId !== unit.nationId
+    ) {
+      throw new RangeError("SCENARIO_INITIAL_UNIT_INVALID");
+    }
+  }
   return Object.freeze({
     schemaVersion: 2,
     id: "cmp_local",
@@ -257,7 +268,11 @@ export const createCampaignStateFromScenario = (
     provinces: Object.freeze(scenario.provinces.map((province) => Object.freeze({ ...province }))),
     relations: Object.freeze(scenario.relations.map((relation) => Object.freeze({ ...relation }))),
     treaties: Object.freeze([]),
-    units: Object.freeze([]),
+    units: Object.freeze(
+      initialUnits.map(({ id, nationId, provinceId, manpower }) =>
+        Object.freeze({ id, ownerNationId: nationId, provinceId, manpower }),
+      ),
+    ),
     wars: Object.freeze([]),
     battleReports: Object.freeze([]),
     events: Object.freeze([]),

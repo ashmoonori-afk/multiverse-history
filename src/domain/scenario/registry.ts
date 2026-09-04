@@ -8,7 +8,23 @@ import {
 } from "./catalog";
 import { eastAsiaNations, eastAsiaRelations } from "./east-asia-1900/nations";
 import { eastAsiaProvinces } from "./east-asia-1900/provinces";
+import { eastAsiaInitialUnits } from "./east-asia-1900/units";
 import { historicalScenarioSeed, loadHistoricalScenario } from "./historical-scenario";
+
+export type NationTag =
+  | "great_power"
+  | "colonial"
+  | "declining"
+  | "reformist"
+  | "isolationist"
+  | "expansionist";
+
+export interface NationProfileDefinition {
+  readonly goalsKo: readonly string[];
+  readonly personalityKo: string;
+  readonly rivalNationIds: readonly string[];
+  readonly allyNationIds: readonly string[];
+}
 
 export interface NationDefinition {
   readonly id: NationId;
@@ -21,12 +37,31 @@ export interface NationDefinition {
   readonly stabilityBps: number;
   readonly population: number;
   readonly infrastructureBps: number;
+  readonly governmentKo?: string | undefined;
+  readonly tags?: readonly string[] | undefined;
+  readonly manpowerPool?: number | undefined;
+  readonly profile?: NationProfileDefinition | undefined;
 }
+
+export type ProvinceTerrain = "plain" | "mountain" | "coast" | "steppe" | "forest" | "desert";
 
 export interface ProvinceDefinition {
   readonly id: string;
   readonly ownerNationId: NationId;
   readonly population: number;
+  readonly nameKo?: string | undefined;
+  readonly adjacentProvinceIds?: readonly string[] | undefined;
+  readonly isCapital?: boolean | undefined;
+  readonly isPort?: boolean | undefined;
+  readonly terrain?: string | undefined;
+  readonly developmentBps?: number | undefined;
+}
+
+export interface ScenarioInitialUnitDefinition {
+  readonly id: string;
+  readonly nationId: NationId;
+  readonly provinceId: string;
+  readonly manpower: number;
 }
 
 export interface RelationDefinition {
@@ -44,6 +79,7 @@ export interface ScenarioDefinition {
   readonly nations: readonly NationDefinition[];
   readonly provinces: readonly ProvinceDefinition[];
   readonly relations: readonly RelationDefinition[];
+  readonly initialUnits?: readonly ScenarioInitialUnitDefinition[] | undefined;
 }
 
 const eastAsia1900: ScenarioDefinition = Object.freeze({
@@ -55,6 +91,7 @@ const eastAsia1900: ScenarioDefinition = Object.freeze({
   nations: eastAsiaNations,
   provinces: eastAsiaProvinces,
   relations: eastAsiaRelations,
+  initialUnits: eastAsiaInitialUnits,
 });
 
 const neutralScenario = (metadata: ScenarioPackageMetadata): ScenarioDefinition => {

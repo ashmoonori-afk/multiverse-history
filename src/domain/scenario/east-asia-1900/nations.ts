@@ -1,5 +1,15 @@
 import { parseNationId } from "../../../shared/ids";
-import type { NationDefinition, RelationDefinition } from "../registry";
+import type { NationDefinition, NationTag, RelationDefinition } from "../registry";
+
+interface AuthoredNationData {
+  readonly governmentKo: string;
+  readonly tags: readonly NationTag[];
+  readonly manpowerPool: number;
+  readonly goalsKo: readonly string[];
+  readonly personalityKo: string;
+  readonly rivals: readonly string[];
+  readonly allies: readonly string[];
+}
 
 const nation = (
   id: string,
@@ -11,6 +21,7 @@ const nation = (
   stability: number,
   population: number,
   infrastructure: number,
+  authored: AuthoredNationData,
 ): NationDefinition =>
   Object.freeze({
     id: parseNationId(id),
@@ -23,7 +34,34 @@ const nation = (
     stabilityBps: stability,
     population,
     infrastructureBps: infrastructure,
+    governmentKo: authored.governmentKo,
+    tags: Object.freeze([...authored.tags]),
+    manpowerPool: authored.manpowerPool,
+    profile: Object.freeze({
+      goalsKo: Object.freeze([...authored.goalsKo]),
+      personalityKo: authored.personalityKo,
+      rivalNationIds: Object.freeze(authored.rivals.map(parseNationId)),
+      allyNationIds: Object.freeze(authored.allies.map(parseNationId)),
+    }),
   });
+
+const authored = (
+  governmentKo: string,
+  tags: readonly NationTag[],
+  manpowerPool: number,
+  goalsKo: readonly string[],
+  personalityKo: string,
+  rivals: readonly string[] = [],
+  allies: readonly string[] = [],
+): AuthoredNationData => ({
+  governmentKo,
+  tags,
+  manpowerPool,
+  goalsKo,
+  personalityKo,
+  rivals,
+  allies,
+});
 
 const relation = (from: string, to: string, value: number): RelationDefinition =>
   Object.freeze({
@@ -33,9 +71,69 @@ const relation = (from: string, to: string, value: number): RelationDefinition =
   });
 
 export const eastAsiaNations: readonly NationDefinition[] = Object.freeze([
-  nation("nat_kor", "대한제국", "한성 수도", 240, 1_200, 1_500, 5_800, 17_082_000, 2_400),
-  nation("nat_jpn", "일본제국", "도쿄 수도", 760, 3_900, 1_900, 7_000, 43_850_000, 4_600),
-  nation("nat_qing", "청제국", "베이징 수도", 1_100, 8_400, 1_200, 4_600, 400_000_000, 1_800),
+  nation(
+    "nat_kor",
+    "대한제국",
+    "한성 수도",
+    240,
+    1_200,
+    1_500,
+    5_800,
+    17_082_000,
+    2_400,
+    authored(
+      "전제군주제",
+      ["declining", "reformist"],
+      260_000,
+      ["주권과 독립을 보전한다", "군제와 재정을 근대화한다", "열강 사이의 균형을 유지한다"],
+      "신중하지만 개혁 의지가 강하며 외세의 간섭을 경계한다.",
+      ["nat_jpn"],
+    ),
+  ),
+  nation(
+    "nat_jpn",
+    "일본제국",
+    "도쿄 수도",
+    760,
+    3_900,
+    1_900,
+    7_000,
+    43_850_000,
+    4_600,
+    authored(
+      "입헌군주제",
+      ["great_power", "reformist", "expansionist"],
+      920_000,
+      ["조선과 만주에서 우위를 확보한다", "해군력을 강화한다", "서구 열강과 대등한 지위를 얻는다"],
+      "근대화의 성과를 바탕으로 신속하고 공세적인 선택을 선호한다.",
+      ["nat_rus", "nat_qing"],
+      ["nat_gbr"],
+    ),
+  ),
+  nation(
+    "nat_qing",
+    "청제국",
+    "베이징 수도",
+    1_100,
+    8_400,
+    1_200,
+    4_600,
+    400_000_000,
+    1_800,
+    authored(
+      "전제군주제",
+      ["declining", "reformist", "isolationist"],
+      4_800_000,
+      [
+        "왕조의 통치 질서를 유지한다",
+        "열강의 조차와 이권 확대를 막는다",
+        "신정을 통해 군사력을 재건한다",
+      ],
+      "거대한 자원을 가졌지만 내부 반발과 외세 압박 사이에서 조심스럽게 움직인다.",
+      ["nat_jpn", "nat_gbr"],
+      ["nat_kor"],
+    ),
+  ),
   nation(
     "nat_rus",
     "러시아제국",
@@ -46,11 +144,107 @@ export const eastAsiaNations: readonly NationDefinition[] = Object.freeze([
     5_900,
     136_000_000,
     3_900,
+    authored(
+      "전제군주제",
+      ["great_power", "expansionist"],
+      3_500_000,
+      [
+        "만주와 태평양으로 진출한다",
+        "부동항과 철도망을 확보한다",
+        "유럽과 아시아의 세력 균형을 유지한다",
+      ],
+      "광대한 국력과 철도 확장을 믿고 장기적인 압박을 선호한다.",
+      ["nat_jpn", "nat_gbr"],
+      ["nat_fra"],
+    ),
   ),
-  nation("nat_gbr", "대영제국", "런던 수도", 4_800, 28_000, 2_000, 7_500, 12_300_000, 6_200),
-  nation("nat_fra", "프랑스제국", "파리 수도", 2_800, 16_000, 1_900, 6_800, 15_000_000, 5_400),
-  nation("nat_deu", "독일제국", "베를린 수도", 3_200, 18_500, 2_100, 7_200, 700_000, 5_800),
-  nation("nat_usa", "미합중국", "워싱턴 수도", 5_200, 31_000, 1_600, 8_000, 7_000_000, 6_500),
+  nation(
+    "nat_gbr",
+    "대영제국",
+    "런던 수도",
+    4_800,
+    28_000,
+    2_000,
+    7_500,
+    12_300_000,
+    6_200,
+    authored(
+      "입헌군주제",
+      ["great_power", "colonial", "expansionist"],
+      520_000,
+      ["중국과 인도의 교역로를 지킨다", "러시아의 남하를 견제한다", "해상 패권을 유지한다"],
+      "해군과 금융력을 앞세워 동맹과 제한적 개입을 능숙하게 조합한다.",
+      ["nat_rus"],
+      ["nat_jpn", "nat_nld"],
+    ),
+  ),
+  nation(
+    "nat_fra",
+    "프랑스제국",
+    "파리 수도",
+    2_800,
+    16_000,
+    1_900,
+    6_800,
+    15_000_000,
+    5_400,
+    authored(
+      "공화제",
+      ["great_power", "colonial"],
+      610_000,
+      [
+        "인도차이나 식민 통치를 공고히 한다",
+        "중국 남부의 이권을 확대한다",
+        "독일의 팽창을 견제한다",
+      ],
+      "외교적 위신과 식민지 이권을 중시하며 유럽 동맹을 활용한다.",
+      ["nat_deu"],
+      ["nat_rus"],
+    ),
+  ),
+  nation(
+    "nat_deu",
+    "독일제국",
+    "베를린 수도",
+    3_200,
+    18_500,
+    2_100,
+    7_200,
+    700_000,
+    5_800,
+    authored(
+      "입헌군주제",
+      ["great_power", "colonial", "expansionist"],
+      820_000,
+      [
+        "칭다오를 동아시아 거점으로 육성한다",
+        "해군과 해외 교역을 확대한다",
+        "영국과 프랑스의 우위를 추격한다",
+      ],
+      "산업력과 군사적 위신을 신뢰하며 빠른 세력 확대를 추구한다.",
+      ["nat_gbr", "nat_fra"],
+    ),
+  ),
+  nation(
+    "nat_usa",
+    "미합중국",
+    "워싱턴 수도",
+    5_200,
+    31_000,
+    1_600,
+    8_000,
+    7_000_000,
+    6_500,
+    authored(
+      "연방공화제",
+      ["great_power", "colonial", "reformist"],
+      420_000,
+      ["필리핀의 통치를 안정시킨다", "중국의 문호개방을 유지한다", "태평양 해군력을 강화한다"],
+      "상업적 개방과 해군력 확대를 결합하되 유럽식 식민 경쟁에는 거리를 둔다.",
+      [],
+      ["nat_gbr"],
+    ),
+  ),
   nation(
     "nat_nld",
     "네덜란드제국",
@@ -61,8 +255,44 @@ export const eastAsiaNations: readonly NationDefinition[] = Object.freeze([
     6_500,
     38_000_000,
     4_800,
+    authored(
+      "입헌군주제",
+      ["colonial", "declining"],
+      180_000,
+      [
+        "동인도 제도의 질서를 유지한다",
+        "향신료와 해운 수익을 보호한다",
+        "강대국 충돌에서 중립을 지킨다",
+      ],
+      "상업적 실리를 우선하며 제한된 군사력으로 넓은 식민지를 방어한다.",
+      [],
+      ["nat_gbr"],
+    ),
   ),
-  nation("nat_tha", "시암왕국", "방콕 수도", 180, 900, 1_400, 6_200, 8_000_000, 1_600),
+  nation(
+    "nat_tha",
+    "시암왕국",
+    "방콕 수도",
+    180,
+    900,
+    1_400,
+    6_200,
+    8_000_000,
+    1_600,
+    authored(
+      "전제군주제",
+      ["reformist"],
+      120_000,
+      [
+        "독립과 완충국 지위를 보전한다",
+        "행정과 군제를 근대화한다",
+        "영국과 프랑스 사이에서 균형을 잡는다",
+      ],
+      "영토 양보도 감수하는 유연한 외교로 왕국의 독립을 최우선한다.",
+      ["nat_fra"],
+      ["nat_gbr"],
+    ),
+  ),
 ]);
 
 export const eastAsiaRelations: readonly RelationDefinition[] = Object.freeze([

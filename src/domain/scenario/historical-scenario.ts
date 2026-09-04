@@ -5,6 +5,7 @@ import {
   parseHistoricalBasemap,
 } from "../../shared/historical-map-contract";
 import { parseNationId } from "../../shared/ids";
+import { getScenarioAdjacency } from "./adjacency";
 import { createPlayableNationStart, listCanonicalCountries } from "./catalog";
 import { historicalMajorPolities, historicalSovereignName } from "./historical-scenario-overlays";
 import type { RelationDefinition, ScenarioDefinition } from "./registry";
@@ -143,13 +144,14 @@ export const buildHistoricalScenario = (
   const majorByName = new Map(
     [...majors].reverse().map((major) => [major.sovereignName, major.definition]),
   );
+  const availableHistoricalNationIds = new Set(orderedNames.map(historicalPolityId));
   const historicalNations = orderedNames.map((name, index) => {
     const major = majorByName.get(name);
     const hash = valueHash(`${metadata.id}:${name}`);
     const [minimumPopulation, maximumPopulation] = genericPopulationBounds(metadata.year);
     const population =
       major?.population ?? minimumPopulation + (hash % (maximumPopulation - minimumPopulation + 1));
-    const treasuryCredits = Math.max(80, (major === undefined ? 240 : 1_000) - index * 5);
+    const treasuryCredits = major?.treasuryCredits ?? Math.max(80, 240 - index * 5);
     return Object.freeze({
       id: historicalPolityId(name),
       nameKo:
@@ -159,18 +161,47 @@ export const buildHistoricalScenario = (
       treasuryCredits,
       gdpCredits: treasuryCredits * 5,
       taxRateBps: 1_500,
-      stabilityBps: 4_500 + (hash % 2_501),
+      stabilityBps: major?.stabilityBps ?? 4_500 + (hash % 2_501),
       population,
       infrastructureBps: infrastructureForYear(metadata.year),
+      ...(major === undefined
+        ? {}
+        : {
+            governmentKo: major.governmentKo,
+            tags: major.tags,
+            profile: Object.freeze({
+              ...major.profile,
+              rivalNationIds: Object.freeze(
+                major.profile.rivalNationIds.filter((id) =>
+                  availableHistoricalNationIds.has(parseNationId(id)),
+                ),
+              ),
+              allyNationIds: Object.freeze(
+                major.profile.allyNationIds.filter((id) =>
+                  availableHistoricalNationIds.has(parseNationId(id)),
+                ),
+              ),
+            }),
+          }),
     });
   });
   const historicalNationById = new Map(historicalNations.map((nation) => [nation.id, nation]));
+  const adjacency = getScenarioAdjacency(metadata.id);
+  const historicalProvinceIds = new Set(
+    territories.map((territory) => historicalProvinceId(territory.name)),
+  );
   const historicalProvinces = territories.map((territory) => {
     const ownerNationId = historicalPolityId(territory.subject);
     return Object.freeze({
       id: historicalProvinceId(territory.name),
       ownerNationId,
       population: historicalNationById.get(ownerNationId)?.population ?? 100_000,
+      nameKo: territory.name,
+      adjacentProvinceIds: Object.freeze(
+        (adjacency[historicalProvinceId(territory.name)] ?? []).filter((id) =>
+          historicalProvinceIds.has(id),
+        ),
+      ),
     });
   });
   const countries = listCanonicalCountries();
@@ -194,6 +225,8 @@ export const buildHistoricalScenario = (
       id: `prv_${country.alpha3.toLowerCase()}_adm0`,
       ownerNationId: parseNationId(country.id),
       population: 100_000 + Number(country.numericCode) * 1_000,
+      nameKo: country.nameKo,
+      adjacentProvinceIds: Object.freeze([]),
     }),
   );
   const fallbackRelations = countries.map((country, index) => {
