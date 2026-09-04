@@ -1,3 +1,4 @@
+import { afterAll } from "bun:test";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -129,16 +130,30 @@ const setTurnAutosaveHeader = (context: Context, autosave: TurnAutosaveStatus): 
 let testSlotRoot: string | undefined;
 let testSlotSequence = 0;
 
-export const cleanupTestSlotRoot = (): void => {
+const cleanupTestSlotRoot = (): void => {
   if (testSlotRoot === undefined) return;
   rmSync(testSlotRoot, { recursive: true, force: true });
   testSlotRoot = undefined;
   testSlotSequence = 0;
 };
 
+const registerTestSlotCleanup = (): void => {
+  process.once("exit", cleanupTestSlotRoot);
+  try {
+    afterAll(cleanupTestSlotRoot);
+  } catch (error) {
+    if (!(error instanceof Error && error.message.includes("outside of the test runner"))) {
+      throw error;
+    }
+  }
+};
+
 const defaultSlotDirectory = (): string => {
   if (process.env.NODE_ENV !== "test") return "data/campaigns";
-  testSlotRoot ??= mkdtempSync(join(tmpdir(), "pax-api-test-slots-"));
+  if (testSlotRoot === undefined) {
+    testSlotRoot = mkdtempSync(join(tmpdir(), "pax-api-test-slots-"));
+    registerTestSlotCleanup();
+  }
   return join(testSlotRoot, String(testSlotSequence++));
 };
 
