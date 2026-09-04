@@ -4,6 +4,8 @@ import { provinceNameKo } from "../shared/display-labels";
 import { appendIncomingCampaignChat } from "./campaign-chat";
 import { type CampaignDeclaredTransfer, createCampaignResolution } from "./campaign-resolution";
 import { advanceCampaignClock, type CampaignState, type TimelineCadence } from "./campaign-state";
+import { applyPolicyIntent } from "./policy-intent-reducers";
+import { applyWarIntent } from "./war-intent-reducers";
 
 const updateNation = (
   state: CampaignState,
@@ -189,6 +191,7 @@ const applyIntent = (
   intent: StrategicIntent,
   turn: number,
   sequence: number,
+  playerIntent: boolean,
 ): CampaignState => {
   switch (intent.type) {
     case "economy.invest":
@@ -199,8 +202,19 @@ const applyIntent = (
       return recruit(state, intent, turn, sequence);
     case "territory.transfer":
       return transferTerritory(state, intent, turn);
-    default:
-      throw new RangeError("INTENT_NOT_SUPPORTED_YET");
+    case "nation.adjust":
+    case "relation.adjust":
+    case "treaty.respond":
+    case "treaty.terminate":
+    case "polity.change":
+    case "action.fail":
+      return applyPolicyIntent(state, intent, turn);
+    case "war.declare":
+    case "war.peace":
+    case "unit.move":
+    case "unit.attack":
+    case "unit.disband":
+      return applyWarIntent(state, intent, turn, playerIntent);
   }
 };
 
@@ -215,7 +229,15 @@ const declaredTransfersOf = (plan: StrategicPlan): readonly CampaignDeclaredTran
               cause: "player" as const,
             }),
           ]
-        : [],
+        : intent.type === "war.peace"
+          ? intent.terms.map((term) =>
+              Object.freeze({
+                provinceId: term.provinceId,
+                reasonKo: term.reasonKo,
+                cause: "player" as const,
+              }),
+            )
+          : [],
     ),
     ...plan.npcIntents.flatMap((intent) =>
       intent.type === "territory.transfer"
@@ -226,7 +248,15 @@ const declaredTransfersOf = (plan: StrategicPlan): readonly CampaignDeclaredTran
               cause: "npc" as const,
             }),
           ]
-        : [],
+        : intent.type === "war.peace"
+          ? intent.terms.map((term) =>
+              Object.freeze({
+                provinceId: term.provinceId,
+                reasonKo: term.reasonKo,
+                cause: "npc" as const,
+              }),
+            )
+          : [],
     ),
   ]);
 
@@ -242,11 +272,16 @@ export const applyStrategicPlan = (input: ApplyStrategicPlanInput): CampaignStat
   const plan = input.plan;
   const orderText = input.orderText ?? "플레이어 계획";
   const cadence = input.cadence ?? "quarter";
-  const intents = [...plan.playerIntents, ...plan.npcIntents];
-  const resolved = intents.reduce(
-    (state, intent, index) => applyIntent(state, intent, snapshot.turn + 1, index),
+  const playerResolved = plan.playerIntents.reduce(
+    (state, intent, index) => applyIntent(state, intent, snapshot.turn + 1, index, true),
     snapshot,
   );
+  const resolved = plan.npcIntents.reduce(
+    (state, intent, index) =>
+      applyIntent(state, intent, snapshot.turn + 1, plan.playerIntents.length + index, false),
+    playerResolved,
+  );
+  const intents = [...plan.playerIntents, ...plan.npcIntents];
   const clock = advanceCampaignClock({
     elapsedDays: snapshot.elapsedDays,
     date: snapshot.date,

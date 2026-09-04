@@ -111,6 +111,7 @@ export const proposeCampaignTreaty = (
         clauses: Object.freeze([...active.clauses]),
         status: active.status === "active" ? ("active" as const) : ("proposed" as const),
         proposedTurn: active.proposedTurn,
+        ...(active.activatedTurn === undefined ? {} : { resolvedTurn: active.activatedTurn }),
       }),
     ]),
     events: Object.freeze([
@@ -137,8 +138,10 @@ export const declareCampaignWar = (state: CampaignState, targetNationId: string)
     wars: Object.freeze([
       ...state.wars,
       Object.freeze({
+        id: `war_${state.turn}_${state.wars.length}`,
         attackerNationId: actor,
         targetNationId: target,
+        status: "active" as const,
         declaredTurn: state.turn,
       }),
     ]),

@@ -34,7 +34,7 @@ const planWithTransfer = (
 });
 
 describe("territory transfer intent", () => {
-  test("rejects v2 intents until their reducer is implemented", () => {
+  test("accepts implemented v2 intents", () => {
     // Given
     const snapshot = createCampaignState("scn_ea1900", "nat_kor");
     const plan: StrategicPlan = {
@@ -61,10 +61,10 @@ describe("territory transfer intent", () => {
     };
 
     // When
-    const applyUnsupported = () => applyStrategicPlan({ snapshot, plan });
+    const after = applyStrategicPlan({ snapshot, plan });
 
     // Then
-    expect(applyUnsupported).toThrow("INTENT_NOT_SUPPORTED_YET");
+    expect(after.wars[0]?.status).toBe("active");
   });
 
   test("moves province ownership and records why it moved", () => {
@@ -107,6 +107,7 @@ describe("territory transfer intent", () => {
       toNationId: snapshot.playerNationId,
       reasonKo: "강화 조약에 따른 할양",
       cause: "player",
+      source: "policy",
     });
   });
 

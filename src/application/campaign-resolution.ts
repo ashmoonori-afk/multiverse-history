@@ -7,12 +7,18 @@ import {
   campaignNewsArticleBody,
   createCampaignNewsArticle,
 } from "./campaign-news-article";
-import { changedEntityOwnerIds } from "./campaign-resolution-entities";
+import {
+  type CampaignDeltaSource,
+  type CampaignUnitDelta,
+  campaignUnitDeltas,
+  changedEntityOwnerIds,
+} from "./campaign-resolution-entities";
 import type { CampaignState, TimelineCadence } from "./campaign-state";
 
 export interface CampaignNumericDelta {
   readonly before: number;
   readonly after: number;
+  readonly source: CampaignDeltaSource;
 }
 
 export interface CampaignNationDelta {
@@ -21,6 +27,9 @@ export interface CampaignNationDelta {
   readonly treasuryCredits: CampaignNumericDelta;
   readonly gdpCredits: CampaignNumericDelta;
   readonly infrastructureBps: CampaignNumericDelta;
+  readonly stabilityBps?: CampaignNumericDelta | undefined;
+  readonly population?: CampaignNumericDelta | undefined;
+  readonly taxRateBps?: CampaignNumericDelta | undefined;
 }
 
 export interface CampaignRelationDelta {
@@ -28,6 +37,7 @@ export interface CampaignRelationDelta {
   readonly toNationId: string;
   readonly before: number;
   readonly after: number;
+  readonly source: CampaignDeltaSource;
 }
 
 export interface CampaignTreatyDelta {
@@ -35,8 +45,11 @@ export interface CampaignTreatyDelta {
   readonly proposerNationId: string;
   readonly recipientNationId: string;
   readonly clauses: readonly string[];
-  readonly status: "proposed" | "active";
+  readonly status: "proposed" | "active" | "rejected" | "terminated";
   readonly proposedTurn: number;
+  readonly resolvedTurn?: number | undefined;
+  readonly terminatedTurn?: number | undefined;
+  readonly source: CampaignDeltaSource;
 }
 
 export type CampaignOwnershipChangeCause = "player" | "npc" | "combat";
@@ -52,6 +65,7 @@ export interface CampaignRegionOwnershipChange {
   readonly fromNationId: string;
   readonly reasonKo: string;
   readonly cause: CampaignOwnershipChangeCause;
+  readonly source: CampaignDeltaSource;
 }
 
 export interface CampaignDeclaredTransfer {
@@ -80,6 +94,7 @@ export interface CampaignResolution {
   readonly nationDeltas: readonly CampaignNationDelta[];
   readonly relationDeltas: readonly CampaignRelationDelta[];
   readonly treatyDeltas: readonly CampaignTreatyDelta[];
+  readonly unitDeltas: readonly CampaignUnitDelta[];
   readonly worldEventIds: readonly string[];
   readonly reactionIds: readonly string[];
   readonly worldImpact: CampaignWorldImpact;
@@ -89,6 +104,7 @@ const NumericDeltaSchema = z
   .object({
     before: z.number().safe().int(),
     after: z.number().safe().int(),
+    source: z.enum(["policy", "tick"]).default("policy"),
   })
   .strict();
 
@@ -118,6 +134,9 @@ export const CampaignResolutionSchema = z
           treasuryCredits: NumericDeltaSchema,
           gdpCredits: NumericDeltaSchema,
           infrastructureBps: NumericDeltaSchema,
+          stabilityBps: NumericDeltaSchema.optional(),
+          population: NumericDeltaSchema.optional(),
+          taxRateBps: NumericDeltaSchema.optional(),
         })
         .strict(),
     ),
@@ -128,21 +147,52 @@ export const CampaignResolutionSchema = z
           toNationId: z.string().regex(/^nat_[a-z0-9_]+$/),
           before: z.number().safe().int(),
           after: z.number().safe().int(),
+          source: z.enum(["policy", "tick"]).default("policy"),
         })
         .strict(),
     ),
     treatyDeltas: z.array(
       z
         .object({
-          id: z.string().min(1),
+          id: z.string().regex(/^try_[a-z0-9_]+$/),
           proposerNationId: z.string().regex(/^nat_[a-z0-9_]+$/),
           recipientNationId: z.string().regex(/^nat_[a-z0-9_]+$/),
           clauses: z.array(z.string().min(1)),
-          status: z.enum(["proposed", "active"]),
+          status: z.enum(["proposed", "active", "rejected", "terminated"]),
           proposedTurn: z.number().safe().int().nonnegative(),
+          resolvedTurn: z.number().safe().int().nonnegative().optional(),
+          terminatedTurn: z.number().safe().int().nonnegative().optional(),
+          source: z.enum(["policy", "tick"]).default("policy"),
         })
         .strict(),
     ),
+    unitDeltas: z
+      .array(
+        z
+          .object({
+            unitId: z.string().regex(/^unt_[a-z0-9_]+$/),
+            ownerNationId: z.string().regex(/^nat_[a-z0-9_]+$/),
+            before: z
+              .object({
+                ownerNationId: z.string().regex(/^nat_[a-z0-9_]+$/),
+                provinceId: z.string().regex(/^prv_[a-z0-9_]+$/),
+                manpower: z.number().safe().int().nonnegative(),
+              })
+              .strict()
+              .nullable(),
+            after: z
+              .object({
+                ownerNationId: z.string().regex(/^nat_[a-z0-9_]+$/),
+                provinceId: z.string().regex(/^prv_[a-z0-9_]+$/),
+                manpower: z.number().safe().int().nonnegative(),
+              })
+              .strict()
+              .nullable(),
+            source: z.enum(["policy", "tick"]).default("policy"),
+          })
+          .strict(),
+      )
+      .default([]),
     worldEventIds: z.array(z.string().regex(/^evt_[a-z0-9_]+$/)).default([]),
     reactionIds: z.array(z.string().regex(/^rct_[a-z0-9_]+$/)).default([]),
     worldImpact: z
@@ -159,6 +209,7 @@ export const CampaignResolutionSchema = z
                 fromNationId: z.string().regex(/^nat_[a-z0-9_]+$/),
                 reasonKo: z.string().min(1).max(300),
                 cause: z.enum(["player", "npc", "combat"]),
+                source: z.enum(["policy", "tick"]).default("policy"),
               })
               .strict(),
           )
@@ -168,8 +219,11 @@ export const CampaignResolutionSchema = z
   })
   .strict();
 
-const numericDelta = (before: number, after: number): CampaignNumericDelta =>
-  Object.freeze({ before, after });
+const numericDelta = (
+  before: number,
+  after: number,
+  source: CampaignDeltaSource,
+): CampaignNumericDelta => Object.freeze({ before, after, source });
 
 const unique = (values: readonly string[]): readonly string[] =>
   Object.freeze([...new Set(values)]);
@@ -189,18 +243,23 @@ export interface CreateCampaignResolutionInput {
   readonly narrativeKo: string;
   readonly changedProvinceIds: readonly string[];
   readonly declaredTransfers?: readonly CampaignDeclaredTransfer[];
+  readonly source?: CampaignDeltaSource;
 }
 
 export const createCampaignResolution = (
   input: CreateCampaignResolutionInput,
 ): CampaignResolution => {
+  const source = input.source ?? "policy";
   const nationDeltas = input.after.nations.flatMap((afterNation) => {
     const beforeNation = input.before.nations.find((nation) => nation.id === afterNation.id);
     if (
       beforeNation === undefined ||
       (beforeNation.treasuryCredits === afterNation.treasuryCredits &&
         beforeNation.gdpCredits === afterNation.gdpCredits &&
-        beforeNation.infrastructureBps === afterNation.infrastructureBps)
+        beforeNation.infrastructureBps === afterNation.infrastructureBps &&
+        beforeNation.stabilityBps === afterNation.stabilityBps &&
+        beforeNation.population === afterNation.population &&
+        beforeNation.taxRateBps === afterNation.taxRateBps)
     ) {
       return [];
     }
@@ -208,12 +267,32 @@ export const createCampaignResolution = (
       Object.freeze({
         nationId: afterNation.id,
         nationNameKo: afterNation.nameKo,
-        treasuryCredits: numericDelta(beforeNation.treasuryCredits, afterNation.treasuryCredits),
-        gdpCredits: numericDelta(beforeNation.gdpCredits, afterNation.gdpCredits),
+        treasuryCredits: numericDelta(
+          beforeNation.treasuryCredits,
+          afterNation.treasuryCredits,
+          source,
+        ),
+        gdpCredits: numericDelta(beforeNation.gdpCredits, afterNation.gdpCredits, source),
         infrastructureBps: numericDelta(
           beforeNation.infrastructureBps,
           afterNation.infrastructureBps,
+          source,
         ),
+        ...(beforeNation.stabilityBps === afterNation.stabilityBps
+          ? {}
+          : {
+              stabilityBps: numericDelta(
+                beforeNation.stabilityBps,
+                afterNation.stabilityBps,
+                source,
+              ),
+            }),
+        ...(beforeNation.population === afterNation.population
+          ? {}
+          : { population: numericDelta(beforeNation.population, afterNation.population, source) }),
+        ...(beforeNation.taxRateBps === afterNation.taxRateBps
+          ? {}
+          : { taxRateBps: numericDelta(beforeNation.taxRateBps, afterNation.taxRateBps, source) }),
       }),
     ];
   });
@@ -232,18 +311,31 @@ export const createCampaignResolution = (
             toNationId: afterRelation.toNationId,
             before: beforeValue,
             after: afterRelation.value,
+            source,
           }),
         ];
   });
-  const treatyDeltas = input.after.treaties.flatMap((treaty) =>
-    input.before.treaties.some((candidate) => candidate.id === treaty.id)
+  const treatyDeltas = input.after.treaties.flatMap((treaty) => {
+    const before = input.before.treaties.find((candidate) => candidate.id === treaty.id);
+    return before !== undefined &&
+      before.status === treaty.status &&
+      before.resolvedTurn === treaty.resolvedTurn &&
+      before.terminatedTurn === treaty.terminatedTurn
       ? []
-      : [Object.freeze({ ...treaty, clauses: Object.freeze([...treaty.clauses]) })],
-  );
+      : [
+          Object.freeze({
+            ...treaty,
+            clauses: Object.freeze([...treaty.clauses]),
+            source,
+          }),
+        ];
+  });
+  const unitDeltas = campaignUnitDeltas(input.before, input.after, source);
   const changedNationIds = unique([
     ...nationDeltas.map((delta) => delta.nationId),
     ...relationDeltas.flatMap((delta) => [delta.fromNationId, delta.toNationId]),
     ...treatyDeltas.flatMap((delta) => [delta.proposerNationId, delta.recipientNationId]),
+    ...unitDeltas.map((delta) => delta.ownerNationId),
     ...changedEntityOwnerIds(input.before, input.after),
   ]);
   const changedProvinceIds = unique([
@@ -276,6 +368,7 @@ export const createCampaignResolution = (
         fromNationId: beforeProvince.ownerNationId,
         reasonKo: declared?.reasonKo ?? "교전 결과로 지배권이 바뀌었다.",
         cause: declared?.cause ?? ("combat" as const),
+        source,
       }),
     ];
   });
@@ -324,6 +417,7 @@ export const createCampaignResolution = (
     nationDeltas: Object.freeze(nationDeltas),
     relationDeltas: Object.freeze(relationDeltas),
     treatyDeltas: Object.freeze(treatyDeltas),
+    unitDeltas,
     worldEventIds: Object.freeze([]),
     reactionIds: Object.freeze([]),
     worldImpact: Object.freeze({

@@ -1,9 +1,17 @@
 import { z } from "zod";
 
+import {
+  NationIdSchema,
+  ProvinceIdSchema,
+  TreatyIdSchema,
+  UnitIdSchema,
+} from "./campaign-id-schemas";
+
 const NumericDeltaSchema = z
   .object({
     before: z.number().int(),
     after: z.number().int(),
+    source: z.enum(["policy", "tick"]).default("policy"),
   })
   .strict();
 
@@ -36,36 +44,70 @@ export const CampaignResolutionSchema = z
     nationDeltas: z.array(
       z
         .object({
-          nationId: z.string(),
+          nationId: NationIdSchema,
           nationNameKo: z.string().min(1),
           treasuryCredits: NumericDeltaSchema,
           gdpCredits: NumericDeltaSchema,
           infrastructureBps: NumericDeltaSchema,
+          stabilityBps: NumericDeltaSchema.optional(),
+          population: NumericDeltaSchema.optional(),
+          taxRateBps: NumericDeltaSchema.optional(),
         })
         .strict(),
     ),
     relationDeltas: z.array(
       z
         .object({
-          fromNationId: z.string(),
-          toNationId: z.string(),
+          fromNationId: NationIdSchema,
+          toNationId: NationIdSchema,
           before: z.number().int(),
           after: z.number().int(),
+          source: z.enum(["policy", "tick"]).default("policy"),
         })
         .strict(),
     ),
     treatyDeltas: z.array(
       z
         .object({
-          id: z.string(),
-          proposerNationId: z.string(),
-          recipientNationId: z.string(),
+          id: TreatyIdSchema,
+          proposerNationId: NationIdSchema,
+          recipientNationId: NationIdSchema,
           clauses: z.array(z.string()),
-          status: z.enum(["proposed", "active"]),
+          status: z.enum(["proposed", "active", "rejected", "terminated"]),
           proposedTurn: z.number().int().nonnegative(),
+          resolvedTurn: z.number().int().nonnegative().optional(),
+          terminatedTurn: z.number().int().nonnegative().optional(),
+          source: z.enum(["policy", "tick"]).default("policy"),
         })
         .strict(),
     ),
+    unitDeltas: z
+      .array(
+        z
+          .object({
+            unitId: UnitIdSchema,
+            ownerNationId: NationIdSchema,
+            before: z
+              .object({
+                ownerNationId: NationIdSchema,
+                provinceId: ProvinceIdSchema,
+                manpower: z.number().int().nonnegative(),
+              })
+              .strict()
+              .nullable(),
+            after: z
+              .object({
+                ownerNationId: NationIdSchema,
+                provinceId: ProvinceIdSchema,
+                manpower: z.number().int().nonnegative(),
+              })
+              .strict()
+              .nullable(),
+            source: z.enum(["policy", "tick"]).default("policy"),
+          })
+          .strict(),
+      )
+      .default([]),
     worldEventIds: z.array(z.string()).default([]),
     reactionIds: z.array(z.string()).default([]),
     worldImpact: z
@@ -82,6 +124,7 @@ export const CampaignResolutionSchema = z
                 fromNationId: z.string(),
                 reasonKo: z.string().min(1),
                 cause: z.enum(["player", "npc", "combat"]),
+                source: z.enum(["policy", "tick"]).default("policy"),
               })
               .strict(),
           )

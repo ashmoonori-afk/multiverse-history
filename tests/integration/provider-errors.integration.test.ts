@@ -118,8 +118,16 @@ describe("provider turn transaction", () => {
     });
 
     // Then
-    expect(result.plan.playerIntents).toEqual([]);
-    expect(result.plan.warnings).toEqual(["PLAYER_ORDER_NOT_RECOGNIZED"]);
+    expect(result.plan.playerIntents).toEqual([
+      {
+        type: "action.fail",
+        actorNationId: "nat_kor",
+        attemptKo: injectionLikeOrder,
+        stabilityDelta: -100,
+        sourceQuoteKo: injectionLikeOrder,
+      },
+    ]);
+    expect(result.plan.warnings).toEqual([]);
     expect(result.state.turn).toBe(1);
     expect(result.state.events).toEqual([`provider_plan:${requestId}`]);
     expect(store.read()).toEqual(result.state);

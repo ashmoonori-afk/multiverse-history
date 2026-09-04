@@ -258,7 +258,7 @@ describe("strategic plan grounding", () => {
     expect(grounded.warnings).toContain("PLAYER_INTENT_UNGROUNDED");
   });
 
-  test("lets an unsupported quoted player intent reach the reducer", () => {
+  test("lets a quoted v2 player intent reach its reducer", () => {
     // Given
     const orderText = "일본에 선전포고하라";
     const snapshot = createCampaignState("scn_ea1900", PLAYER);
@@ -273,10 +273,9 @@ describe("strategic plan grounding", () => {
     ]);
 
     // When
-    const reduceGrounded = () => applyStrategicPlan({ snapshot, plan: grounded, orderText });
+    const reduced = applyStrategicPlan({ snapshot, plan: grounded, orderText });
 
     // Then
-    expect(reduceGrounded).toThrow(RangeError);
-    expect(reduceGrounded).toThrow("INTENT_NOT_SUPPORTED_YET");
+    expect(reduced.wars[0]?.status).toBe("active");
   });
 });

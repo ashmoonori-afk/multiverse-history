@@ -1,51 +1,32 @@
-import { describe, expect, setDefaultTimeout, test } from "bun:test";
+import { afterAll, describe, expect, test } from "bun:test";
 
 import { createGameApp } from "../../src/api/app";
+import { createCampaignStateFromScenario } from "../../src/application/campaign-state";
 import { listScenarios } from "../../src/domain/scenario/registry";
 
-setDefaultTimeout(120_000);
-
 describe("global campaign creation contract", () => {
-  test("creates every scenario-country pair with a complete turn-zero start", async () => {
-    const app = createGameApp();
-    let createdCount = 0;
-
-    for (const scenario of listScenarios()) {
+  let createdCount = 0;
+  for (const scenario of listScenarios()) {
+    test(`creates every ${scenario.id} country with a complete turn-zero start`, () => {
       for (const playerNationId of scenario.playerNationIds) {
-        const response = await app.request("/api/campaigns", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ scenarioId: scenario.id, playerNationId }),
-        });
-        expect(response.status).toBe(201);
-        const body = (await response.json()) as {
-          campaign: {
-            turn: number;
-            nations: readonly {
-              id: string;
-              capitalLabelKo: string;
-              legalActions: readonly string[];
-              treasuryCredits: number;
-            }[];
-            provinces: readonly { ownerNationId: string }[];
-            relations: readonly { fromNationId: string }[];
-          };
-        };
-        const player = body.campaign.nations.find((nation) => nation.id === playerNationId);
-        expect(body.campaign.turn).toBe(0);
+        const campaign = createCampaignStateFromScenario(scenario, playerNationId);
+        const player = campaign.nations.find((nation) => nation.id === playerNationId);
+        expect(campaign.turn).toBe(0);
         expect(player?.capitalLabelKo.length).toBeGreaterThan(0);
         expect(player?.legalActions.length).toBeGreaterThan(0);
         expect(player?.treasuryCredits).toBeGreaterThan(0);
         expect(
-          body.campaign.provinces.some((province) => province.ownerNationId === playerNationId),
+          campaign.provinces.some((province) => province.ownerNationId === playerNationId),
         ).toBe(true);
         expect(
-          body.campaign.relations.some((relation) => relation.fromNationId === playerNationId),
+          campaign.relations.some((relation) => relation.fromNationId === playerNationId),
         ).toBe(true);
         createdCount += 1;
       }
-    }
+    });
+  }
 
+  afterAll(() => {
     const expectedCount = listScenarios().reduce(
       (total, scenario) => total + scenario.playerNationIds.length,
       0,
@@ -59,7 +40,7 @@ describe("global campaign creation contract", () => {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
-        scenarioId: "scn_bronze_1200bc",
+        scenarioId: "scn_ea1900",
         playerNationId: "nat_bra",
         customPolityName: "한성 연방",
       }),

@@ -18,6 +18,83 @@ afterEach(() => {
 });
 
 describe("client campaign compatibility", () => {
+  test("accepts v2 lifecycle contracts and defaults legacy resolution sources", async () => {
+    // Given
+    const base = createCampaignState("scn_ea1900", "nat_kor");
+    const legacyResolution = createCampaignResolution({
+      before: base,
+      after: {
+        ...base,
+        nations: base.nations.map((nation) =>
+          nation.id === "nat_kor" ? { ...nation, stabilityBps: nation.stabilityBps - 1 } : nation,
+        ),
+      },
+      turn: 1,
+      cadence: "quarter",
+      advanceDays: 91,
+      orderText: "정책을 조정한다.",
+      narrativeKo: "정책이 조정되었다.",
+      changedProvinceIds: [],
+    });
+    const legacyResolutionWithoutSource = JSON.parse(JSON.stringify(legacyResolution));
+    Reflect.deleteProperty(legacyResolutionWithoutSource.nationDeltas[0].stabilityBps, "source");
+    Reflect.deleteProperty(legacyResolutionWithoutSource, "unitDeltas");
+    const campaign = {
+      ...base,
+      treaties: [
+        {
+          id: "try_1_0",
+          proposerNationId: "nat_kor",
+          recipientNationId: "nat_jpn",
+          clauses: ["trade"],
+          status: "terminated",
+          proposedTurn: 0,
+          resolvedTurn: 1,
+          terminatedTurn: 2,
+        },
+      ],
+      wars: [
+        {
+          id: "war_1_0",
+          attackerNationId: "nat_kor",
+          targetNationId: "nat_jpn",
+          status: "ended",
+          declaredTurn: 1,
+          endedTurn: 2,
+        },
+        {
+          attackerNationId: "nat_qing",
+          targetNationId: "nat_jpn",
+          declaredTurn: 3,
+        },
+      ],
+      resolutions: [legacyResolutionWithoutSource],
+    };
+    globalThis.fetch = Object.assign(
+      async () =>
+        new Response(JSON.stringify({ campaign, stateHash: "a".repeat(64) }), {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        }),
+      { preconnect: originalFetch.preconnect },
+    );
+
+    // When
+    await useCampaignStore.getState().loadCampaign();
+    const loaded = useCampaignStore.getState().campaign;
+
+    // Then
+    expect(useCampaignStore.getState().error).toBeNull();
+    expect(loaded?.nations.find((nation) => nation.id === "nat_kor")?.capitalProvinceId).toBe(
+      "prv_kor_hanseong",
+    );
+    expect(loaded?.treaties[0]?.status).toBe("terminated");
+    expect(loaded?.wars[0]?.status).toBe("ended");
+    expect(loaded?.wars[1]).toEqual(expect.objectContaining({ id: "war_3_1", status: "active" }));
+    expect(loaded?.resolutions[0]?.nationDeltas[0]?.stabilityBps?.source).toBe("policy");
+    expect(loaded?.resolutions[0]?.unitDeltas).toEqual([]);
+  });
+
   test("accepts v2 nation profiles and province adjacency metadata", async () => {
     // Given
     const base = createCampaignState("scn_ea1900", "nat_kor");

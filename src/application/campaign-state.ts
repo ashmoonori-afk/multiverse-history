@@ -30,8 +30,10 @@ export interface CampaignTreatyState {
   readonly proposerNationId: string;
   readonly recipientNationId: string;
   readonly clauses: readonly string[];
-  readonly status: "proposed" | "active";
+  readonly status: "proposed" | "active" | "rejected" | "terminated";
   readonly proposedTurn: number;
+  readonly resolvedTurn?: number | undefined;
+  readonly terminatedTurn?: number | undefined;
 }
 
 export interface CampaignUnitState {
@@ -42,9 +44,12 @@ export interface CampaignUnitState {
 }
 
 export interface CampaignWarState {
+  readonly id: string;
   readonly attackerNationId: string;
   readonly targetNationId: string;
+  readonly status: "active" | "ended";
   readonly declaredTurn: number;
+  readonly endedTurn?: number | undefined;
 }
 
 export interface CampaignState extends CampaignTurnState {
@@ -74,6 +79,7 @@ export interface CampaignState extends CampaignTurnState {
 }
 
 export type CampaignNationState = ScenarioDefinition["nations"][number] & {
+  readonly capitalProvinceId?: string | undefined;
   readonly governmentKo?: string | undefined;
   readonly tags?: readonly string[] | undefined;
   readonly manpowerPool?: number | undefined;
@@ -126,6 +132,10 @@ const CampaignStateSchema = z
           stabilityBps: z.number().safe().int().min(0).max(10_000),
           population: z.number().safe().int().nonnegative(),
           infrastructureBps: z.number().safe().int().min(0).max(10_000),
+          capitalProvinceId: z
+            .string()
+            .regex(/^prv_[a-z0-9_]+$/)
+            .optional(),
           governmentKo: z.string().trim().min(1).optional(),
           tags: z.array(z.string().trim().min(1)).optional(),
           manpowerPool: z.number().safe().int().nonnegative().optional(),
@@ -168,21 +178,23 @@ const CampaignStateSchema = z
     treaties: z.array(
       z
         .object({
-          id: z.string(),
-          proposerNationId: z.string(),
-          recipientNationId: z.string(),
+          id: z.string().regex(/^try_[a-z0-9_]+$/),
+          proposerNationId: z.string().regex(/^nat_[a-z0-9_]+$/),
+          recipientNationId: z.string().regex(/^nat_[a-z0-9_]+$/),
           clauses: z.array(z.string()),
-          status: z.enum(["proposed", "active"]),
+          status: z.enum(["proposed", "active", "rejected", "terminated"]),
           proposedTurn: z.number().safe().int().nonnegative(),
+          resolvedTurn: z.number().safe().int().nonnegative().optional(),
+          terminatedTurn: z.number().safe().int().nonnegative().optional(),
         })
         .strict(),
     ),
     units: z.array(
       z
         .object({
-          id: z.string(),
-          ownerNationId: z.string(),
-          provinceId: z.string(),
+          id: z.string().regex(/^unt_[a-z0-9_]+$/),
+          ownerNationId: z.string().regex(/^nat_[a-z0-9_]+$/),
+          provinceId: z.string().regex(/^prv_[a-z0-9_]+$/),
           manpower: z.number().safe().int().nonnegative(),
         })
         .strict(),
@@ -190,9 +202,12 @@ const CampaignStateSchema = z
     wars: z.array(
       z
         .object({
+          id: z.string().regex(/^war_[a-z0-9_]+$/),
           attackerNationId: z.string().regex(/^nat_[a-z0-9_]+$/),
           targetNationId: z.string().regex(/^nat_[a-z0-9_]+$/),
+          status: z.enum(["active", "ended"]),
           declaredTurn: z.number().safe().int().nonnegative(),
+          endedTurn: z.number().safe().int().nonnegative().optional(),
         })
         .strict(),
     ),
@@ -256,14 +271,18 @@ export const createCampaignStateFromScenario = (
     turn: 0,
     date: Object.freeze({ year: scenario.year, quarter: scenario.quarter }),
     nations: Object.freeze(
-      scenario.nations.map((nation) =>
-        Object.freeze({
+      scenario.nations.map((nation) => {
+        const capitalProvinceId = scenario.provinces.find(
+          (province) => province.ownerNationId === nation.id && province.isCapital === true,
+        )?.id;
+        return Object.freeze({
           ...nation,
+          ...(capitalProvinceId === undefined ? {} : { capitalProvinceId }),
           ...(nation.id === playerNationId && customPolityName !== undefined
             ? { nameKo: customPolityName }
             : {}),
-        }),
-      ),
+        });
+      }),
     ),
     provinces: Object.freeze(scenario.provinces.map((province) => Object.freeze({ ...province }))),
     relations: Object.freeze(scenario.relations.map((relation) => Object.freeze({ ...relation }))),
@@ -314,6 +333,12 @@ export const parseCampaignState = (value: unknown): CampaignState => {
         }),
       ),
     ),
+    treaties: Object.freeze(
+      parsed.treaties.map((treaty) =>
+        Object.freeze({ ...treaty, clauses: Object.freeze([...treaty.clauses]) }),
+      ),
+    ),
+    units: Object.freeze(parsed.units.map((unit) => Object.freeze({ ...unit }))),
     wars: Object.freeze(
       parsed.wars.map((war) =>
         Object.freeze({

@@ -235,6 +235,7 @@ const CampaignSchema = z
           stabilityBps: z.number().int().nonnegative(),
           population: z.number().int().nonnegative(),
           infrastructureBps: z.number().int().nonnegative(),
+          capitalProvinceId: ProvinceIdSchema.optional(),
           governmentKo: z.string().min(1).optional(),
           tags: z.array(z.string().min(1)).optional(),
           manpowerPool: z.number().int().nonnegative().optional(),
@@ -281,8 +282,10 @@ const CampaignSchema = z
           proposerNationId: NationIdSchema,
           recipientNationId: NationIdSchema,
           clauses: z.array(z.string()),
-          status: z.enum(["proposed", "active"]),
+          status: z.enum(["proposed", "active", "rejected", "terminated"]),
           proposedTurn: z.number().int().nonnegative(),
+          resolvedTurn: z.number().int().nonnegative().optional(),
+          terminatedTurn: z.number().int().nonnegative().optional(),
         })
         .strict(),
     ),
@@ -296,15 +299,25 @@ const CampaignSchema = z
         })
         .strict(),
     ),
-    wars: z.array(
-      z
-        .object({
-          attackerNationId: NationIdSchema,
-          targetNationId: NationIdSchema,
-          declaredTurn: z.number().int().nonnegative(),
-        })
-        .strict(),
-    ),
+    wars: z
+      .array(
+        z
+          .object({
+            id: WarIdSchema.optional(),
+            attackerNationId: NationIdSchema,
+            targetNationId: NationIdSchema,
+            status: z.enum(["active", "ended"]).default("active"),
+            declaredTurn: z.number().int().nonnegative(),
+            endedTurn: z.number().int().nonnegative().optional(),
+          })
+          .strict(),
+      )
+      .transform((wars) =>
+        wars.map((war, index) => ({
+          ...war,
+          id: war.id ?? `war_${war.declaredTurn}_${index}`,
+        })),
+      ),
     battleReports: z.array(z.string()),
     events: z.array(z.string()),
     lastPlan: StrategicPlanSchema.nullable(),
