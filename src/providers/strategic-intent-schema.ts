@@ -1,10 +1,28 @@
 import { z } from "zod";
 
-export const NationIdSchema = z.string().regex(/^nat_[a-z0-9_]+$/);
-export const ProvinceIdSchema = z.string().regex(/^prv_[a-z0-9_]+$/);
-export const TreatyIdSchema = z.string().regex(/^try_[a-z0-9_]+$/);
-export const WarIdSchema = z.string().regex(/^war_[a-z0-9_]+$/);
-export const UnitIdSchema = z.string().regex(/^unt_[a-z0-9_]+$/);
+export const MAX_STRATEGIC_IDENTIFIER_LENGTH = 128;
+export const MAX_PEACE_TERMS = 16;
+
+export const NationIdSchema = z
+  .string()
+  .max(MAX_STRATEGIC_IDENTIFIER_LENGTH)
+  .regex(/^nat_[a-z0-9_]+$/);
+export const ProvinceIdSchema = z
+  .string()
+  .max(MAX_STRATEGIC_IDENTIFIER_LENGTH)
+  .regex(/^prv_[a-z0-9_]+$/);
+export const TreatyIdSchema = z
+  .string()
+  .max(MAX_STRATEGIC_IDENTIFIER_LENGTH)
+  .regex(/^try_[a-z0-9_]+$/);
+export const WarIdSchema = z
+  .string()
+  .max(MAX_STRATEGIC_IDENTIFIER_LENGTH)
+  .regex(/^war_[a-z0-9_]+$/);
+export const UnitIdSchema = z
+  .string()
+  .max(MAX_STRATEGIC_IDENTIFIER_LENGTH)
+  .regex(/^unt_[a-z0-9_]+$/);
 export const SectorSchema = z.string().regex(/^[a-z_]{2,24}$/);
 export const ReasonKoSchema = z.string().trim().min(1).max(300);
 export const SourceQuoteKoValueSchema = z.string().min(2).max(200);
@@ -134,8 +152,9 @@ const WarPeaceIntentSchema = z
   .object(
     withSourceQuoteKo({
       type: z.literal("war.peace"),
+      actorNationId: NationIdSchema,
       warId: WarIdSchema,
-      terms: z.array(TerritoryTransferIntentSchema).readonly(),
+      terms: z.array(TerritoryTransferIntentSchema).max(MAX_PEACE_TERMS).readonly(),
       reparationsCredits: z.number().safe().int().nonnegative().optional(),
     }),
   )
@@ -145,6 +164,7 @@ const UnitMoveIntentSchema = z
   .object(
     withSourceQuoteKo({
       type: z.literal("unit.move"),
+      actorNationId: NationIdSchema,
       unitId: UnitIdSchema,
       toProvinceId: ProvinceIdSchema,
     }),
@@ -155,6 +175,7 @@ const UnitAttackIntentSchema = z
   .object(
     withSourceQuoteKo({
       type: z.literal("unit.attack"),
+      actorNationId: NationIdSchema,
       unitId: UnitIdSchema,
       targetProvinceId: ProvinceIdSchema,
     }),
@@ -162,7 +183,13 @@ const UnitAttackIntentSchema = z
   .strict();
 
 const UnitDisbandIntentSchema = z
-  .object(withSourceQuoteKo({ type: z.literal("unit.disband"), unitId: UnitIdSchema }))
+  .object(
+    withSourceQuoteKo({
+      type: z.literal("unit.disband"),
+      actorNationId: NationIdSchema,
+      unitId: UnitIdSchema,
+    }),
+  )
   .strict();
 
 const PolityChangeIntentSchema = z

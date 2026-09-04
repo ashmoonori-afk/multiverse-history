@@ -78,7 +78,7 @@ describe("campaign slot API", () => {
     expect(notStarted.status).toBe(409);
   });
 
-  test("rejects a tampered slot with a client error", async () => {
+  test("rejects a checksum-corrupted slot with a client error", async () => {
     // Given
     const slotDirectory = await temporaryDirectory();
     const app = createGameApp({ slotDirectory });

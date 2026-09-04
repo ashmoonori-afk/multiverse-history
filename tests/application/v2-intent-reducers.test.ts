@@ -18,6 +18,13 @@ const planWith = (intent: StrategicIntent): StrategicPlan => ({
   warnings: [],
 });
 
+const applyNpc = (snapshot: CampaignState, intent: StrategicIntent): CampaignState =>
+  applyStrategicPlan({
+    snapshot,
+    plan: { ...planWith(intent), playerIntents: [], npcIntents: [intent] },
+    orderText: "NPC intent",
+  });
+
 const apply = (snapshot: CampaignState, intent: StrategicIntent): CampaignState =>
   applyStrategicPlan({ snapshot, plan: planWith(intent), orderText: "명령을 실행한다." });
 
@@ -61,8 +68,8 @@ describe("v2 strategic intent reducers", () => {
         {
           type: "nation.adjust",
           nationId: "nat_kor",
-          treasuryDelta: -10_000,
-          reasonKo: "플레이어 지출",
+          treasuryDelta: 10_000,
+          reasonKo: "플레이어 지원",
         },
       ],
       npcIntents: [
@@ -81,9 +88,9 @@ describe("v2 strategic intent reducers", () => {
     const after = applyStrategicPlan({ snapshot, plan, orderText: "정책을 순서대로 처리한다." });
 
     // Then
-    expect(after.nations.find((nation) => nation.id === "nat_kor")?.treasuryCredits).toBe(230);
+    expect(after.nations.find((nation) => nation.id === "nat_kor")?.treasuryCredits).toBe(345);
     expect(after.events.slice(0, 2)).toEqual([
-      expect.stringContaining("플레이어 지출"),
+      expect.stringContaining("플레이어 지원"),
       expect.stringContaining("NPC 지원"),
     ]);
   });
@@ -97,8 +104,8 @@ describe("v2 strategic intent reducers", () => {
       type: "nation.adjust",
       nationId: "nat_kor",
       treasuryDelta: 10_000,
-      gdpDelta: -10_000,
-      stabilityDelta: -10_000,
+      gdpDelta: 10_000,
+      stabilityDelta: 10_000,
       taxRateBps: 2_000,
       reasonKo: "긴급 재정 조정",
     });
@@ -107,11 +114,29 @@ describe("v2 strategic intent reducers", () => {
 
     // Then
     expect(nation).toEqual(
-      expect.objectContaining({ treasuryCredits: 288, gdpCredits: 960, stabilityBps: 4_640 }),
+      expect.objectContaining({ treasuryCredits: 288, gdpCredits: 1_440, stabilityBps: 6_960 }),
     );
     expect(delta?.treasuryCredits.source).toBe("policy");
     expect(delta?.stabilityBps?.source).toBe("policy");
     expect(after.events.some((event) => event.includes("긴급 재정 조정"))).toBe(true);
+  });
+
+  test("rejects player treasury and stability debits at the reducer boundary", () => {
+    // Given
+    const snapshot = createCampaignState("scn_ea1900", "nat_kor");
+
+    // When
+    const debit = () =>
+      apply(snapshot, {
+        type: "nation.adjust",
+        nationId: "nat_kor",
+        treasuryDelta: -1,
+        stabilityDelta: -1,
+        reasonKo: "플레이어 자원 차감",
+      });
+
+    // Then
+    expect(debit).toThrow("PLAYER_SOVEREIGNTY_VIOLATION");
   });
 
   test("relation.adjust changes only the directed relation", () => {
@@ -262,6 +287,7 @@ describe("v2 strategic intent reducers", () => {
     // When
     const ended = apply(snapshot, {
       type: "war.peace",
+      actorNationId: "nat_kor",
       warId: "war_0_0",
       terms: [validTerm],
       reparationsCredits: 10,
@@ -269,6 +295,7 @@ describe("v2 strategic intent reducers", () => {
     const invalid = () =>
       apply(snapshot, {
         type: "war.peace",
+        actorNationId: "nat_kor",
         warId: "war_0_0",
         terms: [validTerm, { ...validTerm, provinceId: "prv_jpn_kanto", fromNationId: "nat_qing" }],
       });
@@ -285,6 +312,60 @@ describe("v2 strategic intent reducers", () => {
     expect(canonicalStringify(snapshot)).toBe(beforeBytes);
   });
 
+  test("rejects peace by a player who is not a party to the war", () => {
+    // Given
+    const snapshot = parseCampaignState({
+      ...createCampaignState("scn_ea1900", "nat_kor"),
+      wars: [
+        {
+          id: "war_0_0",
+          attackerNationId: "nat_jpn",
+          targetNationId: "nat_qing",
+          status: "active",
+          declaredTurn: 0,
+        },
+      ],
+    });
+
+    // When
+    const settleUnrelatedWar = () =>
+      apply(snapshot, {
+        type: "war.peace",
+        actorNationId: "nat_kor",
+        warId: "war_0_0",
+        terms: [],
+      });
+
+    // Then
+    expect(settleUnrelatedWar).toThrow("WAR_ACTOR_NOT_PARTY");
+  });
+
+  test("rejects peace terms that surrender player territory", () => {
+    // Given
+    const snapshot = withWar();
+
+    // When
+    const surrender = () =>
+      apply(snapshot, {
+        type: "war.peace",
+        actorNationId: "nat_kor",
+        warId: "war_0_0",
+        terms: [
+          {
+            type: "territory.transfer",
+            actorNationId: "nat_kor",
+            provinceId: "prv_kor_hanseong",
+            fromNationId: "nat_kor",
+            toNationId: "nat_qing",
+            reasonKo: "플레이어 영토 할양",
+          },
+        ],
+      });
+
+    // Then
+    expect(surrender).toThrow("PLAYER_TERRITORY_SURRENDER");
+  });
+
   test("unit.move moves adjacently and converts a non-adjacent move to action.fail", () => {
     // Given
     const snapshot = createCampaignState("scn_ea1900", "nat_kor");
@@ -292,11 +373,13 @@ describe("v2 strategic intent reducers", () => {
     // When
     const moved = apply(snapshot, {
       type: "unit.move",
+      actorNationId: "nat_kor",
       unitId: "unt_ea1900_kor_1",
       toProvinceId: "prv_kor_gyeonggi",
     });
     const failed = apply(snapshot, {
       type: "unit.move",
+      actorNationId: "nat_kor",
       unitId: "unt_ea1900_kor_1",
       toProvinceId: "prv_jpn_kanto",
     });
@@ -329,6 +412,7 @@ describe("v2 strategic intent reducers", () => {
     // When
     const after = apply(snapshot, {
       type: "unit.attack",
+      actorNationId: "nat_kor",
       unitId: "unt_ea1900_kor_2",
       targetProvinceId: "prv_qing_manchuria",
     });
@@ -346,6 +430,7 @@ describe("v2 strategic intent reducers", () => {
 
     const defeated = apply(base, {
       type: "unit.attack",
+      actorNationId: "nat_kor",
       unitId: "unt_ea1900_kor_2",
       targetProvinceId: "prv_qing_manchuria",
     });
@@ -361,11 +446,51 @@ describe("v2 strategic intent reducers", () => {
     const snapshot = createCampaignState("scn_ea1900", "nat_kor");
 
     // When
-    const after = apply(snapshot, { type: "unit.disband", unitId: "unt_ea1900_kor_1" });
+    const after = apply(snapshot, {
+      type: "unit.disband",
+      actorNationId: "nat_kor",
+      unitId: "unt_ea1900_kor_1",
+    });
 
     // Then
     expect(after.units.some((unit) => unit.id === "unt_ea1900_kor_1")).toBe(false);
-    expect(() => apply(snapshot, { type: "unit.disband", unitId: "unt_ea1900_jpn_1" })).toThrow();
+    expect(() =>
+      apply(snapshot, {
+        type: "unit.disband",
+        actorNationId: "nat_kor",
+        unitId: "unt_ea1900_jpn_1",
+      }),
+    ).toThrow();
+  });
+
+  test("rejects NPC move, attack, and disband against player or third-party units", () => {
+    // Given
+    const snapshot = createCampaignState("scn_ea1900", "nat_kor");
+    const attempts = [
+      () =>
+        applyNpc(snapshot, {
+          type: "unit.move",
+          actorNationId: "nat_jpn",
+          unitId: "unt_ea1900_kor_1",
+          toProvinceId: "prv_kor_gyeonggi",
+        }),
+      () =>
+        applyNpc(withWar(), {
+          type: "unit.attack",
+          actorNationId: "nat_jpn",
+          unitId: "unt_ea1900_kor_2",
+          targetProvinceId: "prv_qing_manchuria",
+        }),
+      () =>
+        applyNpc(snapshot, {
+          type: "unit.disband",
+          actorNationId: "nat_jpn",
+          unitId: "unt_ea1900_qing_1",
+        }),
+    ];
+
+    // When / Then
+    for (const attempt of attempts) expect(attempt).toThrow("UNIT_NOT_OWNED");
   });
 
   test("polity.change updates identity only when the new capital is owned", () => {

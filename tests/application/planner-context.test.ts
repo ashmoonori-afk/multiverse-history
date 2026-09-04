@@ -77,6 +77,15 @@ describe("planner context slimming", () => {
           affectedNationIds: Object.freeze(index % 2 === 0 ? ["nat_gbr"] : ["nat_jpn"]),
           headlineKo: `일본 관련 사건 ${index}`,
           summaryKo: `일본과 영국이 관련된 사건 ${index}`,
+          impacts: {
+            regionTransfers: [],
+            nationChanges: [],
+            relationChanges: [],
+            unitOps: [],
+          },
+          provenance: "simulated_consequence" as const,
+          regionIds: Object.freeze([]),
+          sourceInputIds: Object.freeze([`req_jpn_${index}`]),
         })),
       ),
     });

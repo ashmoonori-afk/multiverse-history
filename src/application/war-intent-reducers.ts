@@ -26,9 +26,9 @@ const provinceNodes = (state: CampaignState): readonly ProvinceNode[] =>
     adjacentProvinceIds: province.adjacentProvinceIds ?? [],
   }));
 
-const requireUnit = (state: CampaignState, unitId: string, playerIntent: boolean) => {
+const requireUnit = (state: CampaignState, unitId: string, actorNationId: string) => {
   const unit = state.units.find((candidate) => candidate.id === unitId);
-  if (unit === undefined || (playerIntent && unit.ownerNationId !== state.playerNationId)) {
+  if (unit === undefined || unit.ownerNationId !== actorNationId) {
     throw new RangeError("UNIT_NOT_OWNED");
   }
   return unit;
@@ -101,6 +101,13 @@ const makePeace = (
   const war = state.wars.find((candidate) => candidate.id === intent.warId);
   if (war?.status !== "active") throw new RangeError("ACTIVE_WAR_NOT_FOUND");
   const parties = [war.attackerNationId, war.targetNationId];
+  if (!parties.includes(intent.actorNationId)) throw new RangeError("WAR_ACTOR_NOT_PARTY");
+  if (
+    intent.actorNationId === state.playerNationId &&
+    intent.terms.some((term) => term.fromNationId === state.playerNationId)
+  ) {
+    throw new RangeError("PLAYER_TERRITORY_SURRENDER");
+  }
   if (new Set(intent.terms.map((term) => term.provinceId)).size !== intent.terms.length) {
     throw new RangeError("PEACE_TERM_INVALID");
   }
@@ -157,9 +164,8 @@ const makePeace = (
 const moveUnit = (
   state: CampaignState,
   intent: Extract<WarIntent, { readonly type: "unit.move" }>,
-  playerIntent: boolean,
 ): CampaignState => {
-  const unit = requireUnit(state, intent.unitId, playerIntent);
+  const unit = requireUnit(state, intent.unitId, intent.actorNationId);
   if (!state.provinces.some((province) => province.id === intent.toProvinceId)) {
     throw new RangeError("PROVINCE_NOT_FOUND");
   }
@@ -192,17 +198,20 @@ export const applyWarIntent = (
   turn: number,
   playerIntent: boolean,
 ): CampaignState => {
+  if ((intent.actorNationId === state.playerNationId) !== playerIntent) {
+    throw new RangeError("INTENT_ACTOR_INVALID");
+  }
   switch (intent.type) {
     case "war.declare":
       return declareWar(state, intent, turn);
     case "war.peace":
       return makePeace(state, intent, turn);
     case "unit.move":
-      return moveUnit(state, intent, playerIntent);
+      return moveUnit(state, intent);
     case "unit.attack":
-      return applyUnitAttack(state, intent, turn, playerIntent);
+      return applyUnitAttack(state, intent, turn);
     case "unit.disband": {
-      const unit = requireUnit(state, intent.unitId, playerIntent);
+      const unit = requireUnit(state, intent.unitId, intent.actorNationId);
       return appendEvent(
         Object.freeze({
           ...state,

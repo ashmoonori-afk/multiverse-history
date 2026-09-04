@@ -3,6 +3,36 @@ import { z } from "zod";
 import { parseNationId } from "../shared/ids";
 import type { CampaignState } from "./campaign-state";
 
+const NationIdSchema = z.string().regex(/^nat_[a-z0-9_]+$/);
+const ProvinceIdSchema = z.string().regex(/^prv_[a-z0-9_]+$/);
+const UnitIdSchema = z.string().regex(/^unt_[a-z0-9_]+$/);
+
+const UnitOpSchema = z.discriminatedUnion("op", [
+  z
+    .object({
+      op: z.literal("spawn"),
+      ownerNationId: NationIdSchema,
+      provinceId: ProvinceIdSchema,
+      manpower: z.number().safe().int().nonnegative(),
+    })
+    .strict(),
+  z
+    .object({
+      op: z.literal("move"),
+      unitId: UnitIdSchema,
+      provinceId: ProvinceIdSchema,
+    })
+    .strict(),
+  z.object({ op: z.literal("remove"), unitId: UnitIdSchema }).strict(),
+  z
+    .object({
+      op: z.literal("strength"),
+      unitId: UnitIdSchema,
+      manpower: z.number().safe().int().nonnegative(),
+    })
+    .strict(),
+]);
+
 /**
  * Region ownership override: tracks which province changed hands.
  * Applied as a layer on top of the base scenario provinces.
@@ -17,12 +47,9 @@ export interface RegionOwnershipOverride {
 
 export const RegionOwnershipOverrideSchema = z
   .object({
-    regionId: z.string().min(1),
-    toNationId: z.string().regex(/^nat_[a-z0-9_]+$/),
-    fromNationId: z
-      .string()
-      .regex(/^nat_[a-z0-9_]+$/)
-      .optional(),
+    regionId: ProvinceIdSchema,
+    toNationId: NationIdSchema,
+    fromNationId: NationIdSchema.optional(),
     note: z.string().max(500).optional(),
     sourceEventId: z
       .string()
@@ -43,7 +70,7 @@ export const EventImpactSchema = z
       .array(
         z
           .object({
-            nationId: z.string().regex(/^nat_[a-z0-9_]+$/),
+            nationId: NationIdSchema,
             name: z.string().max(200).optional(),
             color: z.string().max(7).optional(),
             stabilityChange: z.number().safe().int().min(-10_000).max(10_000).optional(),
@@ -56,42 +83,14 @@ export const EventImpactSchema = z
       .array(
         z
           .object({
-            fromNationId: z.string().regex(/^nat_[a-z0-9_]+$/),
-            toNationId: z.string().regex(/^nat_[a-z0-9_]+$/),
+            fromNationId: NationIdSchema,
+            toNationId: NationIdSchema,
             delta: z.number().safe().int().min(-10_000).max(10_000),
           })
           .strict(),
       )
       .default([]),
-    unitOps: z
-      .array(
-        z
-          .object({
-            op: z.enum(["spawn", "move", "remove", "strength"]),
-            unitId: z.string().optional(),
-            ownerNationId: z
-              .string()
-              .regex(/^nat_[a-z0-9_]+$/)
-              .optional(),
-            provinceId: z.string().optional(),
-            manpower: z.number().safe().int().optional(),
-          })
-          .strict(),
-      )
-      .default([]),
-    markerOps: z
-      .array(
-        z
-          .object({
-            op: z.enum(["build", "remove", "rename"]),
-            markerId: z.string().optional(),
-            provinceId: z.string().optional(),
-            name: z.string().max(200).optional(),
-            kind: z.string().max(50).optional(),
-          })
-          .strict(),
-      )
-      .default([]),
+    unitOps: z.array(UnitOpSchema).default([]),
   })
   .strict()
   .readonly();
@@ -106,8 +105,25 @@ export const EMPTY_EVENT_IMPACT: EventImpact = Object.freeze({
   nationChanges: Object.freeze([]),
   relationChanges: Object.freeze([]),
   unitOps: Object.freeze([]),
-  markerOps: Object.freeze([]),
 });
+
+const requireNation = (state: CampaignState, nationId: string): void => {
+  if (!state.nations.some((nation) => nation.id === nationId)) {
+    throw new RangeError("EVENT_IMPACT_NATION_INVALID");
+  }
+};
+
+const requireProvince = (state: CampaignState, provinceId: string): void => {
+  if (!state.provinces.some((province) => province.id === provinceId)) {
+    throw new RangeError("EVENT_IMPACT_PROVINCE_INVALID");
+  }
+};
+
+const requireUnit = (state: CampaignState, unitId: string): void => {
+  if (!state.units.some((unit) => unit.id === unitId)) {
+    throw new RangeError("EVENT_IMPACT_UNIT_INVALID");
+  }
+};
 
 const applyRegionTransfers = (
   state: CampaignState,
@@ -115,8 +131,9 @@ const applyRegionTransfers = (
 ): CampaignState => {
   let next = state;
   for (const transfer of transfers) {
-    const province = next.provinces.find((candidate) => candidate.id === transfer.regionId);
-    if (province === undefined) continue;
+    requireProvince(next, transfer.regionId);
+    requireNation(next, transfer.toNationId);
+    if (transfer.fromNationId !== undefined) requireNation(next, transfer.fromNationId);
     next = {
       ...next,
       provinces: Object.freeze(
@@ -159,6 +176,7 @@ const applyNationChanges = (
 ): CampaignState => {
   let next = state;
   for (const change of changes) {
+    requireNation(next, change.nationId);
     next = {
       ...next,
       nations: Object.freeze(next.nations.map((nation) => applyNationChange(nation, change))),
@@ -173,6 +191,8 @@ const applyRelationChanges = (
 ): CampaignState => {
   let next = state;
   for (const change of changes) {
+    requireNation(next, change.fromNationId);
+    requireNation(next, change.toNationId);
     const existing = next.relations.find(
       (relation) =>
         relation.fromNationId === change.fromNationId && relation.toNationId === change.toNationId,
@@ -204,10 +224,9 @@ const applyRelationChanges = (
 
 type UnitOp = EventImpact["unitOps"][number];
 
-const spawnUnit = (state: CampaignState, op: UnitOp): CampaignState => {
-  if (!(op.ownerNationId && op.provinceId) || op.manpower === undefined) {
-    return state;
-  }
+const spawnUnit = (state: CampaignState, op: Extract<UnitOp, { op: "spawn" }>): CampaignState => {
+  requireNation(state, op.ownerNationId);
+  requireProvince(state, op.provinceId);
   return {
     ...state,
     units: Object.freeze([
@@ -222,33 +241,37 @@ const spawnUnit = (state: CampaignState, op: UnitOp): CampaignState => {
   };
 };
 
-const removeUnit = (state: CampaignState, op: UnitOp): CampaignState => {
-  if (!op.unitId) return state;
+const removeUnit = (state: CampaignState, op: Extract<UnitOp, { op: "remove" }>): CampaignState => {
+  requireUnit(state, op.unitId);
   return {
     ...state,
     units: Object.freeze(state.units.filter((unit) => unit.id !== op.unitId)),
   };
 };
 
-const changeUnitStrength = (state: CampaignState, op: UnitOp): CampaignState => {
-  const { manpower, unitId } = op;
-  if (!unitId || manpower === undefined) return state;
-  return {
-    ...state,
-    units: Object.freeze(
-      state.units.map((unit) => (unit.id === unitId ? Object.freeze({ ...unit, manpower }) : unit)),
-    ),
-  };
-};
-
-const moveUnit = (state: CampaignState, op: UnitOp): CampaignState => {
-  const { provinceId, unitId } = op;
-  if (!(unitId && provinceId)) return state;
+const changeUnitStrength = (
+  state: CampaignState,
+  op: Extract<UnitOp, { op: "strength" }>,
+): CampaignState => {
+  requireUnit(state, op.unitId);
   return {
     ...state,
     units: Object.freeze(
       state.units.map((unit) =>
-        unit.id === unitId ? Object.freeze({ ...unit, provinceId }) : unit,
+        unit.id === op.unitId ? Object.freeze({ ...unit, manpower: op.manpower }) : unit,
+      ),
+    ),
+  };
+};
+
+const moveUnit = (state: CampaignState, op: Extract<UnitOp, { op: "move" }>): CampaignState => {
+  requireUnit(state, op.unitId);
+  requireProvince(state, op.provinceId);
+  return {
+    ...state,
+    units: Object.freeze(
+      state.units.map((unit) =>
+        unit.id === op.unitId ? Object.freeze({ ...unit, provinceId: op.provinceId }) : unit,
       ),
     ),
   };

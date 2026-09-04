@@ -50,10 +50,9 @@ export const applyUnitAttack = (
   state: CampaignState,
   intent: Extract<StrategicIntent, { readonly type: "unit.attack" }>,
   turn: number,
-  playerIntent: boolean,
 ): CampaignState => {
   const attacker = state.units.find((unit) => unit.id === intent.unitId);
-  if (attacker === undefined || (playerIntent && attacker.ownerNationId !== state.playerNationId)) {
+  if (attacker === undefined || attacker.ownerNationId !== intent.actorNationId) {
     throw new RangeError("UNIT_NOT_OWNED");
   }
   const target = state.provinces.find((province) => province.id === intent.targetProvinceId);

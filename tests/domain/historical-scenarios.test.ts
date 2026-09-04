@@ -1,13 +1,71 @@
 import { describe, expect, test } from "bun:test";
 
+import { createCampaignStateFromScenario } from "../../src/application/campaign-state";
 import { listBuiltInScenarioMetadata } from "../../src/domain/scenario/catalog";
 import {
   buildHistoricalScenario,
   historicalBasemapSnapshot,
 } from "../../src/domain/scenario/historical-scenario";
+import {
+  historicalMajorPolities,
+  historicalSovereignName,
+} from "../../src/domain/scenario/historical-scenario-overlays";
 import { historicalPolityId, historicalProvinceId } from "../../src/shared/historical-map-contract";
 
 const fixtureNames = ["Germany", "USSR", "United States", " Germany "] as const;
+const allowedTerrain = new Set(["plain", "mountain", "coast", "steppe", "forest", "desert"]);
+
+type HistoricalScenario = ReturnType<typeof buildHistoricalScenario>;
+type HistoricalCampaign = ReturnType<typeof createCampaignStateFromScenario>;
+type HistoricalMajor = ReturnType<typeof historicalMajorPolities>[number];
+
+const expectAuthoredMajor = (major: HistoricalMajor): void => {
+  expect(major.population).toBeGreaterThan(0);
+  expect(major.treasuryCredits).toBeGreaterThan(0);
+  expect(major.stabilityBps).toBeGreaterThanOrEqual(0);
+  expect(major.stabilityBps).toBeLessThanOrEqual(10_000);
+  expect(major.manpowerPool).toBeGreaterThan(0);
+  expect(major.manpowerPool).toBeLessThanOrEqual(major.population);
+  expect(major.profile.goalsKo.length).toBeGreaterThanOrEqual(2);
+  expect(major.profile.goalsKo.length).toBeLessThanOrEqual(4);
+  expect(major.profile.personalityKo).toBeString();
+};
+
+const expectCompleteProvince = (province: HistoricalScenario["provinces"][number]): void => {
+  expect(province.isCapital).toBeBoolean();
+  expect(province.isPort).toBeBoolean();
+  expect(allowedTerrain.has(province.terrain ?? "")).toBe(true);
+  expect(province.developmentBps).toBeGreaterThanOrEqual(0);
+  expect(province.developmentBps).toBeLessThanOrEqual(10_000);
+};
+
+const expectCompleteMajor = (
+  scenario: HistoricalScenario,
+  campaign: HistoricalCampaign,
+  nationId: string,
+): void => {
+  const nation = scenario.nations.find((candidate) => candidate.id === nationId);
+  const campaignNation = campaign.nations.find((candidate) => candidate.id === nationId);
+  const capitals = scenario.provinces.filter(
+    (province) => province.ownerNationId === nationId && province.isCapital,
+  );
+
+  expect(nation?.manpowerPool).toBeGreaterThan(0);
+  expect(nation?.manpowerPool).toBeLessThanOrEqual(nation?.population ?? 0);
+  expect(nation?.profile?.goalsKo.length).toBeGreaterThanOrEqual(2);
+  expect(nation?.profile?.goalsKo.length).toBeLessThanOrEqual(4);
+  const relatedNationIds = [
+    ...(nation?.profile?.allyNationIds ?? []),
+    ...(nation?.profile?.rivalNationIds ?? []),
+  ];
+  expect(new Set(relatedNationIds).size).toBe(relatedNationIds.length);
+  for (const relatedNationId of relatedNationIds) {
+    expect(relatedNationId).not.toBe(nationId);
+    expect(scenario.nations.some((candidate) => candidate.id === relatedNationId)).toBe(true);
+  }
+  expect(capitals).toHaveLength(1);
+  expect(campaignNation?.capitalProvinceId).toBe(capitals[0]?.id);
+};
 
 describe("historical scenario parity", () => {
   test("maps every non-1900 built-in to its own nearest historical snapshot", () => {
@@ -118,6 +176,7 @@ describe("historical scenario parity", () => {
 
     expect(bronze.nations[0]?.population).toBeLessThanOrEqual(3_000_000);
     expect(trade.nations[0]?.population).toBeLessThanOrEqual(35_000_000);
+    expect(buildHistoricalScenario(bronzeMetadata, ["Unlisted Bronze Culture"])).toEqual(bronze);
   });
 
   test("assigns British dependencies to the United Kingdom polity", () => {
@@ -146,5 +205,43 @@ describe("historical scenario parity", () => {
         nameKo: "대영제국",
       }),
     ]);
+  });
+
+  test("ships complete strategic data for every historical built-in", () => {
+    // Given
+    const historicalMetadata = listBuiltInScenarioMetadata().filter(
+      (metadata) => metadata.id !== "scn_ea1900",
+    );
+
+    // When / Then
+    for (const metadata of historicalMetadata) {
+      const majorPolities = historicalMajorPolities(metadata.id);
+      const scenario = buildHistoricalScenario(
+        metadata,
+        majorPolities.map((major) => ({
+          name: major.sourceName,
+          subject: historicalSovereignName(metadata.id, major.sourceName),
+        })),
+      );
+      const playerNationId = scenario.playerNationIds[0];
+      if (playerNationId === undefined) throw new RangeError("HISTORICAL_SCENARIO_HAS_NO_PLAYER");
+      const campaign = createCampaignStateFromScenario(scenario, playerNationId);
+      const majorNationIds = new Set(
+        majorPolities.map((major) =>
+          historicalPolityId(historicalSovereignName(metadata.id, major.sourceName)),
+        ),
+      );
+
+      for (const major of majorPolities) expectAuthoredMajor(major);
+      expect(new Set(majorPolities.map((major) => major.profile.personalityKo)).size).toBe(
+        majorPolities.length,
+      );
+      for (const province of scenario.provinces) {
+        expectCompleteProvince(province);
+      }
+      for (const nationId of majorNationIds) {
+        expectCompleteMajor(scenario, campaign, nationId);
+      }
+    }
   });
 });

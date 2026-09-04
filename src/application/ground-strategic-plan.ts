@@ -98,15 +98,24 @@ const belongsToPlayer = (intent: StrategicIntent, playerNationId: string): boole
     case "action.fail":
       return intent.actorNationId === playerNationId;
     case "nation.adjust":
+      return (
+        intent.nationId === playerNationId &&
+        (intent.treasuryDelta ?? 0) >= 0 &&
+        (intent.stabilityDelta ?? 0) >= 0
+      );
     case "polity.change":
       return intent.nationId === playerNationId;
     case "relation.adjust":
       return intent.fromNationId === playerNationId;
     case "war.peace":
+      return (
+        intent.actorNationId === playerNationId &&
+        !intent.terms.some((term) => term.fromNationId === playerNationId)
+      );
     case "unit.move":
     case "unit.attack":
     case "unit.disband":
-      return true;
+      return intent.actorNationId === playerNationId;
   }
 };
 
@@ -127,8 +136,7 @@ const groundedPlayerIntent = (
     case "military.recruit":
       return input.playerProvinceIds.includes(intent.provinceId) ? intent : undefined;
     case "territory.transfer":
-      return intent.fromNationId !== intent.toNationId &&
-        (intent.toNationId === input.playerNationId || intent.fromNationId === input.playerNationId)
+      return intent.fromNationId !== intent.toNationId && intent.toNationId === input.playerNationId
         ? intent
         : undefined;
     case "nation.adjust":

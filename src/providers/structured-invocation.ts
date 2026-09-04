@@ -1,4 +1,4 @@
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, open, rm, writeFile } from "node:fs/promises";
 import { homedir, tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -7,7 +7,7 @@ import { z } from "zod";
 import { buildClaudeArguments } from "./claude-provider";
 import { buildCodexArguments } from "./codex-provider";
 import type { ProviderId, ProviderProcessInput, ProviderProcessResult } from "./process-runner";
-import { runProviderProcess } from "./process-runner";
+import { MAX_PROVIDER_OUTPUT_BYTES, runProviderProcess } from "./process-runner";
 
 const DEFAULT_TIMEOUT_MS = 120_000;
 const FAILURE_EXCERPT_LENGTH = 2_000;
@@ -47,6 +47,7 @@ export type StructuredInvocationRunner = (
 
 export interface StructuredInvocationInput<Output> {
   readonly provider: ProviderId;
+  readonly requestId?: string;
   readonly prompt: string;
   readonly jsonSchema: object;
   readonly parse: (value: unknown) => Output;
@@ -108,6 +109,36 @@ const decodeClaudeOutput = (stdout: string): unknown => {
   return typeof output === "string" ? decodeJson(output) : output;
 };
 
+const readCodexResult = async (path: string): Promise<string> => {
+  try {
+    const handle = await open(path, "r");
+    try {
+      if ((await handle.stat()).size > MAX_PROVIDER_OUTPUT_BYTES) {
+        throw new ProviderInvocationError("PROVIDER_OUTPUT_TOO_LARGE");
+      }
+      const chunks: Buffer[] = [];
+      let bytes = 0;
+      while (bytes <= MAX_PROVIDER_OUTPUT_BYTES) {
+        const chunk = Buffer.allocUnsafe(
+          Math.min(64 * 1024, MAX_PROVIDER_OUTPUT_BYTES + 1 - bytes),
+        );
+        const { bytesRead } = await handle.read(chunk, 0, chunk.length, null);
+        if (bytesRead === 0) break;
+        bytes += bytesRead;
+        if (bytes > MAX_PROVIDER_OUTPUT_BYTES) {
+          throw new ProviderInvocationError("PROVIDER_OUTPUT_TOO_LARGE");
+        }
+        chunks.push(chunk.subarray(0, bytesRead));
+      }
+      return Buffer.concat(chunks, bytes).toString("utf8");
+    } finally {
+      await handle.close();
+    }
+  } catch (error: unknown) {
+    throw mappedProcessError(error);
+  }
+};
+
 const providerOutput = async (
   input: StructuredInvocationInput<unknown>,
   workspace: string,
@@ -129,12 +160,13 @@ const providerOutput = async (
     stdin: input.prompt,
     timeoutMs,
     cwd: workspace,
+    ...(input.requestId === undefined ? {} : { requestId: input.requestId }),
   });
   if (result.exitCode !== 0) {
     throw new ProviderInvocationError("PROVIDER_FAILED", failureExcerpt(result));
   }
   return input.provider === "codex"
-    ? decodeJson(await readFile(resultPath, "utf8"))
+    ? decodeJson(await readCodexResult(resultPath))
     : decodeClaudeOutput(result.stdout);
 };
 

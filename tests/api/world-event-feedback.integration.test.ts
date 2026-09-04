@@ -38,6 +38,10 @@ const majorCrisis = {
   affectedNationIds: ["nat_kor", "nat_jpn", "nat_qing"],
   headlineKo: "동아시아 식량 공급 위기 확산",
   summaryKo: "대한제국·일본제국·청제국이 공동 대응에 착수했다.",
+  impacts: {},
+  provenance: "simulated_consequence",
+  regionIds: [],
+  sourceInputIds: ["req_major_crisis"],
 } as const;
 
 describe("world-event feedback", () => {

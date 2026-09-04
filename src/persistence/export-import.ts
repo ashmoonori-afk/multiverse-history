@@ -52,6 +52,7 @@ const validateExpectedScenario = (value: ScenarioReference): ScenarioReference =
 
 export const createCampaignExport = (input: ExportCampaignInput): CampaignExport => {
   const scenario = validateExpectedScenario(input.scenario);
+  // SHA-256 is a corruption checksum for local saves, not hostile authentication.
   const exportedStateHash = hashCanonical(input.state);
   return Object.freeze({
     exportVersion: 1,

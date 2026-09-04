@@ -191,10 +191,22 @@ describe("strategic plan grounding", () => {
         casusBelliKo: "국경 침범",
         sourceQuoteKo,
       },
-      { type: "war.peace", warId: "war_1_0", terms: [], sourceQuoteKo },
-      { type: "unit.move", unitId: "unt_1_0", toProvinceId: OWNED, sourceQuoteKo },
-      { type: "unit.attack", unitId: "unt_1_0", targetProvinceId: FOREIGN, sourceQuoteKo },
-      { type: "unit.disband", unitId: "unt_1_0", sourceQuoteKo },
+      { type: "war.peace", actorNationId: PLAYER, warId: "war_1_0", terms: [], sourceQuoteKo },
+      {
+        type: "unit.move",
+        actorNationId: PLAYER,
+        unitId: "unt_1_0",
+        toProvinceId: OWNED,
+        sourceQuoteKo,
+      },
+      {
+        type: "unit.attack",
+        actorNationId: PLAYER,
+        unitId: "unt_1_0",
+        targetProvinceId: FOREIGN,
+        sourceQuoteKo,
+      },
+      { type: "unit.disband", actorNationId: PLAYER, unitId: "unt_1_0", sourceQuoteKo },
       { type: "polity.change", nationId: PLAYER, governmentKo: "입헌군주제", sourceQuoteKo },
       {
         type: "action.fail",
@@ -252,6 +264,60 @@ describe("strategic plan grounding", () => {
 
     // When
     const grounded = ground(sourceQuoteKo, impostors);
+
+    // Then
+    expect(grounded.playerIntents).toEqual([]);
+    expect(grounded.warnings).toContain("PLAYER_INTENT_UNGROUNDED");
+  });
+
+  test("drops sovereign debits, outgoing territory, and spoofed peace actors", () => {
+    // Given
+    const sourceQuoteKo = "명령을 실행하라";
+    const adversarial = [
+      {
+        type: "nation.adjust",
+        nationId: PLAYER,
+        treasuryDelta: -10,
+        stabilityDelta: -100,
+        reasonKo: "플레이어 자원 차감",
+        sourceQuoteKo,
+      },
+      {
+        type: "territory.transfer",
+        actorNationId: PLAYER,
+        provinceId: OWNED,
+        fromNationId: PLAYER,
+        toNationId: "nat_jpn",
+        reasonKo: "플레이어 영토 양도",
+        sourceQuoteKo,
+      },
+      {
+        type: "war.peace",
+        actorNationId: "nat_jpn",
+        warId: "war_1_0",
+        terms: [],
+        sourceQuoteKo,
+      },
+      {
+        type: "war.peace",
+        actorNationId: PLAYER,
+        warId: "war_1_0",
+        terms: [
+          {
+            type: "territory.transfer",
+            actorNationId: PLAYER,
+            provinceId: OWNED,
+            fromNationId: PLAYER,
+            toNationId: "nat_jpn",
+            reasonKo: "강화 조약",
+          },
+        ],
+        sourceQuoteKo,
+      },
+    ] satisfies readonly StrategicIntent[];
+
+    // When
+    const grounded = ground(sourceQuoteKo, adversarial);
 
     // Then
     expect(grounded.playerIntents).toEqual([]);

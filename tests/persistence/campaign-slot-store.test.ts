@@ -1,5 +1,18 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { access, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import {
+  access,
+  lstat,
+  mkdir,
+  mkdtemp,
+  readdir,
+  readFile,
+  rm,
+  rmdir,
+  symlink,
+  truncate,
+  unlink,
+  writeFile,
+} from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -14,6 +27,7 @@ import {
 } from "../../src/persistence/campaign-slot-store";
 
 const directories: string[] = [];
+const links: string[] = [];
 
 const temporaryDirectory = async (): Promise<string> => {
   const directory = await mkdtemp(join(tmpdir(), "pax-campaign-slots-"));
@@ -27,7 +41,32 @@ const campaignStore = (): LocalCampaignStore => {
   return store;
 };
 
+const createDirectoryLink = async (target: string, path: string): Promise<void> => {
+  await symlink(target, path, process.platform === "win32" ? "junction" : "dir");
+  links.push(path);
+};
+
+const removeDirectoryLink = async (path: string): Promise<void> => {
+  try {
+    if (process.platform === "win32") {
+      await rmdir(path);
+    } else {
+      await unlink(path);
+    }
+  } catch (error: unknown) {
+    if (
+      typeof error !== "object" ||
+      error === null ||
+      !("code" in error) ||
+      error.code !== "ENOENT"
+    ) {
+      throw error;
+    }
+  }
+};
+
 afterEach(async () => {
+  await Promise.all(links.splice(0).map(removeDirectoryLink));
   await Promise.all(directories.splice(0).map((directory) => rm(directory, { recursive: true })));
 });
 
@@ -79,7 +118,7 @@ describe("campaign slot store", () => {
     expect(store.stateHash()).toBe(saved.stateHash);
   });
 
-  test("rejects a state-hash-tampered slot before replacing the campaign", async () => {
+  test("rejects slot corruption when its SHA-256 checksum no longer matches", async () => {
     // Given
     const directory = await temporaryDirectory();
     const store = campaignStore();
@@ -111,6 +150,97 @@ describe("campaign slot store", () => {
     // Then
     expect(listed).toEqual([]);
     await expect(access(join(directory, "interrupted.json"))).rejects.toThrow();
+  });
+
+  test("serializes concurrent writes to the same slot in call order", async () => {
+    // Given
+    const directory = await temporaryDirectory();
+    const store = campaignStore();
+    const slots = createCampaignSlotStore({ directory, store });
+
+    // When
+    const first = slots.save("shared");
+    store.replace(jumpCampaignTimeline(store.read(), "week"));
+    const second = slots.save("shared");
+    const [firstSaved, secondSaved] = await Promise.all([first, second]);
+
+    // Then
+    expect(firstSaved.elapsedDays).toBe(0);
+    expect(secondSaved.elapsedDays).toBe(7);
+    expect(JSON.parse(await readFile(join(directory, "shared.json"), "utf8")).header).toEqual(
+      expect.objectContaining({ elapsedDays: 7, stateHash: secondSaved.stateHash }),
+    );
+  });
+
+  test("does not use a hostile predictable temporary symlink or reparse point", async () => {
+    // Given
+    const root = await temporaryDirectory();
+    const directory = join(root, "slots");
+    const outside = join(root, "outside");
+    await Promise.all([mkdir(directory), mkdir(outside)]);
+    const hostile = join(directory, "guarded.json.tmp");
+    await createDirectoryLink(outside, hostile);
+    const slots = createCampaignSlotStore({ directory, store: campaignStore() });
+
+    // When
+    const saved = await slots.save("guarded");
+
+    // Then
+    expect(saved.slot).toBe("guarded");
+    expect((await lstat(hostile)).isSymbolicLink()).toBe(true);
+    expect(await readdir(outside)).toEqual([]);
+    expect(JSON.parse(await readFile(join(directory, "guarded.json"), "utf8")).header).toEqual(
+      expect.objectContaining({ stateHash: saved.stateHash }),
+    );
+  });
+
+  test("rejects a slot symlink or reparse point and leaves no temporary file", async () => {
+    // Given
+    const root = await temporaryDirectory();
+    const directory = join(root, "slots");
+    const outside = join(root, "outside");
+    await Promise.all([mkdir(directory), mkdir(outside)]);
+    const hostile = join(directory, "unsafe.json");
+    await createDirectoryLink(outside, hostile);
+    const slots = createCampaignSlotStore({ directory, store: campaignStore() });
+
+    // When
+    const save = slots.save("unsafe");
+
+    // Then
+    await expect(save).rejects.toThrow("SLOT_FILE_UNSAFE");
+    await expect(slots.load("unsafe")).rejects.toThrow("SLOT_FILE_UNSAFE");
+    expect((await lstat(hostile)).isSymbolicLink()).toBe(true);
+    expect((await readdir(directory)).sort()).toEqual(["unsafe.json"]);
+  });
+
+  test("isolates a malformed slot while listing valid slots", async () => {
+    // Given
+    const directory = await temporaryDirectory();
+    const slots = createCampaignSlotStore({ directory, store: campaignStore() });
+    const valid = await slots.save("valid");
+    await writeFile(join(directory, "broken.json"), "{", "utf8");
+
+    // When
+    const listed = await slots.list();
+
+    // Then
+    expect(listed).toEqual([valid]);
+  });
+
+  test("rejects an oversized slot before parsing it", async () => {
+    // Given
+    const directory = await temporaryDirectory();
+    const slots = createCampaignSlotStore({ directory, store: campaignStore() });
+    const path = join(directory, "oversized.json");
+    await writeFile(path, "", "utf8");
+    await truncate(path, 10 * 1024 * 1024 + 1);
+
+    // When
+    const load = slots.load("oversized");
+
+    // Then
+    await expect(load).rejects.toThrow("SLOT_FILE_TOO_LARGE");
   });
 
   test("autosaves to the reserved autosave slot", async () => {

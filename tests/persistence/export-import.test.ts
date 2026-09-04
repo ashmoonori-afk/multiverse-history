@@ -36,7 +36,7 @@ describe("campaign export and import", () => {
     expect(imported.exportedStateHash).toBe(original.exportedStateHash);
   });
 
-  test("rejects a state modified after export", () => {
+  test("rejects corruption when the exported SHA-256 checksum no longer matches", () => {
     // Given
     const serialized = serializeCampaignExport({ scenario, state });
     const tampered = serialized.replace('"treasuryCredits":375', '"treasuryCredits":999');

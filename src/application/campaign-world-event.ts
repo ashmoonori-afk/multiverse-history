@@ -9,6 +9,20 @@ const orderedUniqueNationIds = z
   })
   .readonly();
 
+const orderedUniqueRegionIds = z
+  .array(z.string().regex(/^prv_[a-z0-9_]+$/))
+  .refine((regionIds) => new Set(regionIds).size === regionIds.length, {
+    message: "WORLD_EVENT_REGIONS_DUPLICATED",
+  })
+  .readonly();
+
+const orderedUniqueSourceInputIds = z
+  .array(z.string().regex(/^(?:chat|req)_[a-z0-9_]+$/))
+  .refine((sourceInputIds) => new Set(sourceInputIds).size === sourceInputIds.length, {
+    message: "WORLD_EVENT_SOURCE_INPUTS_DUPLICATED",
+  })
+  .readonly();
+
 export const CampaignWorldEventSchema = z
   .object({
     id: z.string().regex(/^evt_[a-z0-9_]+$/),
@@ -31,12 +45,15 @@ export const CampaignWorldEventSchema = z
       .string()
       .regex(/^res_[a-z0-9_]+$/)
       .optional(),
-    impacts: EventImpactSchema.optional(),
-    provenance: z
-      .enum(["historical_baseline", "player_divergence", "simulated_consequence", "unknown"])
-      .optional(),
-    regionIds: z.array(z.string()).optional(),
-    sourceInputIds: z.array(z.string()).optional(),
+    impacts: EventImpactSchema,
+    provenance: z.enum([
+      "historical_baseline",
+      "player_divergence",
+      "simulated_consequence",
+      "unknown",
+    ]),
+    regionIds: orderedUniqueRegionIds,
+    sourceInputIds: orderedUniqueSourceInputIds,
   })
   .strict()
   .readonly();

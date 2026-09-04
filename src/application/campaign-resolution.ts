@@ -384,10 +384,6 @@ export const createCampaignResolution = (
     changedNationNames.length === 0
       ? "이번 턴에는 지도상 소유권 변화가 없었다."
       : `${displayedNationNames.join("·")}${extraHint}의 ${changedProvinceNames.slice(0, 3).join(", ")} 지역에 변화가 확정됐다.`;
-  // Always include the player's nation name in the summary for testability
-  const playerNationName =
-    input.after.nations.find((nation) => nation.id === input.after.playerNationId)?.nameKo ??
-    "플레이어 국가";
   const treatyRecipientNames = treatyDeltas
     .map((treaty) => {
       const recipient = input.after.nations.find(
@@ -396,16 +392,10 @@ export const createCampaignResolution = (
       return recipient?.nameKo ?? treaty.recipientNationId;
     })
     .filter((name, index, arr) => arr.indexOf(name) === index);
-  const finalSummaryKo =
-    changedNationNames.length === 0
-      ? summaryKo
-      : summaryKo.includes(playerNationName)
-        ? summaryKo
-        : `${playerNationName}·${summaryKo}`;
   const finalSummaryWithTreaties =
     treatyRecipientNames.length > 0
-      ? `${finalSummaryKo} 특히 ${treatyRecipientNames.join("·")}과(와)의 외교적 움직임이 주목된다.`
-      : finalSummaryKo;
+      ? `${summaryKo} 특히 ${treatyRecipientNames.join("·")}과(와)의 외교적 움직임이 주목된다.`
+      : summaryKo;
   const draft: CampaignResolutionDraft = Object.freeze({
     id: `res_${input.turn}_${input.after.resolutions.length + 1}`,
     turn: input.turn,

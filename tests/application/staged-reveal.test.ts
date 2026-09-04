@@ -42,8 +42,10 @@ describe("staged reveal ownership", () => {
             nationChanges: [],
             relationChanges: [],
             unitOps: [],
-            markerOps: [],
           },
+          provenance: "simulated_consequence",
+          regionIds: [province.id],
+          sourceInputIds: ["req_transfer_one"],
         },
         {
           id: "evt_transfer_two",
@@ -68,8 +70,10 @@ describe("staged reveal ownership", () => {
             nationChanges: [],
             relationChanges: [],
             unitOps: [],
-            markerOps: [],
           },
+          provenance: "simulated_consequence",
+          regionIds: [province.id],
+          sourceInputIds: ["req_transfer_two"],
         },
       ],
     });

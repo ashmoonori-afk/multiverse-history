@@ -18,7 +18,7 @@ export interface ProviderProcessResult {
   readonly stderr: string;
 }
 
-const MAX_OUTPUT_BYTES = 2 * 1024 * 1024;
+export const MAX_PROVIDER_OUTPUT_BYTES = 2 * 1024 * 1024;
 const MAX_LOG_DETAIL_LENGTH = 1_000;
 const environmentKeys = [
   "PATH",
@@ -146,7 +146,7 @@ export const runProviderProcess = (
     };
     const appendOutput = (target: Buffer[], chunk: Buffer): void => {
       outputBytes += chunk.byteLength;
-      if (outputBytes > MAX_OUTPUT_BYTES) {
+      if (outputBytes > MAX_PROVIDER_OUTPUT_BYTES) {
         failAndTerminate("PROVIDER_OUTPUT_TOO_LARGE");
         return;
       }

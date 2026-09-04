@@ -8,7 +8,7 @@ import { parseNationId } from "../../shared/ids";
 import { getScenarioAdjacency } from "./adjacency";
 import { createPlayableNationStart, listCanonicalCountries } from "./catalog";
 import { historicalMajorPolities, historicalSovereignName } from "./historical-scenario-overlays";
-import type { RelationDefinition, ScenarioDefinition } from "./registry";
+import type { ProvinceTerrain, RelationDefinition, ScenarioDefinition } from "./registry";
 import type { ScenarioPackageMetadata } from "./types";
 
 export { historicalBasemapSnapshot } from "../../shared/historical-map-contract";
@@ -57,6 +57,24 @@ const genericPopulationBounds = (year: number): readonly [number, number] => {
   if (year < 1950) return [300_000, 25_000_000];
   if (year < 2100) return [500_000, 50_000_000];
   return [200_000, 15_000_000];
+};
+
+const provinceTerrains = Object.freeze([
+  "plain",
+  "mountain",
+  "coast",
+  "steppe",
+  "forest",
+  "desert",
+] satisfies readonly ProvinceTerrain[]);
+
+const provinceMetadata = (scenarioId: string, name: string, year: number) => {
+  const hash = valueHash(`${scenarioId}:province:${name}`);
+  return Object.freeze({
+    isPort: hash % 4 === 0,
+    terrain: provinceTerrains[hash % provinceTerrains.length] ?? "plain",
+    developmentBps: Math.min(10_000, infrastructureForYear(year) + (hash % 1_001)),
+  });
 };
 
 interface HistoricalTerritory {
@@ -169,6 +187,7 @@ export const buildHistoricalScenario = (
         : {
             governmentKo: major.governmentKo,
             tags: major.tags,
+            manpowerPool: major.manpowerPool,
             profile: Object.freeze({
               ...major.profile,
               rivalNationIds: Object.freeze(
@@ -192,6 +211,7 @@ export const buildHistoricalScenario = (
   );
   const historicalProvinces = territories.map((territory) => {
     const ownerNationId = historicalPolityId(territory.subject);
+    const major = majorByName.get(territory.subject);
     return Object.freeze({
       id: historicalProvinceId(territory.name),
       ownerNationId,
@@ -202,6 +222,8 @@ export const buildHistoricalScenario = (
           historicalProvinceIds.has(id),
         ),
       ),
+      isCapital: major?.sourceName === territory.name,
+      ...provinceMetadata(metadata.id, territory.name, metadata.year),
     });
   });
   const countries = listCanonicalCountries();
@@ -220,15 +242,18 @@ export const buildHistoricalScenario = (
       infrastructureBps: infrastructureForYear(metadata.year),
     });
   });
-  const fallbackProvinces = countries.map((country) =>
-    Object.freeze({
-      id: `prv_${country.alpha3.toLowerCase()}_adm0`,
+  const fallbackProvinces = countries.map((country) => {
+    const id = `prv_${country.alpha3.toLowerCase()}_adm0`;
+    return Object.freeze({
+      id,
       ownerNationId: parseNationId(country.id),
       population: 100_000 + Number(country.numericCode) * 1_000,
       nameKo: country.nameKo,
       adjacentProvinceIds: Object.freeze([]),
-    }),
-  );
+      isCapital: false,
+      ...provinceMetadata(metadata.id, id, metadata.year),
+    });
+  });
   const fallbackRelations = countries.map((country, index) => {
     const nextCountry = countries[(index + 1) % countries.length];
     if (nextCountry === undefined) throw new RangeError("CANONICAL_RELATION_TARGET_MISSING");

@@ -46,6 +46,106 @@ const legacyCampaign = () => {
 };
 
 describe("campaign state compatibility", () => {
+  test("rejects malformed province identifiers at the parser boundary", () => {
+    // Given
+    const base = createCampaignState("scn_ea1900", "nat_kor");
+    const firstNation = base.nations[0];
+    const firstProvince = base.provinces[0];
+    const firstUnit = base.units[0];
+    if (firstNation === undefined || firstProvince === undefined || firstUnit === undefined) {
+      throw new RangeError("TEST_SCENARIO_INCOMPLETE");
+    }
+    const malformedStates = [
+      {
+        ...base,
+        nations: [{ ...firstNation, capitalProvinceId: "prv_KOR" }, ...base.nations.slice(1)],
+      },
+      {
+        ...base,
+        provinces: [{ ...firstProvince, id: "prv_KOR" }, ...base.provinces.slice(1)],
+      },
+      {
+        ...base,
+        provinces: [
+          { ...firstProvince, adjacentProvinceIds: ["prv_KOR"] },
+          ...base.provinces.slice(1),
+        ],
+      },
+      {
+        ...base,
+        units: [{ ...firstUnit, provinceId: "prv_KOR" }, ...base.units.slice(1)],
+      },
+      {
+        ...base,
+        constructionProjects: [
+          {
+            id: "cst_1_1",
+            ownerNationId: "nat_kor",
+            provinceId: "prv_KOR",
+            kind: "rail",
+            investedCredits: 50,
+            startedTurn: 1,
+            status: "active",
+          },
+        ],
+      },
+    ];
+
+    // When / Then
+    for (const state of malformedStates) {
+      expect(() => parseCampaignState(state)).toThrow();
+    }
+  });
+
+  test("rejects dangling province references after a valid import", () => {
+    // Given
+    const base = createCampaignState("scn_ea1900", "nat_kor");
+    const firstProvince = base.provinces[0];
+    const firstUnit = base.units[0];
+    if (firstProvince === undefined || firstUnit === undefined) {
+      throw new RangeError("TEST_SCENARIO_INCOMPLETE");
+    }
+    const danglingProvinceId = "prv_missing";
+    const danglingStates = [
+      {
+        ...base,
+        provinces: [
+          { ...firstProvince, adjacentProvinceIds: [danglingProvinceId] },
+          ...base.provinces.slice(1),
+        ],
+      },
+      {
+        ...base,
+        units: [{ ...firstUnit, provinceId: danglingProvinceId }, ...base.units.slice(1)],
+      },
+      {
+        ...base,
+        constructionProjects: [
+          {
+            id: "cst_1_1",
+            ownerNationId: "nat_kor",
+            provinceId: danglingProvinceId,
+            kind: "rail",
+            investedCredits: 50,
+            startedTurn: 1,
+            status: "active",
+          },
+        ],
+      },
+    ];
+
+    // When / Then
+    for (const state of danglingStates) {
+      const imported = importCampaignExport({
+        json: serializeCampaignExport({ scenario, state }),
+        expectedScenario: scenario,
+      });
+      expect(() => parseCampaignState(imported.state)).toThrow(
+        "CAMPAIGN_PROVINCE_REFERENCE_NOT_FOUND",
+      );
+    }
+  });
+
   test("imports a v1 state with its raw hash and reports the migration", () => {
     // Given
     const v1State = { ...createCampaignState("scn_ea1900", "nat_kor") };
@@ -158,7 +258,6 @@ describe("campaign state compatibility", () => {
             nationChanges: [],
             relationChanges: [],
             unitOps: [],
-            markerOps: [],
           },
           provenance: "player_divergence",
           regionIds: ["prv_kor_hanseong"],

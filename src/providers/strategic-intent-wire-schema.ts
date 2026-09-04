@@ -1,6 +1,8 @@
 import { z } from "zod";
 
 import {
+  MAX_PEACE_TERMS,
+  MAX_STRATEGIC_IDENTIFIER_LENGTH,
   NationIdSchema,
   ProvinceIdSchema,
   ReasonKoSchema,
@@ -91,25 +93,29 @@ const WireWarDeclareIntentSchema = wireIntent({
 
 const WireWarPeaceIntentSchema = wireIntent({
   type: z.literal("war.peace"),
+  actorNationId: NationIdSchema,
   warId: WarIdSchema.nullish(),
-  terms: z.array(WireTerritoryTransferIntentSchema).nullish(),
+  terms: z.array(WireTerritoryTransferIntentSchema).max(MAX_PEACE_TERMS).nullish(),
   reparationsCredits: z.number().safe().int().nonnegative().nullish(),
 });
 
 const WireUnitMoveIntentSchema = wireIntent({
   type: z.literal("unit.move"),
+  actorNationId: NationIdSchema,
   unitId: UnitIdSchema.nullish(),
   toProvinceId: ProvinceIdSchema.nullish(),
 });
 
 const WireUnitAttackIntentSchema = wireIntent({
   type: z.literal("unit.attack"),
+  actorNationId: NationIdSchema,
   unitId: UnitIdSchema.nullish(),
   targetProvinceId: ProvinceIdSchema.nullish(),
 });
 
 const WireUnitDisbandIntentSchema = wireIntent({
   type: z.literal("unit.disband"),
+  actorNationId: NationIdSchema,
   unitId: UnitIdSchema.nullish(),
 });
 
@@ -149,7 +155,10 @@ export const WireStrategicIntentSchema = z.discriminatedUnion("type", [
 export const WireStrategicPlanSchema = z
   .object({
     schemaVersion: z.union([z.literal(1), z.literal(2)]),
-    requestId: z.string().regex(/^req_[a-z0-9_]+$/),
+    requestId: z
+      .string()
+      .max(MAX_STRATEGIC_IDENTIFIER_LENGTH)
+      .regex(/^req_[a-z0-9_]+$/),
     playerIntents: z.array(WireStrategicIntentSchema).max(8),
     npcIntents: z.array(WireStrategicIntentSchema).min(1).max(32),
     narrative: z.object({ ko: z.string().trim().min(1).max(2_000) }).strict(),

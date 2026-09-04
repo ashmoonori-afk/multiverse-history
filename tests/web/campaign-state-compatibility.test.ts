@@ -156,11 +156,9 @@ describe("client campaign compatibility", () => {
               {
                 op: "move",
                 unitId: "unt_1_0",
-                ownerNationId: "nat_kor",
                 provinceId: "prv_kor_hanseong",
               },
             ],
-            markerOps: [{ op: "build", markerId: "marker_1", provinceId: "prv_kor_hanseong" }],
           },
           provenance: "player_divergence",
           regionIds: ["prv_kor_hanseong"],

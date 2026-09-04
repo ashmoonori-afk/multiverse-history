@@ -1,10 +1,11 @@
 import { describe, expect, test } from "bun:test";
-import { exists, writeFile } from "node:fs/promises";
+import { exists, truncate, writeFile } from "node:fs/promises";
 
 import type {
   ProviderProcessInput,
   ProviderProcessResult,
 } from "../../src/providers/process-runner";
+import { MAX_PROVIDER_OUTPUT_BYTES } from "../../src/providers/process-runner";
 import {
   invokeStructuredProvider,
   type StructuredInvocationRunner,
@@ -54,6 +55,38 @@ describe("shared structured provider invocation", () => {
     // Then
     expect(output).toEqual({ value: "codex" });
     expect(workspace).not.toBe("");
+    expect(await exists(workspace)).toBe(false);
+  });
+
+  test("rejects an oversized Codex result file before parsing it", async () => {
+    // Given
+    let parsed = false;
+    let workspace = "";
+    const runner: StructuredInvocationRunner = async (input) => {
+      workspace = input.cwd ?? "";
+      const resultPath = resultPathFrom(input);
+      await writeFile(resultPath, "", "utf8");
+      await truncate(resultPath, MAX_PROVIDER_OUTPUT_BYTES + 1);
+      return successfulResult();
+    };
+
+    // When
+    const invocation = invokeStructuredProvider({
+      provider: "codex",
+      prompt: "Produce a value",
+      jsonSchema,
+      parse: (value) => {
+        parsed = true;
+        return value;
+      },
+      runner,
+    });
+
+    // Then
+    await expect(invocation).rejects.toEqual(
+      expect.objectContaining({ code: "PROVIDER_OUTPUT_TOO_LARGE" }),
+    );
+    expect(parsed).toBe(false);
     expect(await exists(workspace)).toBe(false);
   });
 

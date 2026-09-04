@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { StrategicIntentSchema } from "./strategic-intent-schema";
+import { MAX_STRATEGIC_IDENTIFIER_LENGTH, StrategicIntentSchema } from "./strategic-intent-schema";
 import {
   normalizeWireIntent,
   type WireStrategicPlan,
@@ -31,7 +31,10 @@ export type StrategicPlanInput = Omit<StrategicPlan, "presentation" | "schemaVer
 export const StrategicPlanInputSchema = z
   .object({
     schemaVersion: z.union([z.literal(1), z.literal(2)]),
-    requestId: z.string().regex(/^req_[a-z0-9_]+$/),
+    requestId: z
+      .string()
+      .max(MAX_STRATEGIC_IDENTIFIER_LENGTH)
+      .regex(/^req_[a-z0-9_]+$/),
     playerIntents: z.array(StrategicIntentSchema).max(8).readonly(),
     npcIntents: z.array(StrategicIntentSchema).min(1).max(32).readonly(),
     narrative: z

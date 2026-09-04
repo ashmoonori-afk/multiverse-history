@@ -1,6 +1,7 @@
 import type { CampaignResolution } from "./campaign-resolution";
 import type { CampaignState } from "./campaign-state";
 import type { CampaignWorldEvent } from "./campaign-world-event";
+import { EventImpactSchema } from "./event-impact";
 
 export interface CampaignWorldEventFactoryInput {
   readonly before: CampaignState;
@@ -58,12 +59,14 @@ export const createCampaignWorldEvent = (
   input: CampaignWorldEventFactoryInput,
 ): CampaignWorldEvent => {
   const kind = eventKind(input);
+  const id = `evt_${input.resolution.turn}_${input.reduced.worldEvents.length + 1}`;
+  const plan = input.reduced.lastPlan;
   const affectedNationIds =
     input.resolution.worldImpact.changedNationIds.length === 0
       ? Object.freeze([input.reduced.playerNationId])
       : Object.freeze([...input.resolution.worldImpact.changedNationIds]);
   return Object.freeze({
-    id: `evt_${input.resolution.turn}_${input.reduced.worldEvents.length + 1}`,
+    id,
     kind,
     importance: "minor",
     occurredAtElapsedDays: input.reduced.elapsedDays,
@@ -74,5 +77,22 @@ export const createCampaignWorldEvent = (
     headlineKo: headlineForEvent(input, kind),
     summaryKo: input.resolution.worldImpact.summaryKo,
     sourceResolutionId: input.resolution.id,
+    impacts: EventImpactSchema.parse({
+      regionTransfers: input.resolution.worldImpact.regionOwnershipOverrides.map((change) => ({
+        regionId: change.regionId,
+        toNationId: change.toNationId,
+        fromNationId: change.fromNationId,
+        note: change.reasonKo,
+        sourceEventId: id,
+      })),
+    }),
+    provenance:
+      plan === null
+        ? "unknown"
+        : plan.playerIntents.length > 0
+          ? "player_divergence"
+          : "simulated_consequence",
+    regionIds: Object.freeze([...new Set(input.resolution.worldImpact.changedProvinceIds)]),
+    sourceInputIds: Object.freeze(plan === null ? [] : [plan.requestId]),
   });
 };

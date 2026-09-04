@@ -1,6 +1,11 @@
 import { z } from "zod";
 
-import { EventIdSchema, NationIdSchema, ProvinceIdSchema } from "./campaign-id-schemas";
+import {
+  EventIdSchema,
+  NationIdSchema,
+  ProvinceIdSchema,
+  UnitIdSchema,
+} from "./campaign-id-schemas";
 
 export const CampaignConstructionProjectSchema = z
   .object({
@@ -18,9 +23,43 @@ const orderedUniqueNationIds = z
   .array(NationIdSchema)
   .refine((nationIds) => new Set(nationIds).size === nationIds.length);
 
+const orderedUniqueRegionIds = z
+  .array(ProvinceIdSchema)
+  .refine((regionIds) => new Set(regionIds).size === regionIds.length);
+
+const orderedUniqueSourceInputIds = z
+  .array(z.string().regex(/^(?:chat|req)_[a-z0-9_]+$/))
+  .refine((sourceInputIds) => new Set(sourceInputIds).size === sourceInputIds.length);
+
+const UnitOpSchema = z.discriminatedUnion("op", [
+  z
+    .object({
+      op: z.literal("spawn"),
+      ownerNationId: NationIdSchema,
+      provinceId: ProvinceIdSchema,
+      manpower: z.number().safe().int().nonnegative(),
+    })
+    .strict(),
+  z
+    .object({
+      op: z.literal("move"),
+      unitId: UnitIdSchema,
+      provinceId: ProvinceIdSchema,
+    })
+    .strict(),
+  z.object({ op: z.literal("remove"), unitId: UnitIdSchema }).strict(),
+  z
+    .object({
+      op: z.literal("strength"),
+      unitId: UnitIdSchema,
+      manpower: z.number().safe().int().nonnegative(),
+    })
+    .strict(),
+]);
+
 const RegionOwnershipOverrideSchema = z
   .object({
-    regionId: z.string().min(1),
+    regionId: ProvinceIdSchema,
     toNationId: NationIdSchema,
     fromNationId: NationIdSchema.optional(),
     note: z.string().max(500).optional(),
@@ -55,32 +94,7 @@ const EventImpactSchema = z
           .strict(),
       )
       .default([]),
-    unitOps: z
-      .array(
-        z
-          .object({
-            op: z.enum(["spawn", "move", "remove", "strength"]),
-            unitId: z.string().optional(),
-            ownerNationId: NationIdSchema.optional(),
-            provinceId: z.string().optional(),
-            manpower: z.number().safe().int().optional(),
-          })
-          .strict(),
-      )
-      .default([]),
-    markerOps: z
-      .array(
-        z
-          .object({
-            op: z.enum(["build", "remove", "rename"]),
-            markerId: z.string().optional(),
-            provinceId: z.string().optional(),
-            name: z.string().max(200).optional(),
-            kind: z.string().max(50).optional(),
-          })
-          .strict(),
-      )
-      .default([]),
+    unitOps: z.array(UnitOpSchema).default([]),
   })
   .strict();
 
@@ -105,12 +119,15 @@ export const CampaignWorldEventSchema = z
       .string()
       .regex(/^res_[a-z0-9_]+$/)
       .optional(),
-    impacts: EventImpactSchema.optional(),
-    provenance: z
-      .enum(["historical_baseline", "player_divergence", "simulated_consequence", "unknown"])
-      .optional(),
-    regionIds: z.array(z.string()).optional(),
-    sourceInputIds: z.array(z.string()).optional(),
+    impacts: EventImpactSchema,
+    provenance: z.enum([
+      "historical_baseline",
+      "player_divergence",
+      "simulated_consequence",
+      "unknown",
+    ]),
+    regionIds: orderedUniqueRegionIds,
+    sourceInputIds: orderedUniqueSourceInputIds,
   })
   .strict();
 

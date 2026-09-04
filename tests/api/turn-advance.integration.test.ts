@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { z } from "zod";
@@ -96,6 +96,10 @@ describe("turn advance API", () => {
         stateHash: z.string().length(64),
       })
       .parse(responseBody);
+    expect(JSON.parse(response.headers.get("x-pax-autosave") ?? "null")).toEqual({
+      status: "saved",
+      slot: "autosave",
+    });
     expect(plannerOrders).toEqual([""]);
     expect(body.campaign.elapsedDays).toBe(90);
     expect(
@@ -109,6 +113,67 @@ describe("turn advance API", () => {
         .parse(JSON.parse(await readFile(join(slotDirectory, "autosave.json"), "utf8"))).header
         .stateHash,
     ).toBe(body.stateHash);
+  });
+
+  test("returns the committed turn with a recoverable status when autosave fails", async () => {
+    // Given
+    const directory = await temporaryDirectory();
+    const blocker = join(directory, "not-a-directory");
+    const slotDirectory = join(blocker, "slots");
+    await writeFile(blocker, "blocked", "utf8");
+    const app = createGameApp({
+      slotDirectory,
+      planners: { deterministic: async (input) => timeOnlyPlan(input) },
+    });
+    const created = await createCampaign(app);
+
+    // When
+    const response = await app.request("/api/turns/advance", {
+      method: "POST",
+      headers: { "content-type": "application/json", origin: "http://localhost:5173" },
+      body: JSON.stringify({
+        horizon: { mode: "days", days: 90 },
+        expectedStateHash: created.stateHash,
+        requestId: "req_autosave_failure",
+      }),
+    });
+    const responseBody: unknown = await response.json();
+    const body = z
+      .object({
+        campaign: z.object({ turn: z.literal(1) }),
+        stateHash: z.string().length(64),
+      })
+      .parse(responseBody);
+    const autosave = z
+      .object({
+        status: z.literal("failed"),
+        slot: z.literal("autosave"),
+        error: z.object({ code: z.literal("autosave_failed"), recoverable: z.literal(true) }),
+        retry: z.object({
+          method: z.literal("POST"),
+          path: z.literal("/api/campaigns/autosave/save"),
+        }),
+      })
+      .parse(JSON.parse(response.headers.get("x-pax-autosave") ?? "null"));
+    const current = await app.request("/api/campaign");
+
+    // Then
+    expect(response.status, JSON.stringify(responseBody)).toBe(200);
+    expect(response.headers.get("access-control-expose-headers")).toBe("x-pax-autosave");
+    expect(await current.json()).toMatchObject({
+      campaign: { turn: 1 },
+      stateHash: body.stateHash,
+    });
+    await rm(blocker);
+    const retried = await app.request(autosave.retry.path, {
+      method: autosave.retry.method,
+    });
+    expect(retried.status).toBe(201);
+    expect(await retried.json()).toMatchObject({
+      slot: "autosave",
+      savedAtTurn: 1,
+      stateHash: body.stateHash,
+    });
   });
 
   test("rejects a stale state hash before invoking the planner", async () => {
@@ -163,6 +228,10 @@ describe("turn advance API", () => {
               affectedNationIds: ["nat_kor"],
               headlineKo: "중대 정치 사건",
               summaryKo: "세 번째 진행 단계에서 중대 사건이 발생했다.",
+              impacts: {},
+              provenance: "simulated_consequence",
+              regionIds: [],
+              sourceInputIds: ["req_advance_until_major"],
             };
       },
     });
@@ -220,8 +289,10 @@ describe("turn advance API", () => {
         nationChanges: [],
         relationChanges: [],
         unitOps: [],
-        markerOps: [],
       },
+      provenance: "simulated_consequence" as const,
+      regionIds: ["prv_kor_hanseong"],
+      sourceInputIds: ["req_advance_impacts"],
     });
     const app = createGameApp({
       slotDirectory: await temporaryDirectory(),

@@ -27,6 +27,15 @@ const eventAt = (
   affectedNationIds: ["nat_jpn"],
   headlineKo: `사건 ${clock.step}`,
   summaryKo: `결정론적 사건 ${clock.step}`,
+  impacts: {
+    regionTransfers: [],
+    nationChanges: [],
+    relationChanges: [],
+    unitOps: [],
+  },
+  provenance: "simulated_consequence",
+  regionIds: [],
+  sourceInputIds: [`req_step_${clock.step}`],
 });
 
 describe("pure timeline progression", () => {

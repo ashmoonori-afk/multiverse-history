@@ -41,6 +41,12 @@ const adjustNation = (
   state: CampaignState,
   intent: Extract<PolicyIntent, { readonly type: "nation.adjust" }>,
 ): CampaignState => {
+  if (
+    intent.nationId === state.playerNationId &&
+    ((intent.treasuryDelta ?? 0) < 0 || (intent.stabilityDelta ?? 0) < 0)
+  ) {
+    throw new RangeError("PLAYER_SOVEREIGNTY_VIOLATION");
+  }
   const next = updateNation(state, intent.nationId, (nation) => ({
     ...nation,
     treasuryCredits: Math.max(

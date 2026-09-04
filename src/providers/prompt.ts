@@ -1,16 +1,18 @@
+export interface ProviderPromptScenario {
+  readonly id: string;
+  readonly year: number;
+  readonly era: string;
+  readonly titleKo: string;
+  readonly personaKo: string;
+  readonly historicalBaselineKo: string;
+}
+
 export interface ProviderPromptInput {
   readonly requestId: string;
   readonly orderText: string;
   readonly stateJson: string;
   readonly nationCount?: number;
-  readonly scenario?: {
-    readonly id: string;
-    readonly year: number;
-    readonly era: string;
-    readonly titleKo: string;
-    readonly personaKo: string;
-    readonly historicalBaselineKo: string;
-  };
+  readonly scenario?: ProviderPromptScenario;
 }
 
 const defaultScenario = Object.freeze({
@@ -70,12 +72,6 @@ export const buildProviderPrompt = (input: ProviderPromptInput): string => {
     "3. 셋째 문단 — 앞으로의 전망과 암시 (1-2문장, 역사적 긴장감)",
     "문체는 사관의 기록처럼 간결하고 품위 있게, 그러나 사건의 드라마를 담아낸다.",
     "",
-    "=== 이벤트 생성 지침 ===",
-    "모든 event에는 상태를 바꾸는 구조화된 impacts, regionIds 배열, provenance가 반드시 있어야 한다.",
-    "provenance는 historical_baseline, player_divergence, simulated_consequence, unknown 중 하나다.",
-    "사건은 현재 캠페인 날짜를 기준으로 날짜 오프셋을 가질 수 있으며 시간순으로 정렬한다.",
-    "역사적 기준선과 다른 사건은 historical_baseline으로 표시하지 않는다.",
-    "",
     "=== 단일 호출 연출 지침 ===",
     "presentation.article은 확정될 전략 의도를 바탕으로 한국어 신문 기사로 작성한다.",
     "플레이어 원문 명령을 제목이나 본문에 그대로 복사하지 않는다.",
@@ -91,7 +87,7 @@ export const buildProviderPrompt = (input: ProviderPromptInput): string => {
     "STATE_JSON",
     input.stateJson,
     "BEGIN_UNTRUSTED_PLAYER_ORDER",
-    input.orderText,
+    JSON.stringify({ orderText: input.orderText }),
     "END_UNTRUSTED_PLAYER_ORDER",
   ].join("\n");
 };

@@ -27,6 +27,8 @@ export interface ExecuteProviderTurnInput {
 export type ProviderTurnErrorCode =
   | "provider_empty_output"
   | "provider_malformed_output"
+  | "provider_output_too_large"
+  | "provider_plan_invalid"
   | "provider_schema_invalid"
   | "provider_request_mismatch"
   | "provider_cancelled"
@@ -50,9 +52,12 @@ export interface ProviderTurnResult {
   readonly stateHash: string;
 }
 
-const mappedProviderError = (error: unknown): ProviderTurnError => {
+const mappedProviderError = (error: unknown, planSemantics = false): ProviderTurnError => {
   if (error instanceof ProviderTurnError) {
     return error;
+  }
+  if (planSemantics && error instanceof RangeError) {
+    return new ProviderTurnError(422, "provider_plan_invalid");
   }
   const message = error instanceof Error ? error.message : "";
   switch (message) {
@@ -60,6 +65,8 @@ const mappedProviderError = (error: unknown): ProviderTurnError => {
       return new ProviderTurnError(422, "provider_empty_output");
     case "PROVIDER_MALFORMED_OUTPUT":
       return new ProviderTurnError(422, "provider_malformed_output");
+    case "PROVIDER_OUTPUT_TOO_LARGE":
+      return new ProviderTurnError(422, "provider_output_too_large");
     case "PROVIDER_CANCELLED":
       return new ProviderTurnError(503, "provider_cancelled");
     case "PROVIDER_TIMEOUT":
@@ -100,7 +107,7 @@ export const executeProviderTurn = async (
         ? (input.reduce?.(snapshot, plan) ?? snapshot)
         : await input.prepare(snapshot, plan);
   } catch (error: unknown) {
-    throw mappedProviderError(error);
+    throw mappedProviderError(error, true);
   }
   if (hashCanonical(input.store.read()) !== snapshotHash) {
     throw new ProviderTurnError(409, "campaign_conflict");

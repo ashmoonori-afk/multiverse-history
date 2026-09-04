@@ -1,4 +1,7 @@
-import { Hono } from "hono";
+import { mkdtempSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { type Context, Hono } from "hono";
 import { cors } from "hono/cors";
 import { ZodError, z } from "zod";
 
@@ -57,6 +60,7 @@ import { authorLiveNews } from "../providers/live-news";
 import { planWithLiveProvider } from "../providers/live-planner";
 import { authorLiveReactionsBatch } from "../providers/live-reaction";
 import { type StrategicPlan, strategicPlanCore } from "../providers/schemas";
+import type { StructuredInvocationRunner } from "../providers/structured-invocation";
 import { canonicalStringify, hashCanonical } from "../shared/canonical-json";
 import {
   AdvanceTurnRequestSchema,
@@ -99,11 +103,81 @@ export interface GameAppOptions {
   readonly reactionAuthors?: Partial<Readonly<Record<ProviderSelection, CampaignReactionAuthor>>>;
   readonly worldEventFactory?: CampaignWorldEventFactory;
   readonly slotDirectory?: string;
+  readonly livePlannerRunner?: StructuredInvocationRunner;
 }
 
-const jsonBody = async (request: Request): Promise<unknown> => {
+export type TurnAutosaveStatus =
+  | Readonly<{ status: "saved"; slot: "autosave" }>
+  | Readonly<{
+      status: "failed";
+      slot: "autosave";
+      error: Readonly<{ code: "autosave_failed"; recoverable: true }>;
+      retry: Readonly<{ method: "POST"; path: "/api/campaigns/autosave/save" }>;
+    }>;
+
+const failedAutosaveStatus: TurnAutosaveStatus = Object.freeze({
+  status: "failed",
+  slot: "autosave",
+  error: Object.freeze({ code: "autosave_failed", recoverable: true }),
+  retry: Object.freeze({ method: "POST", path: "/api/campaigns/autosave/save" }),
+});
+
+const setTurnAutosaveHeader = (context: Context, autosave: TurnAutosaveStatus): void => {
+  context.header("x-pax-autosave", JSON.stringify(autosave));
+};
+
+// ponytail: one temp root per test process; add a Bun preload cleanup hook if buildup matters.
+let testSlotRoot: string | undefined;
+let testSlotSequence = 0;
+
+const defaultSlotDirectory = (): string => {
+  if (process.env.NODE_ENV !== "test") return "data/campaigns";
+  testSlotRoot ??= mkdtempSync(join(tmpdir(), "pax-api-test-slots-"));
+  return join(testSlotRoot, String(testSlotSequence++));
+};
+
+const MAX_JSON_BODY_BYTES = 1024 * 1024;
+const MAX_CAMPAIGN_IMPORT_BYTES = 10 * 1024 * 1024;
+
+const boundedBodyText = async (
+  request: Request,
+  maxBytes: number,
+  tooLargeCode: string,
+): Promise<string> => {
+  const contentLength = request.headers.get("content-length");
+  if (contentLength !== null) {
+    if (!/^\d+$/.test(contentLength)) throw new TypeError("INVALID_CONTENT_LENGTH");
+    if (BigInt(contentLength) > BigInt(maxBytes)) throw new RangeError(tooLargeCode);
+  }
+  const reader = request.body?.getReader();
+  if (reader === undefined) return "";
+  const chunks: Uint8Array[] = [];
+  let bytes = 0;
   try {
-    return await request.json();
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      bytes += value.byteLength;
+      if (bytes > maxBytes) {
+        await reader.cancel().catch(() => undefined);
+        throw new RangeError(tooLargeCode);
+      }
+      chunks.push(value);
+    }
+  } finally {
+    reader.releaseLock();
+  }
+  return Buffer.concat(chunks, bytes).toString("utf8");
+};
+
+const jsonBody = async (
+  request: Request,
+  maxBytes = MAX_JSON_BODY_BYTES,
+  tooLargeCode = "REQUEST_BODY_TOO_LARGE",
+): Promise<unknown> => {
+  const text = await boundedBodyText(request, maxBytes, tooLargeCode);
+  try {
+    return JSON.parse(text);
   } catch {
     throw new TypeError("INVALID_JSON_BODY");
   }
@@ -194,17 +268,8 @@ const timelineAdvanceInput = (
   };
 };
 
-const scenarioPackageBody = async (request: Request): Promise<unknown> => {
-  const text = await request.text();
-  if (new TextEncoder().encode(text).byteLength > 1_000_000) {
-    throw new RangeError("SCENARIO_PACKAGE_TOO_LARGE");
-  }
-  try {
-    return JSON.parse(text);
-  } catch {
-    throw new TypeError("INVALID_JSON_BODY");
-  }
-};
+const scenarioPackageBody = (request: Request): Promise<unknown> =>
+  jsonBody(request, 1_000_000, "SCENARIO_PACKAGE_TOO_LARGE");
 
 const scenarioReference = (scenarioId: string) => {
   const scenario = getScenarioById(scenarioId);
@@ -215,8 +280,21 @@ const scenarioReference = (scenarioId: string) => {
   });
 };
 
+const nonRecoverableErrorCodes = new Set([
+  "provider_empty_output",
+  "provider_malformed_output",
+  "provider_output_too_large",
+  "provider_plan_invalid",
+  "provider_request_mismatch",
+  "provider_schema_invalid",
+]);
+
 const errorBody = (code: string) => ({
-  error: { code, recoverable: true, messageKo: "요청을 처리할 수 없습니다." },
+  error: {
+    code,
+    recoverable: !nonRecoverableErrorCodes.has(code),
+    messageKo: "요청을 처리할 수 없습니다.",
+  },
 });
 
 type ApiErrorStatus = 400 | 404 | 409 | 413 | 422 | 500 | 503;
@@ -226,6 +304,12 @@ interface ApiError {
 }
 
 const rangeErrorResponse = (error: RangeError): ApiError => {
+  if (error.message === "REQUEST_BODY_TOO_LARGE") {
+    return { code: "request_body_too_large", status: 413 };
+  }
+  if (error.message === "IMPORT_TOO_LARGE") {
+    return { code: "import_too_large", status: 413 };
+  }
   if (error.message === "SCENARIO_PACKAGE_TOO_LARGE") {
     return { code: "scenario_package_too_large", status: 413 };
   }
@@ -275,9 +359,34 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
   const app = new Hono();
   const store = new LocalCampaignStore();
   const slotStore = createCampaignSlotStore({
-    directory: options.slotDirectory ?? "data/campaigns",
+    directory: options.slotDirectory ?? defaultSlotDirectory(),
     store,
   });
+  const livePlanner =
+    (provider: "codex" | "claude"): ProviderPlanner =>
+    async (input) => {
+      const campaign = store.read();
+      const metadata = listBuiltInScenarioMetadata().find(
+        (candidate) => candidate.id === campaign.scenarioId,
+      );
+      if (metadata === undefined) throw new RangeError("SCENARIO_METADATA_NOT_FOUND");
+      return planWithLiveProvider({
+        provider,
+        requestId: input.requestId,
+        orderText: input.orderText,
+        stateJson: input.stateJson,
+        nationCount: campaign.nations.length,
+        scenario: {
+          id: metadata.id,
+          year: metadata.year,
+          era: metadata.era,
+          titleKo: metadata.titleKo,
+          personaKo: metadata.personaKo,
+          historicalBaselineKo: metadata.historicalBaselineKo,
+        },
+        ...(options.livePlannerRunner === undefined ? {} : { runner: options.livePlannerRunner }),
+      });
+    };
   const planners: Partial<Record<ProviderSelection, ProviderPlanner>> = {
     deterministic: async (input) => {
       const state = store.read();
@@ -300,22 +409,8 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
           }),
       });
     },
-    codex: async (input) =>
-      planWithLiveProvider({
-        provider: "codex",
-        requestId: input.requestId,
-        orderText: input.orderText,
-        stateJson: input.stateJson,
-        ...(store.hasCampaign() ? { nationCount: store.read().nations.length } : {}),
-      }),
-    claude: async (input) =>
-      planWithLiveProvider({
-        provider: "claude",
-        requestId: input.requestId,
-        orderText: input.orderText,
-        stateJson: input.stateJson,
-        ...(store.hasCampaign() ? { nationCount: store.read().nations.length } : {}),
-      }),
+    codex: livePlanner("codex"),
+    claude: livePlanner("claude"),
     ...options.planners,
   };
   const liveDiplomacyResponder =
@@ -458,8 +553,14 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
         });
       },
     });
-    await autosaveAfterTurn(slotStore);
-    return result;
+    let autosave: TurnAutosaveStatus;
+    try {
+      await autosaveAfterTurn(slotStore);
+      autosave = Object.freeze({ status: "saved", slot: "autosave" });
+    } catch {
+      autosave = failedAutosaveStatus;
+    }
+    return Object.freeze({ ...result, autosave });
   };
 
   app.use(
@@ -473,6 +574,7 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
       ],
       allowHeaders: ["content-type"],
       allowMethods: ["GET", "POST", "OPTIONS"],
+      exposeHeaders: ["x-pax-autosave"],
     }),
   );
 
@@ -517,6 +619,7 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
     const campaign = parseCampaignState(store.read());
     const expectedStateHash = store.stateHash();
     const result = await advance(timelineAdvanceInput(request, campaign, expectedStateHash));
+    setTurnAutosaveHeader(context, result.autosave);
     return context.json({ campaign: result.state, stateHash: result.stateHash });
   });
 
@@ -643,6 +746,7 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
       expectedStateHash: request.expectedStateHash,
       requestId: request.requestId,
     });
+    setTurnAutosaveHeader(context, result.autosave);
     return context.json({
       campaign: result.state,
       plan: strategicPlanCore(result.plan),
@@ -667,6 +771,7 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
         ? { progression: { mode: "until_major_event" as const } }
         : {}),
     });
+    setTurnAutosaveHeader(context, result.autosave);
     return context.json({
       campaign: result.state,
       plan: strategicPlanCore(result.plan),
@@ -684,7 +789,7 @@ export const createGameApp = (options: GameAppOptions = {}): Hono => {
   });
 
   app.post("/api/campaign/import", async (context) => {
-    const body = await jsonBody(context.req.raw);
+    const body = await jsonBody(context.req.raw, MAX_CAMPAIGN_IMPORT_BYTES, "IMPORT_TOO_LARGE");
     replaceCampaignFromExport(body, store);
     return context.json({ campaign: store.read(), stateHash: store.stateHash() });
   });

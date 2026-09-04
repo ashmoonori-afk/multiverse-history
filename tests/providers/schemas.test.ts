@@ -9,6 +9,10 @@ import {
   strategicPlanCore,
   strategicPlanJsonSchema,
 } from "../../src/providers/schemas";
+import {
+  MAX_PEACE_TERMS,
+  MAX_STRATEGIC_IDENTIFIER_LENGTH,
+} from "../../src/providers/strategic-intent-schema";
 
 describe("strategic provider schema", () => {
   test("parses a bounded structured plan", () => {
@@ -296,6 +300,37 @@ describe("strategic provider schema", () => {
     expect(schemaJson).not.toContain('"enum":["rail",null]');
   });
 
+  test("rejects unit and peace intents without an explicit actor", () => {
+    // Given
+    const unboundIntents = [
+      { type: "unit.move", unitId: "unt_1_0", toProvinceId: "prv_kor_hanseong" },
+      { type: "unit.attack", unitId: "unt_1_0", targetProvinceId: "prv_jpn_kanto" },
+      { type: "unit.disband", unitId: "unt_1_0" },
+      { type: "war.peace", warId: "war_1_0", terms: [] },
+    ];
+
+    // When / Then
+    for (const intent of unboundIntents) {
+      expect(() =>
+        parseStrategicPlan({
+          schemaVersion: 2,
+          requestId: "req_actor_required",
+          playerIntents: [intent],
+          npcIntents: [
+            {
+              type: "military.recruit",
+              actorNationId: "nat_jpn",
+              provinceId: "prv_jpn_kanto",
+              manpower: 2_000,
+            },
+          ],
+          narrative: { ko: "행위자 검증" },
+          warnings: [],
+        }),
+      ).toThrow();
+    }
+  });
+
   test("parses every v2 intent from wire JSON and advertises each discriminator", () => {
     // Given
     const intents = [
@@ -340,6 +375,7 @@ describe("strategic provider schema", () => {
       },
       {
         type: "war.peace",
+        actorNationId: "nat_kor",
         warId: "war_1_0",
         terms: [
           {
@@ -357,18 +393,21 @@ describe("strategic provider schema", () => {
       },
       {
         type: "unit.move",
+        actorNationId: "nat_kor",
         unitId: "unt_1_0",
         toProvinceId: "prv_kor_jeolla",
         sourceQuoteKo: "부대를 전라로 이동하라",
       },
       {
         type: "unit.attack",
+        actorNationId: "nat_kor",
         unitId: "unt_1_0",
         targetProvinceId: "prv_jpn_kanto",
         sourceQuoteKo: "관동을 공격하라",
       },
       {
         type: "unit.disband",
+        actorNationId: "nat_kor",
         unitId: "unt_1_0",
         sourceQuoteKo: "부대를 해산하라",
       },
@@ -513,5 +552,65 @@ describe("strategic provider schema", () => {
     expect(accepted.npcIntents).toHaveLength(32);
     expect(parseTooMany).toThrow();
     expect(parseUnknown).toThrow();
+  });
+
+  test("bounds nested peace terms and strategic identifiers in runtime and JSON schemas", () => {
+    // Given
+    const term = {
+      type: "territory.transfer",
+      actorNationId: "nat_kor",
+      provinceId: "prv_jpn_kanto",
+      fromNationId: "nat_jpn",
+      toNationId: "nat_kor",
+      reasonKo: "강화 조약",
+      sourceQuoteKo: null,
+    } as const;
+    const planWith = (terms: readonly (typeof term)[], actorNationId = "nat_kor") => ({
+      schemaVersion: 2,
+      requestId: "req_peace_term_limit",
+      playerIntents: [],
+      npcIntents: [
+        {
+          type: "war.peace",
+          actorNationId,
+          warId: "war_1_0",
+          terms,
+          reparationsCredits: null,
+          sourceQuoteKo: null,
+        },
+      ],
+      narrative: { ko: "강화 조건을 검토했다." },
+      presentation: {
+        article: {
+          headlineKo: "강화 협상",
+          ledeKo: "교전국이 강화 조건을 검토했다.",
+          paragraphsKo: ["대표단이 협상을 시작했다.", "주변국은 결과를 주시했다."],
+          quote: null,
+        },
+        reactions: [
+          {
+            nationId: "nat_kor",
+            stance: "cautious",
+            sentimentBps: 0,
+            statementKo: "협상 결과를 기다리겠다.",
+          },
+        ],
+      },
+      warnings: [],
+    });
+    const accepted = planWith(Array.from({ length: MAX_PEACE_TERMS }, () => term));
+    const tooMany = planWith(Array.from({ length: MAX_PEACE_TERMS + 1 }, () => term));
+    const longId = planWith([], `nat_${"x".repeat(MAX_STRATEGIC_IDENTIFIER_LENGTH)}`);
+    const validate = new Ajv({ strict: false }).compile(strategicPlanJsonSchema());
+
+    // When / Then
+    expect(parseProviderStrategicPlan(accepted).npcIntents[0]).toMatchObject({
+      terms: expect.any(Array),
+    });
+    expect(() => parseProviderStrategicPlan(tooMany)).toThrow();
+    expect(() => parseProviderStrategicPlan(longId)).toThrow();
+    expect(validate(accepted)).toBe(true);
+    expect(validate(tooMany)).toBe(false);
+    expect(validate(longId)).toBe(false);
   });
 });

@@ -102,6 +102,8 @@ export type CampaignProvinceState = ScenarioDefinition["provinces"][number] & {
   readonly developmentBps?: number | undefined;
 };
 
+const ProvinceIdSchema = z.string().regex(/^prv_[a-z0-9_]+$/);
+
 const CampaignStateSchema = z
   .object({
     schemaVersion: z.literal(2),
@@ -132,10 +134,7 @@ const CampaignStateSchema = z
           stabilityBps: z.number().safe().int().min(0).max(10_000),
           population: z.number().safe().int().nonnegative(),
           infrastructureBps: z.number().safe().int().min(0).max(10_000),
-          capitalProvinceId: z
-            .string()
-            .regex(/^prv_[a-z0-9_]+$/)
-            .optional(),
+          capitalProvinceId: ProvinceIdSchema.optional(),
           governmentKo: z.string().trim().min(1).optional(),
           tags: z.array(z.string().trim().min(1)).optional(),
           manpowerPool: z.number().safe().int().nonnegative().optional(),
@@ -154,11 +153,11 @@ const CampaignStateSchema = z
     provinces: z.array(
       z
         .object({
-          id: z.string(),
+          id: ProvinceIdSchema,
           ownerNationId: z.string(),
           population: z.number().safe().int().nonnegative(),
           nameKo: z.string().trim().min(1).optional(),
-          adjacentProvinceIds: z.array(z.string()).optional(),
+          adjacentProvinceIds: z.array(ProvinceIdSchema).optional(),
           isCapital: z.boolean().optional(),
           isPort: z.boolean().optional(),
           terrain: z.string().trim().min(1).optional(),
@@ -194,7 +193,7 @@ const CampaignStateSchema = z
         .object({
           id: z.string().regex(/^unt_[a-z0-9_]+$/),
           ownerNationId: z.string().regex(/^nat_[a-z0-9_]+$/),
-          provinceId: z.string().regex(/^prv_[a-z0-9_]+$/),
+          provinceId: ProvinceIdSchema,
           manpower: z.number().safe().int().nonnegative(),
         })
         .strict(),
@@ -221,7 +220,35 @@ const CampaignStateSchema = z
     nationReactions: z.array(CampaignNationReactionSchema).default([]),
     lastProgression: TimelineProgressionResultSchema.nullable().default(null),
   })
-  .strict();
+  .strict()
+  .superRefine((state, context) => {
+    const provinceIds = new Set(state.provinces.map((province) => province.id));
+    const references = [
+      ...state.provinces.flatMap((province, provinceIndex) =>
+        (province.adjacentProvinceIds ?? []).map((provinceId, referenceIndex) => ({
+          provinceId,
+          path: ["provinces", provinceIndex, "adjacentProvinceIds", referenceIndex],
+        })),
+      ),
+      ...state.units.map((unit, index) => ({
+        provinceId: unit.provinceId,
+        path: ["units", index, "provinceId"],
+      })),
+      ...state.constructionProjects.map((project, index) => ({
+        provinceId: project.provinceId,
+        path: ["constructionProjects", index, "provinceId"],
+      })),
+    ];
+    for (const reference of references) {
+      if (!provinceIds.has(reference.provinceId)) {
+        context.addIssue({
+          code: "custom",
+          path: reference.path,
+          message: "CAMPAIGN_PROVINCE_REFERENCE_NOT_FOUND",
+        });
+      }
+    }
+  });
 
 export interface CampaignCreationOptions {
   readonly customPolityName?: string;

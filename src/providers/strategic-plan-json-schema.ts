@@ -1,5 +1,9 @@
 import type { StrategicIntent } from "./strategic-intent-schema";
-import { TreatyClauseSchema } from "./strategic-intent-schema";
+import {
+  MAX_PEACE_TERMS,
+  MAX_STRATEGIC_IDENTIFIER_LENGTH,
+  TreatyClauseSchema,
+} from "./strategic-intent-schema";
 import { turnPresentationJsonSchema } from "./turn-presentation";
 
 const nullable = (type: "string" | "integer" | "array"): object => ({
@@ -8,11 +12,13 @@ const nullable = (type: "string" | "integer" | "array"): object => ({
 
 const stringId = (prefix: string): object => ({
   type: "string",
+  maxLength: MAX_STRATEGIC_IDENTIFIER_LENGTH,
   pattern: `^${prefix}_[a-z0-9_]+$`,
 });
 
 const nullableId = (prefix: string): object => ({
   ...nullable("string"),
+  maxLength: MAX_STRATEGIC_IDENTIFIER_LENGTH,
   pattern: `^${prefix}_[a-z0-9_]+$`,
 });
 
@@ -118,22 +124,32 @@ const warIntentJsonSchemas = (): readonly object[] => [
     casusBelliKo: nullableReason(),
   }),
   wireVariantJsonSchema("war.peace", {
+    actorNationId: stringId("nat"),
     warId: nullableId("war"),
-    terms: { ...nullable("array"), items: territoryIntentJsonSchema() },
+    terms: {
+      ...nullable("array"),
+      items: territoryIntentJsonSchema(),
+      maxItems: MAX_PEACE_TERMS,
+    },
     reparationsCredits: { ...nullable("integer"), minimum: 0 },
   }),
 ];
 
 const unitIntentJsonSchemas = (): readonly object[] => [
   wireVariantJsonSchema("unit.move", {
+    actorNationId: stringId("nat"),
     unitId: nullableId("unt"),
     toProvinceId: nullableId("prv"),
   }),
   wireVariantJsonSchema("unit.attack", {
+    actorNationId: stringId("nat"),
     unitId: nullableId("unt"),
     targetProvinceId: nullableId("prv"),
   }),
-  wireVariantJsonSchema("unit.disband", { unitId: nullableId("unt") }),
+  wireVariantJsonSchema("unit.disband", {
+    actorNationId: stringId("nat"),
+    unitId: nullableId("unt"),
+  }),
 ];
 
 const polityIntentJsonSchema = (): object =>
@@ -172,7 +188,11 @@ export const strategicPlanJsonSchema = (): object => ({
   type: "object",
   properties: {
     schemaVersion: { type: "integer", enum: [1, 2] },
-    requestId: { type: "string", pattern: "^req_[a-z0-9_]+$" },
+    requestId: {
+      type: "string",
+      maxLength: MAX_STRATEGIC_IDENTIFIER_LENGTH,
+      pattern: "^req_[a-z0-9_]+$",
+    },
     playerIntents: { type: "array", items: wireIntentJsonSchema(), maxItems: 8 },
     npcIntents: { type: "array", items: wireIntentJsonSchema(), minItems: 1, maxItems: 32 },
     narrative: {
