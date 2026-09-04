@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 
 import {
+  type CampaignResolution,
   CampaignResolutionSchema,
   createCampaignResolution,
 } from "../../src/application/campaign-resolution";
@@ -44,6 +45,191 @@ const legacyCampaign = () => {
     chatMessages: [legacyMessage],
   };
 };
+
+const fallbackNpcIntent = {
+  type: "action.fail" as const,
+  actorNationId: "nat_jpn",
+  attemptKo: "참조 무결성 테스트",
+  stabilityDelta: -1,
+};
+
+const planWithIntent = (
+  lane: "playerIntents" | "npcIntents",
+  intent: Readonly<Record<string, unknown>>,
+  schemaVersion: 1 | 2 = 2,
+) => ({
+  schemaVersion,
+  requestId: "req_province_reference",
+  playerIntents: lane === "playerIntents" ? [intent] : [],
+  npcIntents: lane === "npcIntents" ? [intent] : [fallbackNpcIntent],
+  narrative: { ko: "참조 무결성 테스트 계획" },
+  warnings: [],
+});
+
+const lastPlanReferenceCases = [
+  {
+    name: "player economy provinceId",
+    lane: "playerIntents" as const,
+    intent: {
+      type: "economy.invest",
+      actorNationId: "nat_kor",
+      provinceId: "prv_missing",
+      sector: "rail",
+      budgetCredits: 20,
+    },
+  },
+  {
+    name: "npc treaty provinceId",
+    lane: "npcIntents" as const,
+    intent: {
+      type: "diplomacy.propose_treaty",
+      actorNationId: "nat_jpn",
+      recipientNationId: "nat_kor",
+      provinceId: "prv_missing",
+      clauses: ["trade"],
+    },
+  },
+  {
+    name: "player recruitment provinceId",
+    lane: "playerIntents" as const,
+    intent: {
+      type: "military.recruit",
+      actorNationId: "nat_kor",
+      provinceId: "prv_missing",
+      manpower: 500,
+    },
+  },
+  {
+    name: "npc direct-transfer provinceId",
+    lane: "npcIntents" as const,
+    intent: {
+      type: "territory.transfer",
+      actorNationId: "nat_jpn",
+      provinceId: "prv_missing",
+      fromNationId: "nat_jpn",
+      toNationId: "nat_kor",
+      reasonKo: "직접 할양",
+    },
+  },
+  {
+    name: "player peace-term provinceId",
+    lane: "playerIntents" as const,
+    intent: {
+      type: "war.peace",
+      actorNationId: "nat_kor",
+      warId: "war_1_0",
+      terms: [
+        {
+          type: "territory.transfer",
+          actorNationId: "nat_kor",
+          provinceId: "prv_missing",
+          fromNationId: "nat_jpn",
+          toNationId: "nat_kor",
+          reasonKo: "강화 조약",
+        },
+      ],
+    },
+  },
+  {
+    name: "npc unit toProvinceId",
+    lane: "npcIntents" as const,
+    intent: {
+      type: "unit.move",
+      actorNationId: "nat_jpn",
+      unitId: "unt_jpn_1",
+      toProvinceId: "prv_missing",
+    },
+  },
+  {
+    name: "player attack targetProvinceId",
+    lane: "playerIntents" as const,
+    intent: {
+      type: "unit.attack",
+      actorNationId: "nat_kor",
+      unitId: "unt_kor_1",
+      targetProvinceId: "prv_missing",
+    },
+  },
+  {
+    name: "npc polity capitalProvinceId",
+    lane: "npcIntents" as const,
+    intent: {
+      type: "polity.change",
+      nationId: "nat_jpn",
+      capitalProvinceId: "prv_missing",
+    },
+  },
+] as const;
+
+const resolutionReferenceCases: readonly {
+  readonly name: string;
+  readonly mutate: (resolution: CampaignResolution, validProvinceId: string) => CampaignResolution;
+}[] = [
+  {
+    name: "changed province",
+    mutate: (resolution) => ({
+      ...resolution,
+      worldImpact: { ...resolution.worldImpact, changedProvinceIds: ["prv_missing"] },
+    }),
+  },
+  {
+    name: "ownership override",
+    mutate: (resolution) => ({
+      ...resolution,
+      worldImpact: {
+        ...resolution.worldImpact,
+        regionOwnershipOverrides: [
+          {
+            regionId: "prv_missing",
+            fromNationId: "nat_jpn",
+            toNationId: "nat_kor",
+            reasonKo: "직접 할양",
+            cause: "player",
+            source: "policy",
+          },
+        ],
+      },
+    }),
+  },
+  {
+    name: "unit delta before province",
+    mutate: (resolution, validProvinceId) => ({
+      ...resolution,
+      unitDeltas: [
+        {
+          unitId: "unt_reference_1",
+          ownerNationId: "nat_kor",
+          before: {
+            ownerNationId: "nat_kor",
+            provinceId: "prv_missing",
+            manpower: 500,
+          },
+          after: { ownerNationId: "nat_kor", provinceId: validProvinceId, manpower: 500 },
+          source: "policy",
+        },
+      ],
+    }),
+  },
+  {
+    name: "unit delta after province",
+    mutate: (resolution, validProvinceId) => ({
+      ...resolution,
+      unitDeltas: [
+        {
+          unitId: "unt_reference_1",
+          ownerNationId: "nat_kor",
+          before: { ownerNationId: "nat_kor", provinceId: validProvinceId, manpower: 500 },
+          after: {
+            ownerNationId: "nat_kor",
+            provinceId: "prv_missing",
+            manpower: 500,
+          },
+          source: "policy",
+        },
+      ],
+    }),
+  },
+];
 
 describe("campaign state compatibility", () => {
   test("rejects malformed province identifiers at the parser boundary", () => {
@@ -229,9 +415,70 @@ describe("campaign state compatibility", () => {
     }
   });
 
+  for (const referenceCase of lastPlanReferenceCases) {
+    test(`rejects dangling lastPlan ${referenceCase.name} after import`, () => {
+      // Given
+      const base = createCampaignState("scn_ea1900", "nat_kor");
+      const state = {
+        ...base,
+        lastPlan: planWithIntent(referenceCase.lane, referenceCase.intent),
+      };
+      const imported = importCampaignExport({
+        json: serializeCampaignExport({ scenario, state }),
+        expectedScenario: scenario,
+      });
+
+      // When
+      const parse = () => parseCampaignState(imported.state);
+
+      // Then
+      expect(parse).toThrow("CAMPAIGN_PROVINCE_REFERENCE_NOT_FOUND");
+    });
+  }
+
+  for (const referenceCase of resolutionReferenceCases) {
+    test(`rejects dangling resolution ${referenceCase.name} after import`, () => {
+      // Given
+      const base = legacyCampaign();
+      const resolution = base.resolutions[0];
+      const validProvinceId = base.provinces[0]?.id;
+      if (resolution === undefined || validProvinceId === undefined) {
+        throw new RangeError("TEST_SCENARIO_INCOMPLETE");
+      }
+      const state = {
+        ...base,
+        resolutions: [referenceCase.mutate(resolution, validProvinceId)],
+      };
+      const imported = importCampaignExport({
+        json: serializeCampaignExport({ scenario, state }),
+        expectedScenario: scenario,
+      });
+
+      // When
+      const parse = () => parseCampaignState(imported.state);
+
+      // Then
+      expect(parse).toThrow("CAMPAIGN_PROVINCE_REFERENCE_NOT_FOUND");
+    });
+  }
+
   test("imports a v1 state with its raw hash and reports the migration", () => {
     // Given
-    const v1State = { ...createCampaignState("scn_ea1900", "nat_kor") };
+    const v1State: Record<string, unknown> = {
+      ...createCampaignState("scn_ea1900", "nat_kor"),
+      lastPlan: planWithIntent(
+        "playerIntents",
+        {
+          type: "territory.transfer",
+          actorNationId: "nat_kor",
+          provinceId: "prv_jpn_kanto",
+          fromNationId: "nat_jpn",
+          toNationId: "nat_kor",
+          reasonKo: "직접 할양",
+        },
+        1,
+      ),
+    };
     Reflect.deleteProperty(v1State, "schemaVersion");
     const serialized = serializeCampaignExport({ scenario, state: v1State });
 
@@ -241,6 +488,8 @@ describe("campaign state compatibility", () => {
 
     // Then
     expect(parsed.schemaVersion).toBe(2);
+    expect(parsed.lastPlan?.schemaVersion).toBe(2);
+    expect(parsed.lastPlan?.playerIntents[0]?.type).toBe("territory.transfer");
     expect(imported.migratedFrom).toBe(1);
   });
 
@@ -392,10 +641,49 @@ describe("campaign state compatibility", () => {
         steps: 1,
         stopReason: "requested_duration",
       },
+      lastPlan: planWithIntent("playerIntents", {
+        type: "territory.transfer",
+        actorNationId: "nat_kor",
+        provinceId: "prv_jpn_kanto",
+        fromNationId: "nat_jpn",
+        toNationId: "nat_kor",
+        reasonKo: "직접 할양",
+      }),
       resolutions: legacy.resolutions.map((resolution) => ({
         ...resolution,
+        unitDeltas: [
+          {
+            unitId: firstUnit.id,
+            ownerNationId: firstUnit.ownerNationId,
+            before: {
+              ownerNationId: firstUnit.ownerNationId,
+              provinceId: firstUnit.provinceId,
+              manpower: firstUnit.manpower,
+            },
+            after: {
+              ownerNationId: firstUnit.ownerNationId,
+              provinceId: "prv_jpn_kanto",
+              manpower: firstUnit.manpower,
+            },
+            source: "policy",
+          },
+        ],
         worldEventIds: ["evt_1_1"],
         reactionIds,
+        worldImpact: {
+          ...resolution.worldImpact,
+          changedProvinceIds: ["prv_jpn_kanto"],
+          regionOwnershipOverrides: [
+            {
+              regionId: "prv_jpn_kanto",
+              fromNationId: "nat_jpn",
+              toNationId: "nat_kor",
+              reasonKo: "직접 할양",
+              cause: "player",
+              source: "policy",
+            },
+          ],
+        },
       })),
     };
 

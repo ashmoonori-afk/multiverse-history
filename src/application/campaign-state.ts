@@ -2,8 +2,12 @@ import { z } from "zod";
 
 import type { ScenarioDefinition } from "../domain/scenario/registry";
 import { getScenarioById } from "../domain/scenario/registry";
-import type { StrategicPlan } from "../providers/schemas";
-import { parseStrategicPlan } from "../providers/schemas";
+import {
+  parseStrategicPlan,
+  type StrategicIntent,
+  type StrategicPlan,
+  StrategicPlanInputSchema,
+} from "../providers/schemas";
 import { hashCanonical } from "../shared/canonical-json";
 import { parseNationId, parseScenarioId } from "../shared/ids";
 import {
@@ -103,6 +107,42 @@ export type CampaignProvinceState = ScenarioDefinition["provinces"][number] & {
 };
 
 const ProvinceIdSchema = z.string().regex(/^prv_[a-z0-9_]+$/);
+
+interface ProvinceReference {
+  readonly provinceId: string;
+  readonly path: (string | number)[];
+}
+
+const intentProvinceReferences = (
+  intent: StrategicIntent,
+  path: (string | number)[],
+): readonly ProvinceReference[] => {
+  switch (intent.type) {
+    case "economy.invest":
+    case "military.recruit":
+    case "territory.transfer":
+      return [{ provinceId: intent.provinceId, path: [...path, "provinceId"] }];
+    case "diplomacy.propose_treaty":
+      return intent.provinceId === undefined
+        ? []
+        : [{ provinceId: intent.provinceId, path: [...path, "provinceId"] }];
+    case "war.peace":
+      return intent.terms.map((term, index) => ({
+        provinceId: term.provinceId,
+        path: [...path, "terms", index, "provinceId"],
+      }));
+    case "unit.move":
+      return [{ provinceId: intent.toProvinceId, path: [...path, "toProvinceId"] }];
+    case "unit.attack":
+      return [{ provinceId: intent.targetProvinceId, path: [...path, "targetProvinceId"] }];
+    case "polity.change":
+      return intent.capitalProvinceId === undefined
+        ? []
+        : [{ provinceId: intent.capitalProvinceId, path: [...path, "capitalProvinceId"] }];
+    default:
+      return [];
+  }
+};
 
 const CampaignStateSchema = z
   .object({
@@ -212,7 +252,7 @@ const CampaignStateSchema = z
     ),
     battleReports: z.array(z.string()),
     events: z.array(z.string()),
-    lastPlan: z.unknown().nullable(),
+    lastPlan: StrategicPlanInputSchema.nullable(),
     resolutions: z.array(CampaignResolutionSchema).default([]),
     chatMessages: z.array(CampaignChatMessageSchema).default([]),
     constructionProjects: z.array(CampaignConstructionProjectSchema).default([]),
@@ -223,6 +263,7 @@ const CampaignStateSchema = z
   .strict()
   .superRefine((state, context) => {
     const provinceIds = new Set(state.provinces.map((province) => province.id));
+    const lastPlan = state.lastPlan;
     const references = [
       ...state.nations.flatMap((nation, index) =>
         nation.capitalProvinceId === undefined
@@ -281,6 +322,68 @@ const CampaignStateSchema = z
               ]
             : [],
         ),
+      ]),
+      ...(lastPlan === null
+        ? []
+        : (["playerIntents", "npcIntents"] as const).flatMap((lane) =>
+            lastPlan[lane].flatMap((intent, index) =>
+              intentProvinceReferences(intent, ["lastPlan", lane, index]),
+            ),
+          )),
+      ...state.resolutions.flatMap((resolution, resolutionIndex) => [
+        ...resolution.worldImpact.changedProvinceIds.map((provinceId, referenceIndex) => ({
+          provinceId,
+          path: [
+            "resolutions",
+            resolutionIndex,
+            "worldImpact",
+            "changedProvinceIds",
+            referenceIndex,
+          ],
+        })),
+        ...resolution.worldImpact.regionOwnershipOverrides.map((change, referenceIndex) => ({
+          provinceId: change.regionId,
+          path: [
+            "resolutions",
+            resolutionIndex,
+            "worldImpact",
+            "regionOwnershipOverrides",
+            referenceIndex,
+            "regionId",
+          ],
+        })),
+        ...resolution.unitDeltas.flatMap((delta, deltaIndex) => [
+          ...(delta.before === null
+            ? []
+            : [
+                {
+                  provinceId: delta.before.provinceId,
+                  path: [
+                    "resolutions",
+                    resolutionIndex,
+                    "unitDeltas",
+                    deltaIndex,
+                    "before",
+                    "provinceId",
+                  ],
+                },
+              ]),
+          ...(delta.after === null
+            ? []
+            : [
+                {
+                  provinceId: delta.after.provinceId,
+                  path: [
+                    "resolutions",
+                    resolutionIndex,
+                    "unitDeltas",
+                    deltaIndex,
+                    "after",
+                    "provinceId",
+                  ],
+                },
+              ]),
+        ]),
       ]),
     ];
     for (const reference of references) {

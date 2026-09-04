@@ -228,9 +228,88 @@ describe("v2 strategic intent reducers", () => {
     expect(spoof).toThrow("INTENT_ACTOR_INVALID");
   });
 
+  test("allows an NPC proposer to target a third party without involving the player", () => {
+    // Given
+    const snapshot = createCampaignState("scn_ea1900", "nat_kor");
+    const playerRelations = snapshot.relations.filter(
+      (relation) =>
+        relation.fromNationId === snapshot.playerNationId ||
+        relation.toNationId === snapshot.playerNationId,
+    );
+
+    // When
+    const after = applyNpc(snapshot, {
+      type: "diplomacy.propose_treaty",
+      actorNationId: "nat_jpn",
+      recipientNationId: "nat_qing",
+      clauses: ["trade"],
+    });
+
+    // Then
+    expect(after.treaties.at(-1)).toMatchObject({
+      proposerNationId: "nat_jpn",
+      recipientNationId: "nat_qing",
+      status: "proposed",
+    });
+    expect(
+      after.treaties.some((treaty) =>
+        [treaty.proposerNationId, treaty.recipientNationId].includes(snapshot.playerNationId),
+      ),
+    ).toBe(false);
+    expect(
+      after.relations.filter(
+        (relation) =>
+          relation.fromNationId === snapshot.playerNationId ||
+          relation.toNationId === snapshot.playerNationId,
+      ),
+    ).toEqual(playerRelations);
+    expect(after.chatMessages).toEqual(snapshot.chatMessages);
+  });
+
+  test("delivers an NPC treaty proposal to the player from the proposer", () => {
+    // Given
+    const snapshot = createCampaignState("scn_ea1900", "nat_kor");
+
+    // When
+    const after = applyNpc(snapshot, {
+      type: "diplomacy.propose_treaty",
+      actorNationId: "nat_jpn",
+      recipientNationId: "nat_kor",
+      clauses: ["trade"],
+    });
+
+    // Then
+    expect(after.chatMessages.at(-1)).toMatchObject({
+      speakerNationId: "nat_jpn",
+      targetNationId: "nat_kor",
+      sourceKey: "diplomacy:trade:nat_jpn:nat_kor",
+    });
+  });
+
+  test("rejects player and NPC treaty proposer spoofs atomically", () => {
+    // Given
+    const snapshot = createCampaignState("scn_ea1900", "nat_kor");
+    const beforeBytes = canonicalStringify(snapshot);
+    const proposal = {
+      type: "diplomacy.propose_treaty" as const,
+      recipientNationId: "nat_qing",
+      clauses: ["trade" as const],
+    };
+
+    // When
+    const playerSpoof = () => apply(snapshot, { ...proposal, actorNationId: "nat_jpn" });
+    const npcSpoof = () => applyNpc(snapshot, { ...proposal, actorNationId: "nat_kor" });
+
+    // Then
+    expect(playerSpoof).toThrow("INTENT_ACTOR_INVALID");
+    expect(npcSpoof).toThrow("INTENT_ACTOR_INVALID");
+    expect(canonicalStringify(snapshot)).toBe(beforeBytes);
+  });
+
   test("rejects an NPC territory intent spoofing the previous owner", () => {
     // Given
     const snapshot = createCampaignState("scn_ea1900", "nat_kor");
+    const beforeBytes = canonicalStringify(snapshot);
 
     // When
     const spoof = () =>
@@ -245,6 +324,7 @@ describe("v2 strategic intent reducers", () => {
 
     // Then
     expect(spoof).toThrow("INTENT_ACTOR_INVALID");
+    expect(canonicalStringify(snapshot)).toBe(beforeBytes);
   });
 
   test("treaty.respond lets only the recipient accept or reject a proposal", () => {

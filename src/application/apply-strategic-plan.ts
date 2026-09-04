@@ -24,8 +24,6 @@ const voluntaryActorNationIds = (intent: StrategicIntent): readonly string[] => 
       return [];
     case "relation.adjust":
       return [intent.fromNationId];
-    case "territory.transfer":
-      return [intent.actorNationId, intent.fromNationId];
     case "polity.change":
       return [intent.nationId];
     default:
@@ -38,6 +36,17 @@ const assertIntentActor = (
   playerNationId: string,
   playerIntent: boolean,
 ): void => {
+  if (intent.type === "territory.transfer") {
+    if (
+      (intent.actorNationId === playerNationId) !== playerIntent ||
+      (playerIntent
+        ? intent.fromNationId !== playerNationId && intent.toNationId !== playerNationId
+        : intent.fromNationId !== intent.actorNationId)
+    ) {
+      throw new RangeError("INTENT_ACTOR_INVALID");
+    }
+    return;
+  }
   const actorNationIds = voluntaryActorNationIds(intent);
   const laneActorNationId = actorNationIds[0];
   if (
@@ -349,19 +358,29 @@ export const applyStrategicPlan = (input: ApplyStrategicPlanInput): CampaignStat
     resolutions: Object.freeze([...snapshot.resolutions, resolution]),
   });
   const incomingTreaty = resolution.treatyDeltas[0];
-  if (incomingTreaty === undefined) {
+  if (
+    incomingTreaty === undefined ||
+    ![incomingTreaty.proposerNationId, incomingTreaty.recipientNationId].includes(
+      committed.playerNationId,
+    )
+  ) {
     return committed;
   }
-  const incomingNationId = incomingTreaty.recipientNationId;
+  const playerProposed = incomingTreaty.proposerNationId === committed.playerNationId;
+  const incomingNationId = playerProposed
+    ? incomingTreaty.recipientNationId
+    : incomingTreaty.proposerNationId;
   const incomingNationName =
     committed.nations.find((nation) => nation.id === incomingNationId)?.nameKo ?? incomingNationId;
   return appendIncomingCampaignChat({
     state: committed,
     speakerNationId: incomingNationId,
     turn: resolution.turn,
-    message: `${incomingNationName} 외교부는 귀국의 조건부 협정 제안을 공식 접수했습니다. 특구 입항과 지원 조항에 관한 실무 회담을 요청합니다. 협상 대표단의 답신을 기다리겠습니다.`,
+    message: playerProposed
+      ? `${incomingNationName} 외교부는 귀국의 조건부 협정 제안을 공식 접수했습니다. 특구 입항과 지원 조항에 관한 실무 회담을 요청합니다. 협상 대표단의 답신을 기다리겠습니다.`
+      : `${incomingNationName} 외교부가 귀국에 조건부 협정 제안을 전달했습니다. 특구 입항과 지원 조항에 관한 실무 회담을 요청합니다.`,
     topic: "trade",
     intent: "proposal",
-    sourceKey: `diplomacy:trade:${committed.playerNationId}:${incomingNationId}`,
+    sourceKey: `diplomacy:trade:${incomingTreaty.proposerNationId}:${incomingTreaty.recipientNationId}`,
   });
 };

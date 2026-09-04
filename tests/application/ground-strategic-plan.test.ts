@@ -344,4 +344,34 @@ describe("strategic plan grounding", () => {
     // Then
     expect(reduced.wars[0]?.status).toBe("active");
   });
+
+  test("grounds and applies an incoming territory transfer that benefits the player", () => {
+    // Given
+    const orderText = "일본에게서 간토를 할양받는다";
+    const snapshot = createCampaignState("scn_ea1900", PLAYER);
+    const intent: StrategicIntent = {
+      type: "territory.transfer",
+      actorNationId: PLAYER,
+      provinceId: FOREIGN,
+      fromNationId: "nat_jpn",
+      toNationId: PLAYER,
+      reasonKo: "일본의 자발적 영토 할양",
+      sourceQuoteKo: orderText,
+    };
+    const grounded = groundStrategicPlan({
+      plan: { ...planWith([intent]), npcIntents: [] },
+      orderText,
+      playerNationId: PLAYER,
+      playerProvinceIds: [OWNED],
+    });
+
+    // When
+    const reduced = applyStrategicPlan({ snapshot, plan: grounded, orderText });
+
+    // Then
+    expect(grounded.playerIntents).toEqual([intent]);
+    expect(
+      String(reduced.provinces.find((province) => province.id === FOREIGN)?.ownerNationId),
+    ).toBe(PLAYER);
+  });
 });

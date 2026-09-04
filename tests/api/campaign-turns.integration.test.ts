@@ -2,6 +2,8 @@ import { describe, expect, test } from "bun:test";
 import { z } from "zod";
 
 import { createGameApp } from "../../src/api/app";
+import { createCampaignResolution } from "../../src/application/campaign-resolution";
+import { createCampaignState } from "../../src/application/campaign-state";
 import { hashCanonical } from "../../src/shared/canonical-json";
 
 const campaignId = "cmp_local";
@@ -174,6 +176,92 @@ describe("campaign and turn API", () => {
     expect(importedBody.campaign.turn).toBe(1);
     expect(importedArticle?.headlineKo).toContain("철도");
     expect(importedArticle?.paragraphsKo.length).toBeGreaterThanOrEqual(2);
+  });
+
+  test("rejects correctly checksummed imports with dangling archived province references", async () => {
+    // Given
+    const app = createGameApp();
+    const created = await createCampaign(app);
+    const exported = z
+      .object({
+        exportVersion: z.literal(1),
+        exportedStateHash: z.string(),
+        scenario: z.object({ id: z.string(), revision: z.number(), canonicalHash: z.string() }),
+        state: z.unknown(),
+      })
+      .parse(await (await app.request("/api/campaign/export")).json());
+    const base = createCampaignState(scenarioId, playerNationId);
+    const resolution = createCampaignResolution({
+      before: base,
+      after: base,
+      turn: 1,
+      cadence: "month",
+      advanceDays: 30,
+      orderText: "내정을 정비한다.",
+      narrativeKo: "내정 정비를 시작했다.",
+      changedProvinceIds: [],
+    });
+    const invalidStates = [
+      {
+        ...base,
+        lastPlan: {
+          schemaVersion: 2,
+          requestId: "req_dangling_import",
+          playerIntents: [
+            {
+              type: "territory.transfer",
+              actorNationId: "nat_kor",
+              provinceId: "prv_missing",
+              fromNationId: "nat_jpn",
+              toNationId: "nat_kor",
+              reasonKo: "직접 할양",
+            },
+          ],
+          npcIntents: [
+            {
+              type: "action.fail",
+              actorNationId: "nat_jpn",
+              attemptKo: "참조 무결성 테스트",
+              stabilityDelta: -1,
+            },
+          ],
+          narrative: { ko: "참조 무결성 테스트 계획" },
+          warnings: [],
+        },
+      },
+      {
+        ...base,
+        resolutions: [
+          {
+            ...resolution,
+            worldImpact: {
+              ...resolution.worldImpact,
+              changedProvinceIds: ["prv_missing"],
+            },
+          },
+        ],
+      },
+    ];
+
+    // When
+    const responses = [];
+    for (const state of invalidStates) {
+      responses.push(
+        await app.request("/api/campaign/import", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ ...exported, exportedStateHash: hashCanonical(state), state }),
+        }),
+      );
+    }
+    const after = await app.request("/api/campaign/state-hash");
+
+    // Then
+    for (const response of responses) {
+      expect(response.status).toBe(400);
+      expect(await response.json()).toMatchObject({ error: { code: "invalid_request" } });
+    }
+    expect(await after.json()).toEqual({ stateHash: created.stateHash });
   });
 
   test("returns typed client errors for unknown scenarios and invalid turn payloads", async () => {
