@@ -8,17 +8,17 @@ Game rules plus the scenario system: one hand-authored 1900 East Asia dataset an
 ## WHERE TO LOOK
 | Task | File |
 |------|------|
-| Scenario shape, lookup, playable-nation merge, async load | `scenario/registry.ts` (186L) |
+| Scenario shape, lookup, playable-nation merge, async load | `scenario/registry.ts` (222L) |
 | Hand-authored nation + province data | `scenario/east-asia-1900/nations.ts`, `scenario/east-asia-1900/provinces.ts`, `scenario/east-asia-1900/units.ts` |
 | Generated province graphs | `scenario/adjacency/*.json`, `scenario/adjacency/index.ts` |
-| Historical scenarios built from basemap features | `scenario/historical-scenario.ts` (250L) |
+| Historical scenarios built from basemap features | `scenario/historical-scenario.ts` (307L) |
 | Korean names/capitals/blocs for historical polities | `scenario/historical-scenario-overlays.ts` |
 | Neutral world countries used as fallback nations | `scenario/countries.ts` |
 | Scenario listing / metadata / built-ins | `scenario/catalog.ts`, `scenario/metadata.ts`, `scenario/built-ins.ts` |
 | Importable scenario package validation | `scenario/package.ts` |
 | Treaty clauses and treaty ids | `diplomacy/treaties.ts` |
 | Quarterly economy resolution | `economy/resolve-quarter.ts` |
-| Combat resolution (seeded by campaign, not RNG) | `military/combat.ts` (234L) |
+| Combat resolution (seeded by campaign, not RNG) | `military/combat.ts` (233L) |
 | Chronicle event records | `events/chronicle.ts` |
 
 ## CONVENTIONS

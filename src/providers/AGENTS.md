@@ -8,7 +8,7 @@ Adapters that turn Codex/Claude CLI subprocesses into schema-validated game outp
 ## WHERE TO LOOK
 | Task | File |
 |------|------|
-| Spawn a provider binary, timeout, output caps | `process-runner.ts` (225L) |
+| Spawn a provider binary, timeout, output caps | `process-runner.ts` (214L) |
 | Structured call: schema file vs JSON envelope, typed failures | `structured-invocation.ts` |
 | Turn planner: temp workspace, prompt, parse, cleanup | `live-planner.ts` |
 | The Korean planner prompt itself | `prompt.ts` |

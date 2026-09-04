@@ -21,7 +21,7 @@ web/
 ## WHERE TO LOOK
 | Task | Location |
 |------|----------|
-| Any API call, any campaign state | `src/state/campaign-store.ts` (628L) |
+| Any API call, any campaign state | `src/state/campaign-store.ts` (883L) |
 | Response shape mirrors of the server | `src/state/campaign-resolution-schema.ts`, `src/state/campaign-world-schema.ts` |
 | Order submission and turn commit UI | `src/app/CampaignShell.tsx` |
 | Horizon mapping + all API I/O | `src/state/campaign-store.ts` |

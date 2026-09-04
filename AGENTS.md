@@ -1,7 +1,7 @@
 # PROJECT KNOWLEDGE BASE
 
 **Generated:** 2026-09-04
-**Commit:** f9d579e
+**Commit:** 4e4eb1b
 **Branch:** main
 
 ## OVERVIEW
@@ -36,7 +36,7 @@ Pax-Historia-AI/
 | Add/adjust a historical scenario | `src/domain/scenario/historical-scenario.ts`, `src/shared/historical-map-contract.ts` | 9 of 10 built-ins are generated from a fetched world basemap |
 | Map rendering / layers | `web/src/features/map/` | style constants hand-mirror CSS tokens |
 | Client state or any API call | `web/src/state/campaign-store.ts` | zustand store owns nearly every `fetch` |
-| E2E flows | `tests/e2e/helpers/open-historia.ts` | 25 inbound refs; widest blast radius in tests |
+| E2E flows | `tests/e2e/helpers/open-historia.ts` | 27 inbound refs; widest blast radius in tests |
 
 ## CODE MAP
 | Symbol | Type | Location | Refs | Role |

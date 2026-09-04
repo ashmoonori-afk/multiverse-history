@@ -9,7 +9,7 @@ Two independent suites: `bun test` for everything in-process, Playwright for `te
 ```
 tests/
 ├── e2e/          playwright, *.e2e.ts                  ├── application/
-│   └── helpers/   1 file   shared campaign flows      ├── persistence/  2
+│   └── helpers/   1 file   shared campaign flows      ├── persistence/  3
 ├── api/          createGameApp in-process             ├── integration/
 ├── domain/       pure rules                           ├── shared/
 ├── providers/    schemas, CLI adapters                └── fixtures/
@@ -19,7 +19,7 @@ tests/
 ## WHERE TO LOOK
 | Task | Location |
 |------|----------|
-| Drive a campaign in E2E | `e2e/helpers/open-historia.ts` (25 inbound refs) |
+| Drive a campaign in E2E | `e2e/helpers/open-historia.ts` (27 inbound refs) |
 | API behavior without HTTP | `api/*.integration.test.ts` — import `createGameApp` directly |
 | Provider failure/atomicity | `integration/provider-errors.integration.test.ts` |
 | Recorded provider payloads | `fixtures/provider-{deterministic,empty,malformed}.json` |
