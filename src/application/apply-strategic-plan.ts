@@ -1,8 +1,8 @@
 import { renderChronicle } from "../domain/events/chronicle";
-import type { StrategicIntent, StrategicPlan } from "../providers/schemas";
+import { type StrategicIntent, type StrategicPlan, strategicPlanCore } from "../providers/schemas";
 import { provinceNameKo } from "../shared/display-labels";
 import { appendIncomingCampaignChat } from "./campaign-chat";
-import { createCampaignResolution } from "./campaign-resolution";
+import { type CampaignDeclaredTransfer, createCampaignResolution } from "./campaign-resolution";
 import { advanceCampaignClock, type CampaignState, type TimelineCadence } from "./campaign-state";
 
 const updateNation = (
@@ -52,7 +52,7 @@ const invest = (
         id: `cst_${turn}_${sequence}`,
         ownerNationId: actor.id,
         provinceId: province.id,
-        kind: "rail" as const,
+        kind: intent.sector,
         investedCredits: intent.budgetCredits,
         startedTurn: turn,
         status: "active" as const,
@@ -86,7 +86,7 @@ const proposeTrade = (
     turn,
     proposerNameKo: proposer.nameKo,
     recipientNameKo: recipient.nameKo,
-    clauseNameKo: "통상",
+    clauseNameKo: intent.clauses.includes("port_access") ? "조건부 입항" : "통상",
     status: "proposed",
   });
   const currentRelation = state.relations.find(
@@ -146,6 +146,44 @@ const recruit = (
   };
 };
 
+/**
+ * Territory only changes hands through an explicit, self-describing record:
+ * the stated previous owner must be the real one, so narration can never quietly
+ * repaint the map.
+ */
+const transferTerritory = (
+  state: CampaignState,
+  intent: Extract<StrategicIntent, { readonly type: "territory.transfer" }>,
+  turn: number,
+): CampaignState => {
+  const province = state.provinces.find((candidate) => candidate.id === intent.provinceId);
+  const from = state.nations.find((nation) => nation.id === intent.fromNationId);
+  const to = state.nations.find((nation) => nation.id === intent.toNationId);
+  if (
+    province === undefined ||
+    from === undefined ||
+    to === undefined ||
+    from.id === to.id ||
+    province.ownerNationId !== from.id
+  ) {
+    throw new RangeError("INTENT_TERRITORY_INVALID");
+  }
+  return {
+    ...state,
+    provinces: Object.freeze(
+      state.provinces.map((candidate) =>
+        candidate.id === province.id
+          ? Object.freeze({ ...candidate, ownerNationId: to.id })
+          : candidate,
+      ),
+    ),
+    events: Object.freeze([
+      ...state.events,
+      `${turn}턴: ${provinceNameKo(province.id)}의 지배권이 ${from.nameKo}에서 ${to.nameKo}(으)로 넘어갔다. (${intent.reasonKo})`,
+    ]),
+  };
+};
+
 const applyIntent = (
   state: CampaignState,
   intent: StrategicIntent,
@@ -159,8 +197,36 @@ const applyIntent = (
       return proposeTrade(state, intent, turn, sequence);
     case "military.recruit":
       return recruit(state, intent, turn, sequence);
+    case "territory.transfer":
+      return transferTerritory(state, intent, turn);
   }
 };
+
+const declaredTransfersOf = (plan: StrategicPlan): readonly CampaignDeclaredTransfer[] =>
+  Object.freeze([
+    ...plan.playerIntents.flatMap((intent) =>
+      intent.type === "territory.transfer"
+        ? [
+            Object.freeze({
+              provinceId: intent.provinceId,
+              reasonKo: intent.reasonKo,
+              cause: "player" as const,
+            }),
+          ]
+        : [],
+    ),
+    ...plan.npcIntents.flatMap((intent) =>
+      intent.type === "territory.transfer"
+        ? [
+            Object.freeze({
+              provinceId: intent.provinceId,
+              reasonKo: intent.reasonKo,
+              cause: "npc" as const,
+            }),
+          ]
+        : [],
+    ),
+  ]);
 
 export interface ApplyStrategicPlanInput {
   readonly snapshot: CampaignState;
@@ -189,7 +255,7 @@ export const applyStrategicPlan = (input: ApplyStrategicPlanInput): CampaignStat
     elapsedDays: clock.elapsedDays,
     date: clock.date,
     events: Object.freeze([...resolved.events, plan.narrative.ko]),
-    lastPlan: plan,
+    lastPlan: strategicPlanCore(plan),
   });
   const resolution = createCampaignResolution({
     before: snapshot,
@@ -200,24 +266,26 @@ export const applyStrategicPlan = (input: ApplyStrategicPlanInput): CampaignStat
     orderText: orderText.trim(),
     narrativeKo: plan.narrative.ko,
     changedProvinceIds: intents.flatMap((intent) =>
-      "provinceId" in intent ? [intent.provinceId] : [],
+      "provinceId" in intent && intent.provinceId !== undefined ? [intent.provinceId] : [],
     ),
+    declaredTransfers: declaredTransfersOf(plan),
   });
   const committed = Object.freeze({
     ...nextState,
     resolutions: Object.freeze([...snapshot.resolutions, resolution]),
   });
-  const incomingNationId = resolution.treatyDeltas[0]?.recipientNationId;
-  if (incomingNationId === undefined) {
+  const incomingTreaty = resolution.treatyDeltas[0];
+  if (incomingTreaty === undefined) {
     return committed;
   }
+  const incomingNationId = incomingTreaty.recipientNationId;
   const incomingNationName =
     committed.nations.find((nation) => nation.id === incomingNationId)?.nameKo ?? incomingNationId;
   return appendIncomingCampaignChat({
     state: committed,
     speakerNationId: incomingNationId,
     turn: resolution.turn,
-    message: `${incomingNationName} 외교부는 귀국의 통상 협정 제안을 공식 접수했습니다. 관세와 철도 연결 조건을 논의할 실무 회담을 요청합니다. 협상 대표단의 답신을 기다리겠습니다.`,
+    message: `${incomingNationName} 외교부는 귀국의 조건부 협정 제안을 공식 접수했습니다. 특구 입항과 지원 조항에 관한 실무 회담을 요청합니다. 협상 대표단의 답신을 기다리겠습니다.`,
     topic: "trade",
     intent: "proposal",
     sourceKey: `diplomacy:trade:${committed.playerNationId}:${incomingNationId}`,

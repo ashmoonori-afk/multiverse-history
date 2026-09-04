@@ -15,8 +15,9 @@ const IntentSchema = z.discriminatedUnion("type", [
       type: z.literal("economy.invest"),
       actorNationId: z.string(),
       provinceId: z.string(),
-      sector: z.literal("rail"),
+      sector: z.string().regex(/^[a-z_]{2,24}$/),
       budgetCredits: z.number().int(),
+      sourceQuoteKo: z.string().min(2).max(200).optional(),
     })
     .strict(),
   z
@@ -24,7 +25,10 @@ const IntentSchema = z.discriminatedUnion("type", [
       type: z.literal("diplomacy.propose_treaty"),
       actorNationId: z.string(),
       recipientNationId: z.string(),
-      clauses: z.array(z.literal("trade")),
+      provinceId: z.string().optional(),
+      clauses: z.array(z.enum(["trade", "port_access", "weapons_support", "officer_training"])),
+      termsKo: z.string().min(1).optional(),
+      sourceQuoteKo: z.string().min(2).max(200).optional(),
     })
     .strict(),
   z
@@ -33,6 +37,18 @@ const IntentSchema = z.discriminatedUnion("type", [
       actorNationId: z.string(),
       provinceId: z.string(),
       manpower: z.number().int(),
+      sourceQuoteKo: z.string().min(2).max(200).optional(),
+    })
+    .strict(),
+  z
+    .object({
+      type: z.literal("territory.transfer"),
+      actorNationId: z.string(),
+      provinceId: z.string(),
+      fromNationId: z.string(),
+      toNationId: z.string(),
+      reasonKo: z.string().min(1),
+      sourceQuoteKo: z.string().min(2).max(200).optional(),
     })
     .strict(),
 ]);
@@ -78,6 +94,7 @@ const CampaignSchema = z
   .object({
     id: z.literal("cmp_local"),
     scenarioId: z.string(),
+    scenarioTitleKo: z.string().min(1).default("알 수 없는 시나리오"),
     playerNationId: z.string(),
     plannerProvider: z.enum(["deterministic", "codex", "claude"]),
     difficulty: z.enum(["story", "standard", "hard"]),

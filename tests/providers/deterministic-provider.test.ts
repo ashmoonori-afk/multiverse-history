@@ -23,12 +23,14 @@ describe("deterministic strategy provider", () => {
         provinceId: "prv_kor_hanseong",
         sector: "rail",
         budgetCredits: 25,
+        sourceQuoteKo: "철도",
       },
       {
         type: "diplomacy.propose_treaty",
         actorNationId: "nat_kor",
         recipientNationId: "nat_jpn",
         clauses: ["trade"],
+        sourceQuoteKo: "통상",
       },
     ]);
     expect(plan.npcIntents.length).toBeGreaterThan(0);

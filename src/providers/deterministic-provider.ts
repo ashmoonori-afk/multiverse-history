@@ -24,23 +24,17 @@ const npcIntents = (
   }
   const maxActors = Math.min(actors.length, 16);
   const selected = actors.slice(0, maxActors);
-  const intentTypes = ["military.recruit", "economy.invest", "diplomacy.propose_treaty"] as const;
   return Object.freeze(
     selected.map((actor, index) => {
-      const typeIndex = (turn + index) % intentTypes.length;
-      const intentType = intentTypes[typeIndex];
-      if (intentType === undefined) {
-        throw new RangeError("Deterministic intent type is unavailable");
-      }
-      switch (intentType) {
-        case "military.recruit":
+      switch ((turn + index) % 3) {
+        case 0:
           return {
             type: "military.recruit" as const,
             actorNationId: actor.actorNationId,
             provinceId: actor.provinceId,
             manpower: 2_000 + index * 500,
           };
-        case "economy.invest":
+        case 1:
           return {
             type: "economy.invest" as const,
             actorNationId: actor.actorNationId,
@@ -48,7 +42,7 @@ const npcIntents = (
             sector: "rail" as const,
             budgetCredits: Math.min(100, 30 + (index % 8) * 10),
           };
-        case "diplomacy.propose_treaty": {
+        default: {
           const recipientIndex = (index + 1) % selected.length;
           const recipient = selected[recipientIndex];
           if (recipient === undefined) {
@@ -58,7 +52,7 @@ const npcIntents = (
             type: "diplomacy.propose_treaty" as const,
             actorNationId: actor.actorNationId,
             recipientNationId: recipient.actorNationId,
-            clauses: ["trade"],
+            clauses: ["trade"] as const,
           };
         }
       }
@@ -80,6 +74,7 @@ const playerIntents = (
       provinceId: playerProvinceId,
       sector: "rail",
       budgetCredits: 25,
+      sourceQuoteKo: "철도",
     });
   }
   if (orderText.includes("통상") || orderText.includes("무역")) {
@@ -88,10 +83,23 @@ const playerIntents = (
       actorNationId: playerNationId,
       recipientNationId,
       clauses: ["trade"],
+      sourceQuoteKo: orderText.includes("통상") ? "통상" : "무역",
     });
   }
   return Object.freeze(intents);
 };
+
+const turnNarrative = (
+  intents: readonly StrategicIntent[],
+  playerNationId: string,
+  actorNames: string,
+  extraHint: string,
+  npcCount: number,
+  hasTrade: boolean,
+): string =>
+  intents.length > 0
+    ? `${playerNationId === "nat_kor" ? "대한제국" : "플레이어 국가"}이 철도 확충과 통상 외교를 추진하는 가운데, ${actorNames}${extraHint} 등 ${npcCount}개국이 각자의 국가 전략을 실행했다.${hasTrade ? " 외교 협상이 오가는 가운데 역내 긴장과 협력의 줄다리기가 계속되고 있다." : " 군비 경쟁과 기반시설 투자가 맞물리며 동아시아 정세는 새로운 국면을 맞고 있다."}`
+    : `${actorNames}${extraHint} 등 ${npcCount}개국이 자국의 이해관계에 따라 행동했으나, 플레이어 국가의 명령은 구체적 의도로 해석되지 못했다. 기존 정책 기조가 유지되는 가운데 역내 움직임은 계속된다.`;
 
 export const planDeterministically = (input: DeterministicPlanInput): StrategicPlan => {
   if (!Number.isSafeInteger(input.turn) || input.turn < 0) {
@@ -150,10 +158,14 @@ export const planDeterministically = (input: DeterministicPlanInput): StrategicP
       ? ` 외 ${fallbackActors.length - maxNamedActors}개국`
       : "";
   const hasTrade = fallbackActors.some((_, index) => (input.turn + index) % 3 === 2);
-  const narrativeKo =
-    intents.length > 0
-      ? `${playerNationId === "nat_kor" ? "대한제국" : "플레이어 국가"}이 철도 확충과 통상 외교를 추진하는 가운데, ${actorNames}${extraHint} 등 ${npcCount}개국이 각자의 국가 전략을 실행했다.${hasTrade ? " 외교 협상이 오가는 가운데 역내 긴장과 협력의 줄다리기가 계속되고 있다." : " 군비 경쟁과 기반시설 투자가 맞물리며 동아시아 정세는 새로운 국면을 맞고 있다."}`
-      : `${actorNames}${extraHint} 등 ${npcCount}개국이 자국의 이해관계에 따라 행동했으나, 플레이어 국가의 명령은 구체적 의도로 해석되지 못했다. 기존 정책 기조가 유지되는 가운데 역내 움직임은 계속된다.`;
+  const narrativeKo = turnNarrative(
+    intents,
+    playerNationId,
+    actorNames,
+    extraHint,
+    npcCount,
+    hasTrade,
+  );
   return parseStrategicPlan({
     schemaVersion: 1,
     requestId: input.requestId,

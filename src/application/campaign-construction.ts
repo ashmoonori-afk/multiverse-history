@@ -5,7 +5,7 @@ export const CampaignConstructionProjectSchema = z
     id: z.string().regex(/^cst_[a-z0-9_]+$/),
     ownerNationId: z.string().regex(/^nat_[a-z0-9_]+$/),
     provinceId: z.string().regex(/^prv_[a-z0-9_]+$/),
-    kind: z.literal("rail"),
+    kind: z.string().regex(/^[a-z_]{2,24}$/),
     investedCredits: z.number().safe().int().positive(),
     startedTurn: z.number().safe().int().nonnegative(),
     status: z.literal("active"),

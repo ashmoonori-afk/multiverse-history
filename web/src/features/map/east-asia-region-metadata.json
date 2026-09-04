@@ -3,40 +3,25 @@
     "id": "prv_rus_core",
     "labelKo": "러시아 본토",
     "terrain": "forest",
-    "neighbors": [
-      "prv_rus_transbaikal",
-      "prv_qing_west"
-    ]
+    "neighbors": ["prv_rus_transbaikal", "prv_qing_west"]
   },
   {
     "id": "prv_rus_transbaikal",
     "labelKo": "자바이칼",
     "terrain": "mountain",
-    "neighbors": [
-      "prv_rus_core",
-      "prv_rus_amur",
-      "prv_qing_manchuria"
-    ]
+    "neighbors": ["prv_rus_core", "prv_rus_amur", "prv_qing_manchuria"]
   },
   {
     "id": "prv_rus_amur",
     "labelKo": "아무르",
     "terrain": "forest",
-    "neighbors": [
-      "prv_rus_transbaikal",
-      "prv_rus_primorye",
-      "prv_qing_manchuria"
-    ]
+    "neighbors": ["prv_rus_transbaikal", "prv_rus_primorye", "prv_qing_manchuria"]
   },
   {
     "id": "prv_rus_primorye",
     "labelKo": "연해주",
     "terrain": "coast",
-    "neighbors": [
-      "prv_rus_amur",
-      "prv_qing_manchuria",
-      "prv_kor_hamgyeong"
-    ],
+    "neighbors": ["prv_rus_amur", "prv_qing_manchuria", "prv_kor_hamgyeong"],
     "marker": "city",
     "markerLabelKo": "블라디보스토크"
   },
@@ -57,11 +42,7 @@
     "id": "prv_qing_zhili",
     "labelKo": "직례",
     "terrain": "plain",
-    "neighbors": [
-      "prv_qing_manchuria",
-      "prv_qing_central",
-      "prv_qing_shandong"
-    ],
+    "neighbors": ["prv_qing_manchuria", "prv_qing_central", "prv_qing_shandong"],
     "marker": "capital",
     "markerLabelKo": "베이징"
   },
@@ -69,72 +50,43 @@
     "id": "prv_qing_shandong",
     "labelKo": "산둥",
     "terrain": "coast",
-    "neighbors": [
-      "prv_qing_manchuria",
-      "prv_qing_zhili",
-      "prv_qing_jiangnan"
-    ]
+    "neighbors": ["prv_qing_manchuria", "prv_qing_zhili", "prv_qing_jiangnan"]
   },
   {
     "id": "prv_qing_jiangnan",
     "labelKo": "강남",
     "terrain": "coast",
-    "neighbors": [
-      "prv_qing_central",
-      "prv_qing_shandong",
-      "prv_qing_south"
-    ]
+    "neighbors": ["prv_qing_central", "prv_qing_shandong", "prv_qing_south"]
   },
   {
     "id": "prv_qing_central",
     "labelKo": "중부",
     "terrain": "plain",
-    "neighbors": [
-      "prv_qing_west",
-      "prv_qing_zhili",
-      "prv_qing_jiangnan",
-      "prv_qing_south"
-    ]
+    "neighbors": ["prv_qing_west", "prv_qing_zhili", "prv_qing_jiangnan", "prv_qing_south"]
   },
   {
     "id": "prv_qing_south",
     "labelKo": "남부",
     "terrain": "plain",
-    "neighbors": [
-      "prv_qing_west",
-      "prv_qing_central",
-      "prv_qing_jiangnan"
-    ]
+    "neighbors": ["prv_qing_west", "prv_qing_central", "prv_qing_jiangnan"]
   },
   {
     "id": "prv_qing_west",
     "labelKo": "서부",
     "terrain": "mountain",
-    "neighbors": [
-      "prv_rus_core",
-      "prv_qing_central",
-      "prv_qing_south"
-    ]
+    "neighbors": ["prv_rus_core", "prv_qing_central", "prv_qing_south"]
   },
   {
     "id": "prv_kor_hamgyeong",
     "labelKo": "함경",
     "terrain": "mountain",
-    "neighbors": [
-      "prv_rus_primorye",
-      "prv_qing_manchuria",
-      "prv_kor_pyeongan"
-    ]
+    "neighbors": ["prv_rus_primorye", "prv_qing_manchuria", "prv_kor_pyeongan"]
   },
   {
     "id": "prv_kor_pyeongan",
     "labelKo": "평안",
     "terrain": "mountain",
-    "neighbors": [
-      "prv_kor_hamgyeong",
-      "prv_qing_manchuria",
-      "prv_kor_hanseong"
-    ],
+    "neighbors": ["prv_kor_hamgyeong", "prv_qing_manchuria", "prv_kor_hanseong"],
     "marker": "city",
     "markerLabelKo": "평양"
   },
@@ -142,11 +94,7 @@
     "id": "prv_kor_hanseong",
     "labelKo": "한성",
     "terrain": "plain",
-    "neighbors": [
-      "prv_kor_pyeongan",
-      "prv_kor_gyeonggi",
-      "prv_kor_chungcheong"
-    ],
+    "neighbors": ["prv_kor_pyeongan", "prv_kor_gyeonggi", "prv_kor_chungcheong"],
     "marker": "capital",
     "markerLabelKo": "한성"
   },
@@ -154,41 +102,25 @@
     "id": "prv_kor_gyeonggi",
     "labelKo": "경기",
     "terrain": "coast",
-    "neighbors": [
-      "prv_kor_hanseong",
-      "prv_kor_chungcheong",
-      "prv_kor_gyeongsang"
-    ]
+    "neighbors": ["prv_kor_hanseong", "prv_kor_chungcheong", "prv_kor_gyeongsang"]
   },
   {
     "id": "prv_kor_chungcheong",
     "labelKo": "충청",
     "terrain": "plain",
-    "neighbors": [
-      "prv_kor_hanseong",
-      "prv_kor_gyeonggi",
-      "prv_kor_jeolla",
-      "prv_kor_gyeongsang"
-    ]
+    "neighbors": ["prv_kor_hanseong", "prv_kor_gyeonggi", "prv_kor_jeolla", "prv_kor_gyeongsang"]
   },
   {
     "id": "prv_kor_jeolla",
     "labelKo": "전라",
     "terrain": "coast",
-    "neighbors": [
-      "prv_kor_chungcheong",
-      "prv_kor_gyeongsang"
-    ]
+    "neighbors": ["prv_kor_chungcheong", "prv_kor_gyeongsang"]
   },
   {
     "id": "prv_kor_gyeongsang",
     "labelKo": "경상",
     "terrain": "mountain",
-    "neighbors": [
-      "prv_kor_gyeonggi",
-      "prv_kor_chungcheong",
-      "prv_kor_jeolla"
-    ],
+    "neighbors": ["prv_kor_gyeonggi", "prv_kor_chungcheong", "prv_kor_jeolla"],
     "marker": "city",
     "markerLabelKo": "부산"
   },
@@ -196,27 +128,19 @@
     "id": "prv_jpn_hokkaido",
     "labelKo": "홋카이도",
     "terrain": "forest",
-    "neighbors": [
-      "prv_jpn_tohoku"
-    ]
+    "neighbors": ["prv_jpn_tohoku"]
   },
   {
     "id": "prv_jpn_tohoku",
     "labelKo": "도호쿠",
     "terrain": "mountain",
-    "neighbors": [
-      "prv_jpn_hokkaido",
-      "prv_jpn_kanto"
-    ]
+    "neighbors": ["prv_jpn_hokkaido", "prv_jpn_kanto"]
   },
   {
     "id": "prv_jpn_kanto",
     "labelKo": "간토",
     "terrain": "plain",
-    "neighbors": [
-      "prv_jpn_tohoku",
-      "prv_jpn_chubu"
-    ],
+    "neighbors": ["prv_jpn_tohoku", "prv_jpn_chubu"],
     "marker": "capital",
     "markerLabelKo": "도쿄"
   },
@@ -224,38 +148,25 @@
     "id": "prv_jpn_chubu",
     "labelKo": "주부",
     "terrain": "mountain",
-    "neighbors": [
-      "prv_jpn_kanto",
-      "prv_jpn_kansai",
-      "prv_jpn_chugoku_shikoku"
-    ]
+    "neighbors": ["prv_jpn_kanto", "prv_jpn_kansai", "prv_jpn_chugoku_shikoku"]
   },
   {
     "id": "prv_jpn_kansai",
     "labelKo": "간사이",
     "terrain": "plain",
-    "neighbors": [
-      "prv_jpn_chubu",
-      "prv_jpn_chugoku_shikoku"
-    ]
+    "neighbors": ["prv_jpn_chubu", "prv_jpn_chugoku_shikoku"]
   },
   {
     "id": "prv_jpn_chugoku_shikoku",
     "labelKo": "주고쿠·시코쿠",
     "terrain": "coast",
-    "neighbors": [
-      "prv_jpn_chubu",
-      "prv_jpn_kansai",
-      "prv_jpn_kyushu"
-    ]
+    "neighbors": ["prv_jpn_chubu", "prv_jpn_kansai", "prv_jpn_kyushu"]
   },
   {
     "id": "prv_jpn_kyushu",
     "labelKo": "규슈",
     "terrain": "coast",
-    "neighbors": [
-      "prv_jpn_chugoku_shikoku"
-    ]
+    "neighbors": ["prv_jpn_chugoku_shikoku"]
   },
   {
     "id": "prv_gbr_hongkong",
