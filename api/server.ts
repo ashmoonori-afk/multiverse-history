@@ -5,7 +5,9 @@ const app = createGameApp();
 Bun.serve({
   fetch(request) {
     const url = new URL(request.url);
-    url.pathname = url.pathname.replace(/^\/api\/server/, "");
+    const apiPath = url.searchParams.get("path");
+    url.pathname = apiPath === null ? "/" : `/api/${apiPath}`;
+    url.searchParams.delete("path");
     return app.fetch(new Request(url, request));
   },
 });

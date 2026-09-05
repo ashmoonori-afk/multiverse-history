@@ -2,7 +2,15 @@
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "files": {
     "ignoreUnknown": false,
-    "includes": ["**", "!!dist", "!!node_modules", "!!.omo", "!!data", "!!test-results"]
+    "includes": [
+      "**",
+      "!!dist",
+      "!!node_modules",
+      "!!.omo",
+      "!!.vercel",
+      "!!data",
+      "!!test-results"
+    ]
   },
   "formatter": {
     "enabled": true,
