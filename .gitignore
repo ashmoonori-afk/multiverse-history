@@ -10,3 +10,4 @@ test-results/
 .omo/
 DESIGN.md
 docs/
+.vercel/

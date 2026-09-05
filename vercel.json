@@ -1,0 +1,16 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "bunVersion": "1.x",
+  "buildCommand": "bun run build:web",
+  "outputDirectory": "dist/web",
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/server/api/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
